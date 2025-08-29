@@ -34,8 +34,6 @@ In case of a sensor/network failure, the system continues operating using a rand
 * **Documentation**: wiring diagram + operating instructions.  
 * **Unit Tests**: tests for individual hardware components (sensors, displays).  
 * **flutter_app**: (optional) client application code.  
-* **Parameters**: configurable parameters (timing, thresholds, etc.).  
-* **Assets**: 3D printed parts, wiring diagrams (Fritzing), etc.  
 
 ## ESP32 SDK version used in this project
 - ESP32 Arduino Core v2.0.17  
