@@ -52,9 +52,7 @@ flowchart TD
     A[Customer Arrival] --> B[Entry Sensor Detects]
     B --> C[ESP32 Updates Queue State]
     C --> D[Calculate Waiting Times]
-    D -->|Option 1| E[Display Board: Recommended Queue]
-    D -->|Option 2| F[Web App: Recommended Queue via QR Code]
+    D --> E[Display Board: Recommended Queue]
     E --> G[Customer Joins Queue]
-    F --> G[Customer Joins Queue]
     G --> H[Exit Sensor Detects Completion]
     H --> C
