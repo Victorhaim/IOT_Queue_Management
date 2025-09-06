@@ -98,11 +98,12 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Recommended line',
+              'GO TO LINE:',
               style: TextStyle(
                 fontSize: 50, 
-                fontWeight: FontWeight.w900,
-                fontFamily: 'serif', // Bigger, more elegant font
+                fontWeight: FontWeight.w900, // Black weight
+                fontFamily: 'EncodeSans', // EncodeSans font family
+                color: Color(0xFF3868F6), // Blue color matching your theme
               ),
             ),
             const SizedBox(height: 10),
@@ -120,14 +121,15 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                     '3',
                     style: TextStyle(
                       fontSize: 100,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900, // Black weight for maximum thickness
+                      fontFamily: 'EncodeSansExpanded', // Thickest and biggest variant
                       color: Color(0xFF3868F6),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 80), // Increased from 40 to push boxes further down
             // Both boxes in the same row - closer together
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -331,6 +333,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'EncodeSans', // Regular EncodeSans
                             color: Colors.black,
                           ),
                         ),
@@ -343,6 +346,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                             style: const TextStyle(
                               fontSize: 22, // Keep base size constant, use scale for growth
                               fontWeight: FontWeight.w900,
+                              fontFamily: 'EncodeSans', // Regular EncodeSans
                               color: Colors.black,
                             ),
                           ),
@@ -354,6 +358,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'EncodeSans', // Regular EncodeSans
                             color: Colors.black,
                           ),
                         ),
