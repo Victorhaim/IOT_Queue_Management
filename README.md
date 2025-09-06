@@ -56,3 +56,5 @@ flowchart TD
     E --> G[Customer Joins Queue]
     G --> H[Exit Sensor Detects Completion]
     H --> C
+
+    check
