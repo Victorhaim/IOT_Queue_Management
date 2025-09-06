@@ -31,7 +31,7 @@ class QueueScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Recomended line',
+              'Recommended line',
               style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
