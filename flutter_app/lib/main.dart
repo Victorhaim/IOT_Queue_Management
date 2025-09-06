@@ -32,7 +32,11 @@ class QueueScreen extends StatefulWidget {
 class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
   late AnimationController _clockController;
+  late AnimationController _placeHoverController;
+  late AnimationController _waitHoverController;
   bool _isAnimating = false;
+  bool _isPlaceHovered = false;
+  bool _isWaitHovered = false;
 
   @override
   void initState() {
@@ -47,14 +51,27 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     // Clock animation controller for continuous rotation
     _clockController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6), // 6 seconds total
+      duration: const Duration(seconds: 12), // 12 seconds total
     )..repeat(); // Continuous rotation
+    
+    // Hover animation controllers
+    _placeHoverController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    
+    _waitHoverController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _clockController.dispose();
+    _placeHoverController.dispose();
+    _waitHoverController.dispose();
     super.dispose();
   }
 
@@ -83,8 +100,9 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
             const Text(
               'Recommended line',
               style: TextStyle(
-                fontSize: 45, 
+                fontSize: 50, 
                 fontWeight: FontWeight.w900,
+                fontFamily: 'serif', // Bigger, more elegant font
               ),
             ),
             const SizedBox(height: 10),
@@ -110,68 +128,49 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
               ),
             ),
             const SizedBox(height: 40),
-            // Both boxes in the same row
+            // Both boxes in the same row - closer together
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Place in line with styled container
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3868F6).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(50), // More rounded
-                    border: Border.all(
-                      color: const Color(0xFF3868F6).withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/queue_icon.svg',
-                        width: 30,
-                        height: 30,
-                        colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'place in line: 4',
-                        style: TextStyle(
-                          fontSize: 20, // Smaller to fit in row
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Black text
-                        ),
-                      ),
-                    ],
-                  ),
+                // Place in line with hover animation
+                _buildHoverBox(
+                  icon: 'assets/images/queue_icon.svg',
+                  text: 'place in line: ',
+                  number: '4',
+                  controller: _placeHoverController,
+                  isHovered: _isPlaceHovered,
+                  explanation: 'According to sensor\ndata collection',
+                  onHover: (hovered) {
+                    setState(() {
+                      _isPlaceHovered = hovered;
+                    });
+                    if (hovered) {
+                      _placeHoverController.forward();
+                    } else {
+                      _placeHoverController.reverse();
+                    }
+                  },
                 ),
-                // Wait time with styled container
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF3868F6).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(50), // More rounded
-                    border: Border.all(
-                      color: const Color(0xFF3868F6).withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildAnimatedClock(),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'wait time: 20 min',
-                        style: TextStyle(
-                          fontSize: 20, // Smaller to fit in row
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black, // Black text
-                        ),
-                      ),
-                    ],
-                  ),
+                const SizedBox(width: 20), // Closer spacing
+                // Wait time with hover animation
+                _buildHoverBox(
+                  icon: 'assets/images/clock_icon.svg',
+                  text: 'wait time: ',
+                  number: '20 min',
+                  controller: _waitHoverController,
+                  isHovered: _isWaitHovered,
+                  explanation: 'Approximation based on calculations\nfrom sensor data collection',
+                  onHover: (hovered) {
+                    setState(() {
+                      _isWaitHovered = hovered;
+                    });
+                    if (hovered) {
+                      _waitHoverController.forward();
+                    } else {
+                      _waitHoverController.reverse();
+                    }
+                  },
+                  isClockIcon: true,
                 ),
               ],
             ),
@@ -269,6 +268,115 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           ),
         );
       },
+    );
+  }
+
+  Widget _buildHoverBox({
+    required String icon,
+    required String text,
+    required String number,
+    required AnimationController controller,
+    required bool isHovered,
+    required String explanation,
+    required Function(bool) onHover,
+    bool isClockIcon = false,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => onHover(true),
+      onExit: (_) => onHover(false),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Explanation tooltip - only show when opacity > 0
+          AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) {
+              if (controller.value == 0) {
+                return const SizedBox(height: 25); // Empty space when hidden
+              }
+              return Container(
+                height: 25,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                margin: const EdgeInsets.only(bottom: 5),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.8 * controller.value),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    explanation,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(controller.value),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            },
+          ),
+          // Main box
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3868F6).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(
+                color: const Color(0xFF3868F6).withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon or animated clock
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: isClockIcon 
+                    ? _buildAnimatedClock()
+                    : SvgPicture.asset(
+                        icon,
+                        width: 30,
+                        height: 30,
+                        colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
+                      ),
+                ),
+                const SizedBox(width: 10),
+                // Text with animated number
+                AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, child) {
+                    return RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: text,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: number,
+                            style: TextStyle(
+                              fontSize: 22 + (6 * controller.value), // Grows from 22 to 28
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
