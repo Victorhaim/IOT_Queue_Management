@@ -37,8 +37,9 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      lowerBound: 0.5,
-      duration: const Duration(seconds: 2), // Faster waves
+      lowerBound: 0.0,
+      upperBound: 1.0, // Normal 0 to 1 animation
+      duration: const Duration(seconds: 2),
     );
   }
 
@@ -168,14 +169,10 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
         return Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            _buildContainer(60 * _controller.value),   // More waves with smaller increments
-            _buildContainer(80 * _controller.value),
-            _buildContainer(100 * _controller.value),
-            _buildContainer(120 * _controller.value),
-            _buildContainer(140 * _controller.value),
-            _buildContainer(160 * _controller.value),
-            _buildContainer(180 * _controller.value),
-            _buildContainer(200 * _controller.value),
+            _buildAnimatedContainer(60 + (70 * _controller.value * 2), 0.4),   // Fades to transparent
+            _buildAnimatedContainer(100 + (70 * _controller.value * 2), 0.3),  // Fades to transparent  
+            _buildAnimatedContainer(140 + (70 * _controller.value * 2), 0.2),  // Fades to transparent
+            _buildContainer(200),  // Outer circle stays at 200px with static color
           ],
         );
       },
@@ -188,7 +185,25 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       height: radius,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF3868F6).withOpacity(0.25 - (_controller.value * 0.2)), // Darker color
+        color: const Color(0xFF3868F6).withOpacity(0.05), // Same as static circle - no fading
+      ),
+    );
+  }
+
+  Widget _buildAnimatedContainer(double radius, double startOpacity) {
+    // Fade based on animation progress (0 to 1)
+    double fadeProgress = _controller.value;
+    
+    // Fade from startOpacity to 0 (completely transparent)
+    double targetOpacity = 0.0;
+    double currentOpacity = startOpacity + (targetOpacity - startOpacity) * fadeProgress;
+    
+    return Container(
+      width: radius,
+      height: radius,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFF3868F6).withOpacity(currentOpacity),
       ),
     );
   }
