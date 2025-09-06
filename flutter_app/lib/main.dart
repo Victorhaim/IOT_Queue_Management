@@ -314,48 +314,48 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                       colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
                     ),
                 const SizedBox(width: 10),
-                // Text with animated number - constrained to prevent layout shifts
-                SizedBox(
-                  height: 28, // Fixed height to accommodate the largest text size
-                  child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, child) {
-                      return RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: text,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                height: 1.0, // Fixed line height
-                              ),
+                // Text with animated number - separated to prevent baseline shifts
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center, // Center align all text
+                  children: [
+                    // Static text part
+                    Text(
+                      text,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    // Animated number with proper center scaling
+                    AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, child) {
+                        double scale = 1.0 + (0.27 * controller.value); // Scale from 1.0 to 1.27 (22->28px)
+                        return Transform.scale(
+                          scale: scale,
+                          child: Text(
+                            number,
+                            style: const TextStyle(
+                              fontSize: 22, // Keep base size constant, use scale for growth
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
                             ),
-                            TextSpan(
-                              text: number,
-                              style: TextStyle(
-                                fontSize: 22 + (6 * controller.value), // Grows from 22 to 28
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
-                                height: 1.0, // Fixed line height
-                              ),
-                            ),
-                            TextSpan(
-                              text: suffix,
-                              style: const TextStyle(
-                                fontSize: 22, // Static size for suffix
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                height: 1.0, // Fixed line height
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Static suffix part
+                    Text(
+                      suffix,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
