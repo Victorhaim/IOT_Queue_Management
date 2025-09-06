@@ -137,6 +137,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                   icon: 'assets/images/queue_icon.svg',
                   text: 'place in line: ',
                   number: '4',
+                  suffix: '',
                   controller: _placeHoverController,
                   isHovered: _isPlaceHovered,
                   explanation: 'According to sensor\ndata collection',
@@ -156,10 +157,11 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                 _buildHoverBox(
                   icon: 'assets/images/clock_icon.svg',
                   text: 'wait time: ',
-                  number: '20 min',
+                  number: '20',
+                  suffix: ' min',
                   controller: _waitHoverController,
                   isHovered: _isWaitHovered,
-                  explanation: 'Approximation based on calculations\nfrom sensor data collection',
+                  explanation: 'Approximation based on calculations from sensor data collection',
                   onHover: (hovered) {
                     setState(() {
                       _isWaitHovered = hovered;
@@ -275,6 +277,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     required String icon,
     required String text,
     required String number,
+    required String suffix,
     required AnimationController controller,
     required bool isHovered,
     required String explanation,
@@ -284,39 +287,10 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     return MouseRegion(
       onEnter: (_) => onHover(true),
       onExit: (_) => onHover(false),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
+        clipBehavior: Clip.none, // Allow tooltip to appear outside bounds
         children: [
-          // Explanation tooltip - only show when opacity > 0
-          AnimatedBuilder(
-            animation: controller,
-            builder: (context, child) {
-              if (controller.value == 0) {
-                return const SizedBox(height: 25); // Empty space when hidden
-              }
-              return Container(
-                height: 25,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                margin: const EdgeInsets.only(bottom: 5),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.8 * controller.value),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    explanation,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(controller.value),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
-            },
-          ),
-          // Main box
+          // Main box - this is the only thing that affects layout
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             decoration: BoxDecoration(
@@ -331,48 +305,91 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Icon or animated clock
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: isClockIcon 
-                    ? _buildAnimatedClock()
-                    : SvgPicture.asset(
-                        icon,
-                        width: 30,
-                        height: 30,
-                        colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
-                      ),
-                ),
+                isClockIcon 
+                  ? _buildAnimatedClock()
+                  : SvgPicture.asset(
+                      icon,
+                      width: 30,
+                      height: 30,
+                      colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
+                    ),
                 const SizedBox(width: 10),
-                // Text with animated number
-                AnimatedBuilder(
-                  animation: controller,
-                  builder: (context, child) {
-                    return RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: text,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                // Text with animated number - constrained to prevent layout shifts
+                SizedBox(
+                  height: 28, // Fixed height to accommodate the largest text size
+                  child: AnimatedBuilder(
+                    animation: controller,
+                    builder: (context, child) {
+                      return RichText(
+                        textAlign: TextAlign.start,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: text,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                height: 1.0, // Fixed line height
+                              ),
                             ),
-                          ),
-                          TextSpan(
-                            text: number,
-                            style: TextStyle(
-                              fontSize: 22 + (6 * controller.value), // Grows from 22 to 28
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                            TextSpan(
+                              text: number,
+                              style: TextStyle(
+                                fontSize: 22 + (6 * controller.value), // Grows from 22 to 28
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black,
+                                height: 1.0, // Fixed line height
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                            TextSpan(
+                              text: suffix,
+                              style: const TextStyle(
+                                fontSize: 22, // Static size for suffix
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                height: 1.0, // Fixed line height
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
+            ),
+          ),
+          // Tooltip - positioned absolutely, doesn't affect layout
+          Positioned(
+            bottom: 70, // Above the box
+            left: 0,
+            right: 0,
+            child: AnimatedBuilder(
+              animation: controller,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: controller.value,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        explanation,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
