@@ -44,8 +44,8 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     _controller = AnimationController(
       vsync: this,
       lowerBound: 0.0,
-      upperBound: 1.0, // Normal 0 to 1 animation
-      duration: const Duration(seconds: 2),
+      upperBound: 1.0,
+      duration: const Duration(milliseconds: 2000),
     );
     
     // Clock animation controller for continuous rotation
@@ -98,7 +98,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'GO TO LINE:',
+              'GO TO LINE',
               style: TextStyle(
                 fontSize: 50, 
                 fontWeight: FontWeight.w900, // Black weight
@@ -214,12 +214,28 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     return AnimatedBuilder(
       animation: CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
       builder: (context, child) {
+        // All circles grow at same speed, animation ends when Circle 4 reaches 200px
+        double progress = _controller.value; // 0 to 1
+        
+        // Staggered start times, all grow at same speed (500px per progress unit)
+        // When progress=1: Circle4 = (1-0.6)*500 = 200px ✓
+        double circle1Size = progress * 500; // grows beyond 200px but gets capped
+        double circle2Size = math.max(0, (progress - 0.2) * 500);
+        double circle3Size = math.max(0, (progress - 0.4) * 500);  
+        double circle4Size = math.max(0, (progress - 0.6) * 500); // reaches 200px when progress=1
+        
+        // Cap the first circles at 200px so they don't grow too big
+        circle1Size = math.min(200, circle1Size);
+        circle2Size = math.min(200, circle2Size);
+        circle3Size = math.min(200, circle3Size);
+
         return Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            _buildAnimatedContainer(60 + (70 * _controller.value * 2), 0.4),   // Fades to transparent
-            _buildAnimatedContainer(100 + (70 * _controller.value * 2), 0.3),  // Fades to transparent  
-            _buildAnimatedContainer(140 + (70 * _controller.value * 2), 0.2),  // Fades to transparent
+            _buildAnimatedContainer(circle1Size, 0.4),
+            _buildAnimatedContainer(circle2Size, 0.3),
+            _buildAnimatedContainer(circle3Size, 0.2),
+            _buildAnimatedContainer(circle4Size, 0.1),
             _buildContainer(200),  // Outer circle stays at 200px with static color
           ],
         );
