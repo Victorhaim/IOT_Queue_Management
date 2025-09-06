@@ -315,25 +315,28 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                     ),
                 const SizedBox(width: 10),
                 // Text with animated number - separated to prevent baseline shifts
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center, // Center align all text
-                  children: [
-                    // Static text part
-                    Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    // Animated number with proper center scaling
-                    AnimatedBuilder(
-                      animation: controller,
-                      builder: (context, child) {
-                        double scale = 1.0 + (0.27 * controller.value); // Scale from 1.0 to 1.27 (22->28px)
-                        return Transform.scale(
+                AnimatedBuilder(
+                  animation: controller,
+                  builder: (context, child) {
+                    double scale = 1.0 + (0.27 * controller.value); // Scale from 1.0 to 1.27
+                    double spacing = 2.0 * scale; // Animated spacing that grows with the text
+                    
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Static text part
+                        Text(
+                          text,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(width: spacing), // Animated spacing before number
+                        // Animated number with proper center scaling
+                        Transform.scale(
                           scale: scale,
                           child: Text(
                             number,
@@ -343,19 +346,20 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
                               color: Colors.black,
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    // Static suffix part
-                    Text(
-                      suffix,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+                        ),
+                        SizedBox(width: spacing), // Animated spacing after number
+                        // Static suffix part
+                        Text(
+                          suffix,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
