@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:math' as math;
 
 void main() {
   runApp(const QueueApp());
@@ -30,6 +31,7 @@ class QueueScreen extends StatefulWidget {
 
 class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _clockController;
   bool _isAnimating = false;
 
   @override
@@ -41,11 +43,18 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       upperBound: 1.0, // Normal 0 to 1 animation
       duration: const Duration(seconds: 2),
     );
+    
+    // Clock animation controller for continuous rotation
+    _clockController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6), // 6 seconds total
+    )..repeat(); // Continuous rotation
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _clockController.dispose();
     super.dispose();
   }
 
@@ -73,7 +82,10 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           children: [
             const Text(
               'Recommended line',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 45, 
+                fontWeight: FontWeight.w900,
+              ),
             ),
             const SizedBox(height: 10),
             // Animated number with ripple waves behind
@@ -98,35 +110,68 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
               ),
             ),
             const SizedBox(height: 40),
+            // Both boxes in the same row
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SvgPicture.asset(
-                  'assets/images/queue_icon.svg',
-                  width: 30,
-                  height: 30,
-                  colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
+                // Place in line with styled container
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3868F6).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(50), // More rounded
+                    border: Border.all(
+                      color: const Color(0xFF3868F6).withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/queue_icon.svg',
+                        width: 30,
+                        height: 30,
+                        colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'place in line: 4',
+                        style: TextStyle(
+                          fontSize: 20, // Smaller to fit in row
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Black text
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 10),
-                const Text(
-                  'place in line: 4',
-                  style: TextStyle(fontSize: 40),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/images/clock_icon.svg',
-                  width: 30,
-                  height: 30,
-                  colorFilter: const ColorFilter.mode(Color(0xFF3868F6), BlendMode.srcIn),
-                ),
-                const SizedBox(width: 10),
-                const Text(
-                  'expected waiting time: 20 min',
-                  style: TextStyle(fontSize: 40),
+                // Wait time with styled container
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3868F6).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(50), // More rounded
+                    border: Border.all(
+                      color: const Color(0xFF3868F6).withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildAnimatedClock(),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'wait time: 20 min',
+                        style: TextStyle(
+                          fontSize: 20, // Smaller to fit in row
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black, // Black text
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -207,4 +252,72 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       ),
     );
   }
+
+  Widget _buildAnimatedClock() {
+    return AnimatedBuilder(
+      animation: _clockController,
+      builder: (context, child) {
+        return SizedBox(
+          width: 30,
+          height: 30,
+          child: CustomPaint(
+            painter: AnimatedClockPainter(
+              minuteHandAngle: _clockController.value * 6 * 2 * 3.14159, // 6 full rotations
+              hourHandAngle: _clockController.value * 2 * 3.14159, // 1 full rotation
+              color: const Color(0xFF3868F6),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AnimatedClockPainter extends CustomPainter {
+  final double minuteHandAngle;
+  final double hourHandAngle;
+  final Color color;
+
+  AnimatedClockPainter({
+    required this.minuteHandAngle,
+    required this.hourHandAngle,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    // Draw clock circle
+    canvas.drawCircle(center, radius - 1, paint);
+
+    // Draw hour hand (shorter)
+    final hourHandLength = radius * 0.5;
+    final hourHandX = center.dx + hourHandLength * math.cos(hourHandAngle - 3.14159 / 2);
+    final hourHandY = center.dy + hourHandLength * math.sin(hourHandAngle - 3.14159 / 2);
+    canvas.drawLine(
+      center,
+      Offset(hourHandX, hourHandY),
+      paint..strokeWidth = 2, // Same thickness as minute hand
+    );
+
+    // Draw minute hand (longer)
+    final minuteHandLength = radius * 0.7;
+    final minuteHandX = center.dx + minuteHandLength * math.cos(minuteHandAngle - 3.14159 / 2);
+    final minuteHandY = center.dy + minuteHandLength * math.sin(minuteHandAngle - 3.14159 / 2);
+    canvas.drawLine(
+      center,
+      Offset(minuteHandX, minuteHandY),
+      paint..strokeWidth = 2, // Same thickness as hour hand
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
