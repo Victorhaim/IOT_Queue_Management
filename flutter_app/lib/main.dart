@@ -37,24 +37,16 @@ class QueueScreen extends StatelessWidget {
             const SizedBox(height: 10),
             const Text(
               '3',
-              style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.green),
+              style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 40),
             const Text(
-              'expected place in line',
-              style: TextStyle(fontSize: 30),
+              'expected place in line: 4',
+              style: TextStyle(fontSize: 40),
             ),
             const Text(
-              '4',
-              style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: Colors.amber),
-            ),
-            const Text(
-              'expected waiting time',
-              style: TextStyle(fontSize: 30),
-            ),
-            const Text(
-              '4 minutes',
-              style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold, color: Colors.amber),
+              'expected waiting time: 20 min',
+              style: TextStyle(fontSize: 40),
             ),
           ],
         ),
