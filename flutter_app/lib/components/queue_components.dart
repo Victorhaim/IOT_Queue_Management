@@ -150,33 +150,36 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   }
 
   Widget _buildHoverBoxes() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        HoverBox(
-          icon: AppAssets.string_queueIcon,
-          text: AppStrings.string_placeInLineText,
-          number: AppStrings.string_placeInLineNumber,
-          suffix: '',
-          controller: _placeHoverController,
-          isHovered: _isPlaceHovered,
-          explanation: AppStrings.string_placeTooltip,
-          onHover: _handlePlaceHover,
-        ),
-        SizedBox(width: AppParameters.size_hoverBoxSpacing),
-        HoverBox(
-          icon: AppAssets.string_clockIcon,
-          text: AppStrings.string_waitTimeText,
-          number: AppStrings.string_waitTimeNumber,
-          suffix: AppStrings.string_waitTimeSuffix,
-          controller: _waitHoverController,
-          isHovered: _isWaitHovered,
-          explanation: AppStrings.string_waitTimeTooltip,
-          onHover: _handleWaitHover,
-          isClockIcon: true,
-          clockController: _clockController,
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          HoverBox(
+            icon: AppAssets.string_queueIcon,
+            text: AppStrings.string_placeInLineText,
+            number: AppStrings.string_placeInLineNumber,
+            suffix: '',
+            controller: _placeHoverController,
+            isHovered: _isPlaceHovered,
+            explanation: AppStrings.string_placeTooltip,
+            onHover: _handlePlaceHover,
+          ),
+          SizedBox(width: AppParameters.size_hoverBoxSpacing),
+          HoverBox(
+            icon: AppAssets.string_clockIcon,
+            text: AppStrings.string_waitTimeText,
+            number: AppStrings.string_waitTimeNumber,
+            suffix: AppStrings.string_waitTimeSuffix,
+            controller: _waitHoverController,
+            isHovered: _isWaitHovered,
+            explanation: AppStrings.string_waitTimeTooltip,
+            onHover: _handleWaitHover,
+            isClockIcon: true,
+            clockController: _clockController,
+          ),
+        ],
+      ),
     );
   }
 
