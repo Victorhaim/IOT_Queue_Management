@@ -57,7 +57,7 @@ class AnimatedClockPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     // Draw clock circle
-    canvas.drawCircle(center, radius - 1, paint);
+    canvas.drawCircle(center, radius - AppParameters.size_clockRadiusOffset, paint);
 
     // Draw hour hand (shorter)
     final hourHandLength = radius * AppParameters.hourHandLengthRatio;

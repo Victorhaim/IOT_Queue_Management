@@ -100,11 +100,11 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildTitle(),
-            const SizedBox(height: 10),
+            SizedBox(height: AppParameters.size_titleToNumberSpacing),
             _buildAnimatedNumber(),
-            const SizedBox(height: 80),
+            SizedBox(height: AppParameters.size_numberToBoxesSpacing),
             _buildHoverBoxes(),
-            const SizedBox(height: 20),
+            SizedBox(height: AppParameters.size_boxesToButtonSpacing),
             _buildAnimationButton(),
           ],
         ),
@@ -116,7 +116,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     return Text(
       AppStrings.string_goToLineText,
       style: TextStyle(
-        fontSize: 50,
+        fontSize: AppParameters.size_titleFontSize,
         fontWeight: FontWeight.w900,
         fontFamily: AppParameters.string_fontFamily,
         color: AppParameters.color_primaryBlue,
@@ -138,7 +138,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
           Text(
             AppStrings.string_queueNumber,
             style: TextStyle(
-              fontSize: 100,
+              fontSize: AppParameters.size_queueNumberFontSize,
               fontWeight: FontWeight.w900,
               fontFamily: AppParameters.string_expandedFontFamily,
               color: AppParameters.color_primaryBlue,
@@ -186,11 +186,14 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       style: ElevatedButton.styleFrom(
         backgroundColor: AppParameters.color_primaryBlue,
         foregroundColor: AppParameters.color_backgroundColor,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppParameters.size_buttonHorizontalPadding, 
+          vertical: AppParameters.size_buttonVerticalPadding
+        ),
       ),
       child: Text(
         _isAnimating ? AppStrings.string_animatingText : AppStrings.string_startAnimationText,
-        style: const TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
       ),
     );
   }

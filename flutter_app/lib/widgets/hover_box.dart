@@ -52,18 +52,18 @@ class HoverBox extends StatelessWidget {
         vertical: AppParameters.size_hoverBoxVerticalPadding,
       ),
       decoration: BoxDecoration(
-        color: AppParameters.color_primaryBlue.withOpacity(0.1),
+        color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBackgroundOpacity),
         borderRadius: BorderRadius.circular(AppParameters.size_hoverBoxBorderRadius),
         border: Border.all(
-          color: AppParameters.color_primaryBlue.withOpacity(0.3),
-          width: 1,
+          color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBorderOpacity),
+          width: AppParameters.size_borderWidth,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildIcon(),
-          const SizedBox(width: 10),
+          SizedBox(width: AppParameters.size_iconToTextSpacing),
           _buildAnimatedText(),
         ],
       ),
@@ -91,7 +91,7 @@ class HoverBox extends StatelessWidget {
       animation: controller,
       builder: (context, child) {
         double scale = 1.0 + (AppParameters.hoverScaleMultiplier * controller.value);
-        double spacing = 2.0 * scale;
+        double spacing = AppParameters.size_textSpacing * scale;
         
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -112,7 +112,7 @@ class HoverBox extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 22,
+        fontSize: AppParameters.size_hoverBoxFontSize,
         fontWeight: FontWeight.bold,
         fontFamily: AppParameters.string_fontFamily,
         color: AppParameters.color_textColor,
@@ -126,7 +126,7 @@ class HoverBox extends StatelessWidget {
       child: Text(
         number,
         style: TextStyle(
-          fontSize: 22,
+          fontSize: AppParameters.size_hoverBoxFontSize,
           fontWeight: FontWeight.w900,
           fontFamily: AppParameters.string_fontFamily,
           color: AppParameters.color_textColor,
@@ -147,16 +147,19 @@ class HoverBox extends StatelessWidget {
             opacity: controller.value,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppParameters.size_tooltipHorizontalPadding, 
+                  vertical: AppParameters.size_tooltipVerticalPadding
+                ),
                 decoration: BoxDecoration(
-                  color: AppParameters.color_tooltipBackgroundColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppParameters.color_tooltipBackgroundColor.withOpacity(AppParameters.tooltipBackgroundOpacity),
+                  borderRadius: BorderRadius.circular(AppParameters.size_tooltipBorderRadius),
                 ),
                 child: Text(
                   explanation,
                   style: TextStyle(
                     color: AppParameters.color_tooltipTextColor,
-                    fontSize: 12,
+                    fontSize: AppParameters.size_tooltipFontSize,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,

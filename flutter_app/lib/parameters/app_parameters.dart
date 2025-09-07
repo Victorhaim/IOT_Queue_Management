@@ -29,6 +29,11 @@ class AppParameters {
   static const double circle4Opacity = 0.1;
   static const double staticCircleOpacity = 0.05;
   
+  // UI Opacity Values
+  static const double hoverBoxBackgroundOpacity = 0.1;
+  static const double hoverBoxBorderOpacity = 0.3;
+  static const double tooltipBackgroundOpacity = 0.8;
+  
   // Text Styles
   static const String string_fontFamily = 'EncodeSans';
   static const String string_expandedFontFamily = 'EncodeSansExpanded';
@@ -42,12 +47,39 @@ class AppParameters {
   static const double size_tooltipVerticalOffset = 70.0;
   static const double hoverScaleMultiplier = 0.27;
   
+  // Layout Spacing
+  static const double size_titleToNumberSpacing = 10.0;
+  static const double size_numberToBoxesSpacing = 80.0;
+  static const double size_boxesToButtonSpacing = 20.0;
+  static const double size_iconToTextSpacing = 10.0;
+  static const double size_textSpacing = 2.0;
+  
+  // Font Sizes
+  static const double size_titleFontSize = 50.0;
+  static const double size_queueNumberFontSize = 100.0;
+  static const double size_hoverBoxFontSize = 22.0;
+  static const double size_buttonFontSize = 16.0;
+  static const double size_tooltipFontSize = 12.0;
+  
+  // Button Properties
+  static const double size_buttonHorizontalPadding = 24.0;
+  static const double size_buttonVerticalPadding = 12.0;
+  
+  // Tooltip Properties
+  static const double size_tooltipHorizontalPadding = 12.0;
+  static const double size_tooltipVerticalPadding = 6.0;
+  static const double size_tooltipBorderRadius = 8.0;
+  
+  // Border Properties
+  static const double size_borderWidth = 1.0;
+  
   // Clock Settings
   static const double size_clockCircleStrokeWidth = 2.0;
   static const double hourHandLengthRatio = 0.5;
   static const double minuteHandLengthRatio = 0.7;
   static const int minuteHandRotations = 6;
   static const int hourHandRotations = 1;
+  static const double size_clockRadiusOffset = 1.0;
 }
 
 /// Text content for the application
