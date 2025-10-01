@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
-import '../constants/app_constants.dart';
+import '../parameters/app_parameters.dart';
 import '../widgets/animated_waves.dart';
 import '../widgets/hover_box.dart';
+
+/// Queue app main widget
+class QueueApp extends StatelessWidget {
+  const QueueApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: AppStrings.string_appTitle,
+      theme: ThemeData.light().copyWith(
+        colorScheme: ColorScheme.fromSeed(seedColor: AppParameters.color_primaryBlue),
+      ),
+      home: const QueueScreen(),
+    );
+  }
+}
 
 /// Main queue display screen
 class QueueScreen extends StatefulWidget {
@@ -32,22 +49,22 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       vsync: this,
       lowerBound: 0.0,
       upperBound: 1.0,
-      duration: AppConstants.waveAnimationDuration,
+      duration: AppParameters.waveAnimationDuration,
     );
     
     _clockController = AnimationController(
       vsync: this,
-      duration: AppConstants.clockAnimationDuration,
+      duration: AppParameters.clockAnimationDuration,
     )..repeat();
     
     _placeHoverController = AnimationController(
       vsync: this,
-      duration: AppConstants.hoverAnimationDuration,
+      duration: AppParameters.hoverAnimationDuration,
     );
     
     _waitHoverController = AnimationController(
       vsync: this,
-      duration: AppConstants.hoverAnimationDuration,
+      duration: AppParameters.hoverAnimationDuration,
     );
   }
 
@@ -77,17 +94,17 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppParameters.color_backgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildTitle(),
-            const SizedBox(height: 10),
+            SizedBox(height: AppParameters.size_titleToNumberSpacing),
             _buildAnimatedNumber(),
-            const SizedBox(height: 80),
+            SizedBox(height: AppParameters.size_numberToBoxesSpacing),
             _buildHoverBoxes(),
-            const SizedBox(height: 20),
+            SizedBox(height: AppParameters.size_boxesToButtonSpacing),
             _buildAnimationButton(),
           ],
         ),
@@ -96,21 +113,21 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   }
 
   Widget _buildTitle() {
-    return const Text(
-      AppStrings.goToLineText,
+    return Text(
+      AppStrings.string_goToLineText,
       style: TextStyle(
-        fontSize: 50,
+        fontSize: AppParameters.size_titleFontSize,
         fontWeight: FontWeight.w900,
-        fontFamily: AppConstants.fontFamily,
-        color: AppConstants.primaryBlue,
+        fontFamily: AppParameters.string_fontFamily,
+        color: AppParameters.color_primaryBlue,
       ),
     );
   }
 
   Widget _buildAnimatedNumber() {
     return SizedBox(
-      width: AppConstants.maxCircleRadius,
-      height: AppConstants.maxCircleRadius,
+      width: AppParameters.size_maxCircleRadius,
+      height: AppParameters.size_maxCircleRadius,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -118,13 +135,13 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
             controller: _waveController,
             isAnimating: _isAnimating,
           ),
-          const Text(
-            AppStrings.queueNumber,
+          Text(
+            AppStrings.string_queueNumber,
             style: TextStyle(
-              fontSize: 100,
+              fontSize: AppParameters.size_queueNumberFontSize,
               fontWeight: FontWeight.w900,
-              fontFamily: AppConstants.expandedFontFamily,
-              color: AppConstants.primaryBlue,
+              fontFamily: AppParameters.string_expandedFontFamily,
+              color: AppParameters.color_primaryBlue,
             ),
           ),
         ],
@@ -133,33 +150,36 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   }
 
   Widget _buildHoverBoxes() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        HoverBox(
-          icon: AppAssets.queueIcon,
-          text: AppStrings.placeInLineText,
-          number: AppStrings.placeInLineNumber,
-          suffix: '',
-          controller: _placeHoverController,
-          isHovered: _isPlaceHovered,
-          explanation: AppStrings.placeTooltip,
-          onHover: _handlePlaceHover,
-        ),
-        const SizedBox(width: AppConstants.hoverBoxSpacing),
-        HoverBox(
-          icon: AppAssets.clockIcon,
-          text: AppStrings.waitTimeText,
-          number: AppStrings.waitTimeNumber,
-          suffix: AppStrings.waitTimeSuffix,
-          controller: _waitHoverController,
-          isHovered: _isWaitHovered,
-          explanation: AppStrings.waitTimeTooltip,
-          onHover: _handleWaitHover,
-          isClockIcon: true,
-          clockController: _clockController,
-        ),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          HoverBox(
+            icon: AppAssets.string_queueIcon,
+            text: AppStrings.string_placeInLineText,
+            number: AppStrings.string_placeInLineNumber,
+            suffix: '',
+            controller: _placeHoverController,
+            isHovered: _isPlaceHovered,
+            explanation: AppStrings.string_placeTooltip,
+            onHover: _handlePlaceHover,
+          ),
+          SizedBox(width: AppParameters.size_hoverBoxSpacing),
+          HoverBox(
+            icon: AppAssets.string_clockIcon,
+            text: AppStrings.string_waitTimeText,
+            number: AppStrings.string_waitTimeNumber,
+            suffix: AppStrings.string_waitTimeSuffix,
+            controller: _waitHoverController,
+            isHovered: _isWaitHovered,
+            explanation: AppStrings.string_waitTimeTooltip,
+            onHover: _handleWaitHover,
+            isClockIcon: true,
+            clockController: _clockController,
+          ),
+        ],
+      ),
     );
   }
 
@@ -167,13 +187,16 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     return ElevatedButton(
       onPressed: _isAnimating ? null : _toggleAnimation,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppConstants.primaryBlue,
-        foregroundColor: AppConstants.backgroundColor,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        backgroundColor: AppParameters.color_primaryBlue,
+        foregroundColor: AppParameters.color_backgroundColor,
+        padding: EdgeInsets.symmetric(
+          horizontal: AppParameters.size_buttonHorizontalPadding, 
+          vertical: AppParameters.size_buttonVerticalPadding
+        ),
       ),
       child: Text(
-        _isAnimating ? AppStrings.animatingText : AppStrings.startAnimationText,
-        style: const TextStyle(fontSize: 16),
+        _isAnimating ? AppStrings.string_animatingText : AppStrings.string_startAnimationText,
+        style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
       ),
     );
   }

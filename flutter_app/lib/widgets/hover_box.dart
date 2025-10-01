@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../constants/app_constants.dart';
+import '../parameters/app_parameters.dart';
 import '../widgets/animated_clock.dart';
 
 /// Hover box widget with tooltip and animations
@@ -47,23 +47,23 @@ class HoverBox extends StatelessWidget {
 
   Widget _buildMainBox() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.hoverBoxPadding,
-        vertical: AppConstants.hoverBoxVerticalPadding,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppParameters.size_hoverBoxPadding,
+        vertical: AppParameters.size_hoverBoxVerticalPadding,
       ),
       decoration: BoxDecoration(
-        color: AppConstants.primaryBlue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppConstants.hoverBoxBorderRadius),
+        color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBackgroundOpacity),
+        borderRadius: BorderRadius.circular(AppParameters.size_hoverBoxBorderRadius),
         border: Border.all(
-          color: AppConstants.primaryBlue.withOpacity(0.3),
-          width: 1,
+          color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBorderOpacity),
+          width: AppParameters.size_borderWidth,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildIcon(),
-          const SizedBox(width: 10),
+          SizedBox(width: AppParameters.size_iconToTextSpacing),
           _buildAnimatedText(),
         ],
       ),
@@ -77,10 +77,10 @@ class HoverBox extends StatelessWidget {
     
     return SvgPicture.asset(
       icon,
-      width: AppConstants.iconSize,
-      height: AppConstants.iconSize,
-      colorFilter: const ColorFilter.mode(
-        AppConstants.primaryBlue,
+      width: AppParameters.size_iconSize,
+      height: AppParameters.size_iconSize,
+      colorFilter: ColorFilter.mode(
+        AppParameters.color_primaryBlue,
         BlendMode.srcIn,
       ),
     );
@@ -90,8 +90,8 @@ class HoverBox extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        double scale = 1.0 + (AppConstants.hoverScaleMultiplier * controller.value);
-        double spacing = 2.0 * scale;
+        double scale = 1.0 + (AppParameters.hoverScaleMultiplier * controller.value);
+        double spacing = AppParameters.size_textSpacing * scale;
         
         return Row(
           mainAxisSize: MainAxisSize.min,
@@ -111,11 +111,11 @@ class HoverBox extends StatelessWidget {
   Widget _buildStaticText(String text) {
     return Text(
       text,
-      style: const TextStyle(
-        fontSize: 22,
+      style: TextStyle(
+        fontSize: AppParameters.size_hoverBoxFontSize,
         fontWeight: FontWeight.bold,
-        fontFamily: AppConstants.fontFamily,
-        color: AppConstants.textColor,
+        fontFamily: AppParameters.string_fontFamily,
+        color: AppParameters.color_textColor,
       ),
     );
   }
@@ -125,11 +125,11 @@ class HoverBox extends StatelessWidget {
       scale: scale,
       child: Text(
         number,
-        style: const TextStyle(
-          fontSize: 22,
+        style: TextStyle(
+          fontSize: AppParameters.size_hoverBoxFontSize,
           fontWeight: FontWeight.w900,
-          fontFamily: AppConstants.fontFamily,
-          color: AppConstants.textColor,
+          fontFamily: AppParameters.string_fontFamily,
+          color: AppParameters.color_textColor,
         ),
       ),
     );
@@ -137,7 +137,7 @@ class HoverBox extends StatelessWidget {
 
   Widget _buildTooltip() {
     return Positioned(
-      bottom: AppConstants.tooltipVerticalOffset,
+      bottom: AppParameters.size_tooltipVerticalOffset,
       left: 0,
       right: 0,
       child: AnimatedBuilder(
@@ -147,16 +147,19 @@ class HoverBox extends StatelessWidget {
             opacity: controller.value,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppParameters.size_tooltipHorizontalPadding, 
+                  vertical: AppParameters.size_tooltipVerticalPadding
+                ),
                 decoration: BoxDecoration(
-                  color: AppConstants.tooltipBackgroundColor.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppParameters.color_tooltipBackgroundColor.withOpacity(AppParameters.tooltipBackgroundOpacity),
+                  borderRadius: BorderRadius.circular(AppParameters.size_tooltipBorderRadius),
                 ),
                 child: Text(
                   explanation,
-                  style: const TextStyle(
-                    color: AppConstants.tooltipTextColor,
-                    fontSize: 12,
+                  style: TextStyle(
+                    color: AppParameters.color_tooltipTextColor,
+                    fontSize: AppParameters.size_tooltipFontSize,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,

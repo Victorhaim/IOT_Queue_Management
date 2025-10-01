@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../constants/app_constants.dart';
+import '../parameters/app_parameters.dart';
 
 /// Animated ripple waves widget
 class AnimatedWaves extends StatelessWidget {
@@ -29,11 +29,11 @@ class AnimatedWaves extends StatelessWidget {
 
   Widget _buildStaticCircle() {
     return Container(
-      width: AppConstants.maxCircleRadius,
-      height: AppConstants.maxCircleRadius,
+      width: AppParameters.size_maxCircleRadius,
+      height: AppParameters.size_maxCircleRadius,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppConstants.primaryBlue.withOpacity(AppConstants.staticCircleOpacity),
+        color: AppParameters.color_primaryBlue.withOpacity(AppParameters.staticCircleOpacity),
       ),
     );
   }
@@ -43,23 +43,23 @@ class AnimatedWaves extends StatelessWidget {
     double progress = controller.value; // 0 to 1
     
     // Staggered start times, all grow at same speed
-    double circle1Size = progress * AppConstants.waveGrowthSpeed;
-    double circle2Size = math.max(0, (progress - AppConstants.circle2StartOffset) * AppConstants.waveGrowthSpeed);
-    double circle3Size = math.max(0, (progress - AppConstants.circle3StartOffset) * AppConstants.waveGrowthSpeed);
-    double circle4Size = math.max(0, (progress - AppConstants.circle4StartOffset) * AppConstants.waveGrowthSpeed);
+    double circle1Size = progress * AppParameters.size_waveGrowthSpeed;
+    double circle2Size = math.max(0, (progress - AppParameters.circle2StartOffset) * AppParameters.size_waveGrowthSpeed);
+    double circle3Size = math.max(0, (progress - AppParameters.circle3StartOffset) * AppParameters.size_waveGrowthSpeed);
+    double circle4Size = math.max(0, (progress - AppParameters.circle4StartOffset) * AppParameters.size_waveGrowthSpeed);
     
     // Cap the first circles at max radius so they don't grow too big
-    circle1Size = math.min(AppConstants.maxCircleRadius, circle1Size);
-    circle2Size = math.min(AppConstants.maxCircleRadius, circle2Size);
-    circle3Size = math.min(AppConstants.maxCircleRadius, circle3Size);
+    circle1Size = math.min(AppParameters.size_maxCircleRadius, circle1Size);
+    circle2Size = math.min(AppParameters.size_maxCircleRadius, circle2Size);
+    circle3Size = math.min(AppParameters.size_maxCircleRadius, circle3Size);
 
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
-        _buildAnimatedContainer(circle1Size, AppConstants.circle1Opacity),
-        _buildAnimatedContainer(circle2Size, AppConstants.circle2Opacity),
-        _buildAnimatedContainer(circle3Size, AppConstants.circle3Opacity),
-        _buildAnimatedContainer(circle4Size, AppConstants.circle4Opacity),
+        _buildAnimatedContainer(circle1Size, AppParameters.circle1Opacity),
+        _buildAnimatedContainer(circle2Size, AppParameters.circle2Opacity),
+        _buildAnimatedContainer(circle3Size, AppParameters.circle3Opacity),
+        _buildAnimatedContainer(circle4Size, AppParameters.circle4Opacity),
         _buildStaticOuterCircle(),
       ],
     );
@@ -78,18 +78,18 @@ class AnimatedWaves extends StatelessWidget {
       height: radius,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppConstants.primaryBlue.withOpacity(currentOpacity),
+        color: AppParameters.color_primaryBlue.withOpacity(currentOpacity),
       ),
     );
   }
 
   Widget _buildStaticOuterCircle() {
     return Container(
-      width: AppConstants.maxCircleRadius,
-      height: AppConstants.maxCircleRadius,
+      width: AppParameters.size_maxCircleRadius,
+      height: AppParameters.size_maxCircleRadius,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppConstants.primaryBlue.withOpacity(AppConstants.staticCircleOpacity),
+        color: AppParameters.color_primaryBlue.withOpacity(AppParameters.staticCircleOpacity),
       ),
     );
   }

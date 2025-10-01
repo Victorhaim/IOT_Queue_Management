@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../constants/app_constants.dart';
+import '../parameters/app_parameters.dart';
 
 /// Animated clock widget with rotating hands
 class AnimatedClock extends StatelessWidget {
@@ -17,15 +17,15 @@ class AnimatedClock extends StatelessWidget {
       animation: controller,
       builder: (context, child) {
         return SizedBox(
-          width: AppConstants.iconSize,
-          height: AppConstants.iconSize,
+          width: AppParameters.size_iconSize,
+          height: AppParameters.size_iconSize,
           child: CustomPaint(
             painter: AnimatedClockPainter(
               minuteHandAngle: controller.value * 
-                AppConstants.minuteHandRotations * 2 * math.pi,
+                AppParameters.minuteHandRotations * 2 * math.pi,
               hourHandAngle: controller.value * 
-                AppConstants.hourHandRotations * 2 * math.pi,
-              color: AppConstants.primaryBlue,
+                AppParameters.hourHandRotations * 2 * math.pi,
+              color: AppParameters.color_primaryBlue,
             ),
           ),
         );
@@ -53,30 +53,30 @@ class AnimatedClockPainter extends CustomPainter {
     
     final paint = Paint()
       ..color = color
-      ..strokeWidth = AppConstants.clockCircleStrokeWidth
+      ..strokeWidth = AppParameters.size_clockCircleStrokeWidth
       ..style = PaintingStyle.stroke;
 
     // Draw clock circle
-    canvas.drawCircle(center, radius - 1, paint);
+    canvas.drawCircle(center, radius - AppParameters.size_clockRadiusOffset, paint);
 
     // Draw hour hand (shorter)
-    final hourHandLength = radius * AppConstants.hourHandLengthRatio;
+    final hourHandLength = radius * AppParameters.hourHandLengthRatio;
     final hourHandX = center.dx + hourHandLength * math.cos(hourHandAngle - math.pi / 2);
     final hourHandY = center.dy + hourHandLength * math.sin(hourHandAngle - math.pi / 2);
     canvas.drawLine(
       center,
       Offset(hourHandX, hourHandY),
-      paint..strokeWidth = AppConstants.clockCircleStrokeWidth,
+      paint..strokeWidth = AppParameters.size_clockCircleStrokeWidth,
     );
 
     // Draw minute hand (longer)
-    final minuteHandLength = radius * AppConstants.minuteHandLengthRatio;
+    final minuteHandLength = radius * AppParameters.minuteHandLengthRatio;
     final minuteHandX = center.dx + minuteHandLength * math.cos(minuteHandAngle - math.pi / 2);
     final minuteHandY = center.dy + minuteHandLength * math.sin(minuteHandAngle - math.pi / 2);
     canvas.drawLine(
       center,
       Offset(minuteHandX, minuteHandY),
-      paint..strokeWidth = AppConstants.clockCircleStrokeWidth,
+      paint..strokeWidth = AppParameters.size_clockCircleStrokeWidth,
     );
   }
 
