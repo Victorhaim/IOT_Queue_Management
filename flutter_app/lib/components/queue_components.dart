@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
 import '../widgets/animated_waves.dart';
 import '../widgets/hover_box.dart';
@@ -57,8 +57,8 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       
       print('Firebase initialized successfully!');
       
-      // Optional: Try a simple Firestore operation (but don't block on it)
-      _tryFirestoreTest();
+      // Optional: Try a simple Realtime Database operation (but don't block on it)
+      _tryRealtimeDatabaseTest();
     } catch (e) {
       setState(() {
         _firebaseStatus = '❌ Error: $e';
@@ -68,21 +68,19 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     }
   }
 
-  void _tryFirestoreTest() async {
+  void _tryRealtimeDatabaseTest() async {
     try {
-      // Try to write to Firestore in the background
-      await FirebaseFirestore.instance
-          .collection('test')
-          .doc('connection')
-          .set({
-        'timestamp': FieldValue.serverTimestamp(),
+      // Try to write to Realtime Database in the background
+      DatabaseReference ref = FirebaseDatabase.instance.ref('test/connection');
+      await ref.set({
+        'timestamp': ServerValue.timestamp,
         'status': 'connected',
-        'message': 'Firestore is working!'
+        'message': 'Realtime Database is working!'
       });
       
-      print('Firestore test successful!');
+      print('Realtime Database test successful!');
     } catch (e) {
-      print('Firestore test failed (but Firebase Core is working): $e');
+      print('Realtime Database test failed (but Firebase Core is working): $e');
     }
   }
 
@@ -137,22 +135,29 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppParameters.color_backgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTitle(),
-            SizedBox(height: AppParameters.size_titleToNumberSpacing),
-            _buildAnimatedNumber(),
-            SizedBox(height: AppParameters.size_numberToBoxesSpacing),
-            _buildHoverBoxes(),
-            SizedBox(height: AppParameters.size_boxesToButtonSpacing),
-            _buildAnimationButton(),
-            SizedBox(height: 20),
-            _buildFirebaseStatus(),
-            SizedBox(height: 10),
-            _buildTestFirebaseButton(),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 50), // Top padding
+              _buildTitle(),
+              SizedBox(height: AppParameters.size_titleToNumberSpacing),
+              _buildAnimatedNumber(),
+              SizedBox(height: AppParameters.size_numberToBoxesSpacing),
+              _buildHoverBoxes(),
+              SizedBox(height: AppParameters.size_boxesToButtonSpacing),
+              _buildAnimationButton(),
+              SizedBox(height: 20),
+              _buildFirebaseStatus(),
+              SizedBox(height: 10),
+              _buildTestFirebaseButton(),
+              SizedBox(height: 50), // Bottom padding
+            ],
+          ),
         ),
       ),
     );
@@ -289,7 +294,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          child: Text('Test Firebase Write'),
+          child: Text('Test Realtime Database'),
         ),
         if (_testResult.isNotEmpty) 
           Padding(
@@ -309,19 +314,17 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
 
   void _testFirebaseWrite() async {
     setState(() {
-      _testResult = 'Writing to Firebase...';
+      _testResult = 'Writing to Realtime Database...';
     });
 
     try {
-      // Write test data to Firestore
-      await FirebaseFirestore.instance
-          .collection('queue_data')
-          .doc('test_queue')
-          .set({
+      // Write test data to Realtime Database
+      DatabaseReference ref = FirebaseDatabase.instance.ref('queue_data/test_queue');
+      await ref.set({
         'queue_number': 5,
         'people_in_line': 8,
         'estimated_wait_time': 15,
-        'timestamp': FieldValue.serverTimestamp(),
+        'timestamp': ServerValue.timestamp,
         'status': 'active',
         'sensor_data': {
           'temperature': 23.5,
@@ -331,10 +334,10 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       });
 
       setState(() {
-        _testResult = '✅ Success! Data written to Firebase';
+        _testResult = '✅ Success! Data written to Realtime Database';
       });
 
-      print('Firebase write test successful!');
+      print('Realtime Database write test successful!');
     } catch (e) {
       setState(() {
         _testResult = '❌ Error: ${e.toString()}';
