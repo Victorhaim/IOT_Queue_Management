@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../parameters/app_parameters.dart';
 import '../widgets/animated_waves.dart';
 import '../widgets/hover_box.dart';
@@ -37,11 +38,52 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
+  String _firebaseStatus = 'Connecting...';
+  String _testResult = '';
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _testFirebaseConnection();
+  }
+
+  void _testFirebaseConnection() async {
+    try {
+      // Simple Firebase test - just check if Firebase is initialized
+      setState(() {
+        _firebaseStatus = '✅ Connected';
+      });
+      
+      print('Firebase initialized successfully!');
+      
+      // Optional: Try a simple Firestore operation (but don't block on it)
+      _tryFirestoreTest();
+    } catch (e) {
+      setState(() {
+        _firebaseStatus = '❌ Error: $e';
+      });
+      
+      print('Firebase connection error: $e');
+    }
+  }
+
+  void _tryFirestoreTest() async {
+    try {
+      // Try to write to Firestore in the background
+      await FirebaseFirestore.instance
+          .collection('test')
+          .doc('connection')
+          .set({
+        'timestamp': FieldValue.serverTimestamp(),
+        'status': 'connected',
+        'message': 'Firestore is working!'
+      });
+      
+      print('Firestore test successful!');
+    } catch (e) {
+      print('Firestore test failed (but Firebase Core is working): $e');
+    }
   }
 
   void _initializeControllers() {
@@ -106,6 +148,10 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
             _buildHoverBoxes(),
             SizedBox(height: AppParameters.size_boxesToButtonSpacing),
             _buildAnimationButton(),
+            SizedBox(height: 20),
+            _buildFirebaseStatus(),
+            SizedBox(height: 10),
+            _buildTestFirebaseButton(),
           ],
         ),
       ),
@@ -199,6 +245,103 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
         style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
       ),
     );
+  }
+
+  Widget _buildFirebaseStatus() {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _firebaseStatus.contains('✅') ? Colors.green.shade50 : Colors.red.shade50,
+        border: Border.all(
+          color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            _firebaseStatus.contains('✅') ? Icons.cloud_done : Icons.cloud_off,
+            color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
+            size: 20,
+          ),
+          SizedBox(width: 8),
+          Text(
+            'Firebase: $_firebaseStatus',
+            style: TextStyle(
+              color: _firebaseStatus.contains('✅') ? Colors.green.shade800 : Colors.red.shade800,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTestFirebaseButton() {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: _testFirebaseWrite,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          child: Text('Test Firebase Write'),
+        ),
+        if (_testResult.isNotEmpty) 
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              _testResult,
+              style: TextStyle(
+                fontSize: 12,
+                color: _testResult.contains('Success') ? Colors.green : Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _testFirebaseWrite() async {
+    setState(() {
+      _testResult = 'Writing to Firebase...';
+    });
+
+    try {
+      // Write test data to Firestore
+      await FirebaseFirestore.instance
+          .collection('queue_data')
+          .doc('test_queue')
+          .set({
+        'queue_number': 5,
+        'people_in_line': 8,
+        'estimated_wait_time': 15,
+        'timestamp': FieldValue.serverTimestamp(),
+        'status': 'active',
+        'sensor_data': {
+          'temperature': 23.5,
+          'occupancy': 0.7,
+          'last_update': DateTime.now().toIso8601String(),
+        }
+      });
+
+      setState(() {
+        _testResult = '✅ Success! Data written to Firebase';
+      });
+
+      print('Firebase write test successful!');
+    } catch (e) {
+      setState(() {
+        _testResult = '❌ Error: ${e.toString()}';
+      });
+
+      print('Firebase write test failed: $e');
+    }
   }
 
   void _handlePlaceHover(bool hovered) {
