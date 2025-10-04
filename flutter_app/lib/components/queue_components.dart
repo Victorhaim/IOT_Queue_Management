@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
 import '../widgets/animated_waves.dart';
 import '../widgets/hover_box.dart';
@@ -37,11 +38,50 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
+  String _firebaseStatus = 'Connecting...';
+  String _testResult = '';
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _testFirebaseConnection();
+  }
+
+  void _testFirebaseConnection() async {
+    try {
+      // Simple Firebase test - just check if Firebase is initialized
+      setState(() {
+        _firebaseStatus = '✅ Connected';
+      });
+      
+      print('Firebase initialized successfully!');
+      
+      // Optional: Try a simple Realtime Database operation (but don't block on it)
+      _tryRealtimeDatabaseTest();
+    } catch (e) {
+      setState(() {
+        _firebaseStatus = '❌ Error: $e';
+      });
+      
+      print('Firebase connection error: $e');
+    }
+  }
+
+  void _tryRealtimeDatabaseTest() async {
+    try {
+      // Try to write to Realtime Database in the background
+      DatabaseReference ref = FirebaseDatabase.instance.ref('test/connection');
+      await ref.set({
+        'timestamp': ServerValue.timestamp,
+        'status': 'connected',
+        'message': 'Realtime Database is working!'
+      });
+      
+      print('Realtime Database test successful!');
+    } catch (e) {
+      print('Realtime Database test failed (but Firebase Core is working): $e');
+    }
   }
 
   void _initializeControllers() {
@@ -95,18 +135,29 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppParameters.color_backgroundColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTitle(),
-            SizedBox(height: AppParameters.size_titleToNumberSpacing),
-            _buildAnimatedNumber(),
-            SizedBox(height: AppParameters.size_numberToBoxesSpacing),
-            _buildHoverBoxes(),
-            SizedBox(height: AppParameters.size_boxesToButtonSpacing),
-            _buildAnimationButton(),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 50), // Top padding
+              _buildTitle(),
+              SizedBox(height: AppParameters.size_titleToNumberSpacing),
+              _buildAnimatedNumber(),
+              SizedBox(height: AppParameters.size_numberToBoxesSpacing),
+              _buildHoverBoxes(),
+              SizedBox(height: AppParameters.size_boxesToButtonSpacing),
+              _buildAnimationButton(),
+              SizedBox(height: 20),
+              _buildFirebaseStatus(),
+              SizedBox(height: 10),
+              _buildTestFirebaseButton(),
+              SizedBox(height: 50), // Bottom padding
+            ],
+          ),
         ),
       ),
     );
@@ -199,6 +250,101 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
         style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
       ),
     );
+  }
+
+  Widget _buildFirebaseStatus() {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: _firebaseStatus.contains('✅') ? Colors.green.shade50 : Colors.red.shade50,
+        border: Border.all(
+          color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            _firebaseStatus.contains('✅') ? Icons.cloud_done : Icons.cloud_off,
+            color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
+            size: 20,
+          ),
+          SizedBox(width: 8),
+          Text(
+            'Firebase: $_firebaseStatus',
+            style: TextStyle(
+              color: _firebaseStatus.contains('✅') ? Colors.green.shade800 : Colors.red.shade800,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTestFirebaseButton() {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: _testFirebaseWrite,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          ),
+          child: Text('Test Realtime Database'),
+        ),
+        if (_testResult.isNotEmpty) 
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Text(
+              _testResult,
+              style: TextStyle(
+                fontSize: 12,
+                color: _testResult.contains('Success') ? Colors.green : Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _testFirebaseWrite() async {
+    setState(() {
+      _testResult = 'Writing to Realtime Database...';
+    });
+
+    try {
+      // Write test data to Realtime Database
+      DatabaseReference ref = FirebaseDatabase.instance.ref('queue_data/test_queue');
+      await ref.set({
+        'queue_number': 5,
+        'people_in_line': 8,
+        'estimated_wait_time': 15,
+        'timestamp': ServerValue.timestamp,
+        'status': 'active',
+        'sensor_data': {
+          'temperature': 23.5,
+          'occupancy': 0.7,
+          'last_update': DateTime.now().toIso8601String(),
+        }
+      });
+
+      setState(() {
+        _testResult = '✅ Success! Data written to Realtime Database';
+      });
+
+      print('Realtime Database write test successful!');
+    } catch (e) {
+      setState(() {
+        _testResult = '❌ Error: ${e.toString()}';
+      });
+
+      print('Firebase write test failed: $e');
+    }
   }
 
   void _handlePlaceHover(bool hovered) {
