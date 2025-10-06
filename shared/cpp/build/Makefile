@@ -141,6 +141,49 @@ queue_manager_static/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/build
 .PHONY : queue_manager_static/fast
 
+#=============================================================================
+# Target rules for targets named queue_simulator
+
+# Build rule for target.
+queue_simulator: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 queue_simulator
+.PHONY : queue_simulator
+
+# fast build rule for target.
+queue_simulator/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/build
+.PHONY : queue_simulator/fast
+
+FirebaseClient.obj: FirebaseClient.cpp.obj
+.PHONY : FirebaseClient.obj
+
+# target to build an object file
+FirebaseClient.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/FirebaseClient.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/FirebaseClient.cpp.obj
+.PHONY : FirebaseClient.cpp.obj
+
+FirebaseClient.i: FirebaseClient.cpp.i
+.PHONY : FirebaseClient.i
+
+# target to preprocess a source file
+FirebaseClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/FirebaseClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/FirebaseClient.cpp.i
+.PHONY : FirebaseClient.cpp.i
+
+FirebaseClient.s: FirebaseClient.cpp.s
+.PHONY : FirebaseClient.s
+
+# target to generate assembly for a file
+FirebaseClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/FirebaseClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/FirebaseClient.cpp.s
+.PHONY : FirebaseClient.cpp.s
+
 QueueManager.obj: QueueManager.cpp.obj
 .PHONY : QueueManager.obj
 
@@ -148,6 +191,7 @@ QueueManager.obj: QueueManager.cpp.obj
 QueueManager.cpp.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueManager.cpp.obj
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueManager.cpp.obj
 .PHONY : QueueManager.cpp.obj
 
 QueueManager.i: QueueManager.cpp.i
@@ -157,6 +201,7 @@ QueueManager.i: QueueManager.cpp.i
 QueueManager.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueManager.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueManager.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueManager.cpp.i
 .PHONY : QueueManager.cpp.i
 
 QueueManager.s: QueueManager.cpp.s
@@ -166,7 +211,32 @@ QueueManager.s: QueueManager.cpp.s
 QueueManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueManager.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueManager.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueManager.cpp.s
 .PHONY : QueueManager.cpp.s
+
+QueueSimulator.obj: QueueSimulator.cpp.obj
+.PHONY : QueueSimulator.obj
+
+# target to build an object file
+QueueSimulator.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueSimulator.cpp.obj
+.PHONY : QueueSimulator.cpp.obj
+
+QueueSimulator.i: QueueSimulator.cpp.i
+.PHONY : QueueSimulator.i
+
+# target to preprocess a source file
+QueueSimulator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueSimulator.cpp.i
+.PHONY : QueueSimulator.cpp.i
+
+QueueSimulator.s: QueueSimulator.cpp.s
+.PHONY : QueueSimulator.s
+
+# target to generate assembly for a file
+QueueSimulator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueSimulator.cpp.s
+.PHONY : QueueSimulator.cpp.s
 
 QueueStructures.obj: QueueStructures.cpp.obj
 .PHONY : QueueStructures.obj
@@ -175,6 +245,7 @@ QueueStructures.obj: QueueStructures.cpp.obj
 QueueStructures.cpp.obj:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueStructures.cpp.obj
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueStructures.cpp.obj
 .PHONY : QueueStructures.cpp.obj
 
 QueueStructures.i: QueueStructures.cpp.i
@@ -184,6 +255,7 @@ QueueStructures.i: QueueStructures.cpp.i
 QueueStructures.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueStructures.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueStructures.cpp.i
 .PHONY : QueueStructures.cpp.i
 
 QueueStructures.s: QueueStructures.cpp.s
@@ -193,7 +265,38 @@ QueueStructures.s: QueueStructures.cpp.s
 QueueStructures.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/QueueStructures.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/QueueStructures.cpp.s
 .PHONY : QueueStructures.cpp.s
+
+SimpleHttpClient.obj: SimpleHttpClient.cpp.obj
+.PHONY : SimpleHttpClient.obj
+
+# target to build an object file
+SimpleHttpClient.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/SimpleHttpClient.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/SimpleHttpClient.cpp.obj
+.PHONY : SimpleHttpClient.cpp.obj
+
+SimpleHttpClient.i: SimpleHttpClient.cpp.i
+.PHONY : SimpleHttpClient.i
+
+# target to preprocess a source file
+SimpleHttpClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/SimpleHttpClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/SimpleHttpClient.cpp.i
+.PHONY : SimpleHttpClient.cpp.i
+
+SimpleHttpClient.s: SimpleHttpClient.cpp.s
+.PHONY : SimpleHttpClient.s
+
+# target to generate assembly for a file
+SimpleHttpClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_shared.dir\build.make CMakeFiles/queue_manager_shared.dir/SimpleHttpClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_manager_static.dir\build.make CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\queue_simulator.dir\build.make CMakeFiles/queue_simulator.dir/SimpleHttpClient.cpp.s
+.PHONY : SimpleHttpClient.cpp.s
 
 # Help Target
 help:
@@ -205,12 +308,22 @@ help:
 	@echo ... rebuild_cache
 	@echo ... queue_manager_shared
 	@echo ... queue_manager_static
+	@echo ... queue_simulator
+	@echo ... FirebaseClient.obj
+	@echo ... FirebaseClient.i
+	@echo ... FirebaseClient.s
 	@echo ... QueueManager.obj
 	@echo ... QueueManager.i
 	@echo ... QueueManager.s
+	@echo ... QueueSimulator.obj
+	@echo ... QueueSimulator.i
+	@echo ... QueueSimulator.s
 	@echo ... QueueStructures.obj
 	@echo ... QueueStructures.i
 	@echo ... QueueStructures.s
+	@echo ... SimpleHttpClient.obj
+	@echo ... SimpleHttpClient.i
+	@echo ... SimpleHttpClient.s
 .PHONY : help
 
 

@@ -8,8 +8,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp" "CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj" "gcc" "CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj.d"
   "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/QueueManager.cpp" "CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj" "gcc" "CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj.d"
   "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/QueueStructures.cpp" "CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj" "gcc" "CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj.d"
+  "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp" "CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj" "gcc" "CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

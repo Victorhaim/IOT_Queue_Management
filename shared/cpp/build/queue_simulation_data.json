@@ -1,0 +1,20 @@
+{
+  "queueA": {
+    "name": "Queue Hub (C++ Simulation)",
+    "length": 2,
+    "totalPeople": 2,
+    "numberOfLines": 3,
+    "lines": {
+      "1": 1,
+      "2": 0,
+      "3": 1
+    },
+    "sensors": {
+      "infrared": {
+        "count": 2,
+        "status": "active"
+      }
+    },
+    "lastUpdated": "2025-10-07 01:17:53"
+  }
+}

@@ -99,19 +99,51 @@ CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.s"
 	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\QueueStructures.cpp" -o CMakeFiles\queue_manager_static.dir\QueueStructures.cpp.s
 
+CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj: CMakeFiles/queue_manager_static.dir/flags.make
+CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj: C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp
+CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj: CMakeFiles/queue_manager_static.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj -MF CMakeFiles\queue_manager_static.dir\FirebaseClient.cpp.obj.d -o CMakeFiles\queue_manager_static.dir\FirebaseClient.cpp.obj -c "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\FirebaseClient.cpp"
+
+CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.i"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\FirebaseClient.cpp" > CMakeFiles\queue_manager_static.dir\FirebaseClient.cpp.i
+
+CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.s"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\FirebaseClient.cpp" -o CMakeFiles\queue_manager_static.dir\FirebaseClient.cpp.s
+
+CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj: CMakeFiles/queue_manager_static.dir/flags.make
+CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj: C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp
+CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj: CMakeFiles/queue_manager_static.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj -MF CMakeFiles\queue_manager_static.dir\SimpleHttpClient.cpp.obj.d -o CMakeFiles\queue_manager_static.dir\SimpleHttpClient.cpp.obj -c "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\SimpleHttpClient.cpp"
+
+CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.i"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\SimpleHttpClient.cpp" > CMakeFiles\queue_manager_static.dir\SimpleHttpClient.cpp.i
+
+CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.s"
+	C:\msys64\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\SimpleHttpClient.cpp" -o CMakeFiles\queue_manager_static.dir\SimpleHttpClient.cpp.s
+
 # Object files for target queue_manager_static
 queue_manager_static_OBJECTS = \
 "CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj" \
-"CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj"
+"CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj" \
+"CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj" \
+"CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj"
 
 # External object files for target queue_manager_static
 queue_manager_static_EXTERNAL_OBJECTS =
 
 C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj
 C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj
+C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj
+C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj
 C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/build.make
 C:/Users/t-tseroussi/Documents/IoT\ project/IOT_Queue_Management/shared/lib/libqueue_manager_static.a: CMakeFiles/queue_manager_static.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library \"C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\lib\libqueue_manager_static.a\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\cpp\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library \"C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\lib\libqueue_manager_static.a\""
 	$(CMAKE_COMMAND) -P CMakeFiles\queue_manager_static.dir\cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\queue_manager_static.dir\link.txt --verbose=$(VERBOSE)
 

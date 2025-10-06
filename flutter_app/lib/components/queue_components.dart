@@ -4,8 +4,6 @@ import '../parameters/app_parameters.dart';
 import '../graphics/animated_waves.dart';
 import '../graphics/hover_box.dart';
 import '../graphics/queue_view.dart';
-import '../simulation/queue_simulator.dart';
-import 'package:firebase_core/firebase_core.dart' show Firebase;
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -40,11 +38,6 @@ class _QueueScreenState extends State<QueueScreen>
   late AnimationController _clockController;
   late AnimationController _placeHoverController;
   late AnimationController _waitHoverController;
-  QueueSimulator?
-  _simulator; // Lazy-created to avoid Firebase access before init (esp. in tests)
-  bool _simRunning = false;
-  static const bool _autoStartSimulation =
-      false; // Flip to true for demo auto-run
 
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
@@ -58,18 +51,6 @@ class _QueueScreenState extends State<QueueScreen>
     super.initState();
     _initializeControllers();
     _testFirebaseConnection();
-    // Optionally auto-start simulation if Firebase is ready
-    if (_autoStartSimulation) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (Firebase.apps.isNotEmpty && !_simRunning) {
-          _simulator ??= QueueSimulator();
-          _simulator!.start();
-          setState(() {
-            _simRunning = true;
-          });
-        }
-      });
-    }
   }
 
   void _testFirebaseConnection() async {
@@ -177,8 +158,6 @@ class _QueueScreenState extends State<QueueScreen>
               _buildAnimationButton(),
               const SizedBox(height: 12),
               _buildQueueViewButton(),
-              const SizedBox(height: 12),
-              _buildSimulationButton(),
               const SizedBox(height: 12),
               _buildDebugToggle(),
               if (_showDebug) ...[
@@ -514,33 +493,6 @@ class _QueueScreenState extends State<QueueScreen>
       label: const Text('Open QueueA Live View'),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(
-          horizontal: AppParameters.size_buttonHorizontalPadding,
-          vertical: AppParameters.size_buttonVerticalPadding,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSimulationButton() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        setState(() {
-          if (_simRunning) {
-            _simulator?.stop();
-            _simRunning = false;
-          } else {
-            _simulator ??= QueueSimulator();
-            _simulator!.start();
-            _simRunning = true;
-          }
-        });
-      },
-      icon: Icon(_simRunning ? Icons.stop : Icons.play_arrow),
-      label: Text(_simRunning ? 'Stop Simulation' : 'Start Simulation'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _simRunning ? Colors.redAccent : Colors.teal,
         foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(
           horizontal: AppParameters.size_buttonHorizontalPadding,

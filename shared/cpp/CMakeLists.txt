@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCES
     QueueManager.cpp
     QueueStructures.cpp
+    FirebaseClient.cpp
+    SimpleHttpClient.cpp
 )
 
 # Create shared library for FFI
@@ -40,4 +42,18 @@ endif()
 add_library(queue_manager_static STATIC ${SOURCES})
 set_target_properties(queue_manager_static PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../lib"
+)
+
+# Create simulator executable
+add_executable(queue_simulator QueueSimulator.cpp ${SOURCES})
+
+# Link Windows HTTP library for the simulator and shared library
+if(WIN32)
+    target_link_libraries(queue_simulator PRIVATE winhttp)
+    target_link_libraries(queue_manager_shared PRIVATE winhttp)
+endif()
+
+# Set simulator executable output directory
+set_target_properties(queue_simulator PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
 )
