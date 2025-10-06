@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:math';
-import '../native/queue_manager_ffi.dart';
+import '../native/queue_manager_wasm.dart';
 import '../services/firebase_queue_service.dart';
 
 /// Simulates ESP32 queue + sensor updates by writing to Firebase RTDB
-/// Uses C++ queue logic via FFI (same as ESP32) and Firebase for data sync
+/// Uses C++ queue logic via WASM (same as ESP32) and Firebase for data sync
 class QueueSimulator {
   QueueSimulator({
     FirebaseQueueService? queueService,
@@ -12,24 +12,42 @@ class QueueSimulator {
     Duration? interval,
     int numberOfLines = 3,
     int maxSize = 0,
-  })  : _queueService = queueService ?? FirebaseQueueService(),
-        _interval = interval ?? const Duration(seconds: 3),
-        _queueManager = QueueManagerFFI(maxSize, numberOfLines);
+  }) : _queueService = queueService ?? FirebaseQueueService(),
+       _interval = interval ?? const Duration(seconds: 3),
+       _numberOfLines = numberOfLines,
+       _maxSize = maxSize;
 
   final FirebaseQueueService _queueService;
   final String queueId;
   final Duration _interval;
-  final QueueManagerFFI _queueManager; // Using C++ implementation via FFI!
+  final int _numberOfLines;
+  final int _maxSize;
+  QueueManagerWASM? _queueManager; // Using C++ implementation via WASM!
   final _rand = Random();
 
   Timer? _timer;
   bool get isRunning => _timer?.isActive ?? false;
 
+  /// Initialize the WASM module and create queue manager instance
+  Future<void> initialize() async {
+    if (_queueManager != null) return;
+
+    // Initialize WASM module if not already done
+    await QueueManagerWASM.initialize();
+
+    // Create the queue manager instance
+    _queueManager = QueueManagerWASM(_maxSize, _numberOfLines);
+  }
+
   /// Start simulation loop.
-  void start() {
+  Future<void> start() async {
     if (isRunning) return;
+
+    // Ensure WASM is initialized
+    await initialize();
+
     // Initial prime write to ensure node exists
-    _writeUpdate();
+    await _writeUpdate();
     _timer = Timer.periodic(_interval, (_) => _writeUpdate());
   }
 
@@ -39,41 +57,44 @@ class QueueSimulator {
     _timer = null;
   }
 
-  /// Cleanup FFI resources
+  /// Cleanup WASM resources
   void dispose() {
     stop();
-    _queueManager.dispose();
+    _queueManager?.dispose();
   }
 
-  void _writeUpdate() async {
+  Future<void> _writeUpdate() async {
+    final queueManager = _queueManager;
+    if (queueManager == null) return;
+
     // Randomly decide operations for each tick using C++ QueueManager
     final ops = _rand.nextInt(3) + 1; // 1..3 operations
     for (var i = 0; i < ops; i++) {
       if (_rand.nextBool()) {
         // Enqueue to auto-selected line (C++ chooses best line)
-        _queueManager.enqueue();
+        queueManager.enqueue();
       } else {
         // Occasionally dequeue from a random line
-        final line = _rand.nextInt(_queueManager.numberOfLines) + 1;
+        final line = _rand.nextInt(queueManager.numberOfLines) + 1;
         if (_rand.nextBool()) {
-          _queueManager.dequeue(line);
+          queueManager.dequeue(line);
         } else {
-          _queueManager.enqueueOnLine(line);
+          queueManager.enqueueOnLine(line);
         }
       }
     }
 
     // Generate sensor-ish values per line using C++ data
     final sensorMap = <String, dynamic>{};
-    for (var line = 1; line <= _queueManager.numberOfLines; line++) {
+    for (var line = 1; line <= queueManager.numberOfLines; line++) {
       sensorMap['line$line'] = {
-        'people': _queueManager.getLineCount(line),
+        'people': queueManager.getLineCount(line),
         'ultrasonic': 100 + _rand.nextInt(60),
       };
     }
 
     // Use C++ queue logic for all decisions - NO Dart duplicates!
-    final queueData = _queueManager.toJson();
+    final queueData = queueManager.toJson();
 
     await _queueService.updateQueueFields(queueId, {
       'name': 'Queue Hub (Simulated)',

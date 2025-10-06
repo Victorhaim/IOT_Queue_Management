@@ -44,6 +44,9 @@ dependencies:
   
   # FFI for native C++ integration
   ffi: ^2.1.3
+  
+  # For web platform detection and JS interop
+  js: ^0.6.7
 
 dev_dependencies:
   flutter_test:

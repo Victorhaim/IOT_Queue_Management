@@ -29,7 +29,7 @@ class QueueView extends StatelessWidget {
           if (!snapshot.hasData) {
             return const Center(child: Text('No data'));
           }
-          
+
           final data = snapshot.data!;
           final name = data['name']?.toString() ?? 'Unknown Queue';
           final totalPeople = data['totalPeople'] ?? data['length'] ?? 0;
@@ -37,7 +37,7 @@ class QueueView extends StatelessWidget {
           final lines = data['lines'] as Map<String, dynamic>? ?? {};
           final sensors = data['sensors'] as Map<String, dynamic>? ?? {};
           final lastUpdated = data['updatedAt'];
-          
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -61,7 +61,9 @@ class QueueView extends StatelessWidget {
                 ],
                 const SizedBox(height: 12),
                 if (lastUpdated != null)
-                  Text('Updated: ${DateTime.fromMillisecondsSinceEpoch(lastUpdated)}')
+                  Text(
+                    'Updated: ${DateTime.fromMillisecondsSinceEpoch(lastUpdated)}',
+                  )
                 else
                   const Text('Updated: -'),
                 if (lines.isNotEmpty) ...[
