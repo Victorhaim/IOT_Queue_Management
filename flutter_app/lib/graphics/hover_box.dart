@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../parameters/app_parameters.dart';
-import '../widgets/animated_clock.dart';
+import 'animated_clock.dart';
 
 /// Hover box widget with tooltip and animations
 class HoverBox extends StatelessWidget {
@@ -37,10 +37,7 @@ class HoverBox extends StatelessWidget {
       onExit: (_) => onHover(false),
       child: Stack(
         clipBehavior: Clip.none,
-        children: [
-          _buildMainBox(),
-          _buildTooltip(),
-        ],
+        children: [_buildMainBox(), _buildTooltip()],
       ),
     );
   }
@@ -52,10 +49,16 @@ class HoverBox extends StatelessWidget {
         vertical: AppParameters.size_hoverBoxVerticalPadding,
       ),
       decoration: BoxDecoration(
-        color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBackgroundOpacity),
-        borderRadius: BorderRadius.circular(AppParameters.size_hoverBoxBorderRadius),
+        color: AppParameters.color_primaryBlue.withOpacity(
+          AppParameters.hoverBoxBackgroundOpacity,
+        ),
+        borderRadius: BorderRadius.circular(
+          AppParameters.size_hoverBoxBorderRadius,
+        ),
         border: Border.all(
-          color: AppParameters.color_primaryBlue.withOpacity(AppParameters.hoverBoxBorderOpacity),
+          color: AppParameters.color_primaryBlue.withOpacity(
+            AppParameters.hoverBoxBorderOpacity,
+          ),
           width: AppParameters.size_borderWidth,
         ),
       ),
@@ -74,7 +77,7 @@ class HoverBox extends StatelessWidget {
     if (isClockIcon && clockController != null) {
       return AnimatedClock(controller: clockController!);
     }
-    
+
     return SvgPicture.asset(
       icon,
       width: AppParameters.size_iconSize,
@@ -90,9 +93,10 @@ class HoverBox extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        double scale = 1.0 + (AppParameters.hoverScaleMultiplier * controller.value);
+        double scale =
+            1.0 + (AppParameters.hoverScaleMultiplier * controller.value);
         double spacing = AppParameters.size_textSpacing * scale;
-        
+
         return Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -148,12 +152,16 @@ class HoverBox extends StatelessWidget {
             child: Center(
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppParameters.size_tooltipHorizontalPadding, 
-                  vertical: AppParameters.size_tooltipVerticalPadding
+                  horizontal: AppParameters.size_tooltipHorizontalPadding,
+                  vertical: AppParameters.size_tooltipVerticalPadding,
                 ),
                 decoration: BoxDecoration(
-                  color: AppParameters.color_tooltipBackgroundColor.withOpacity(AppParameters.tooltipBackgroundOpacity),
-                  borderRadius: BorderRadius.circular(AppParameters.size_tooltipBorderRadius),
+                  color: AppParameters.color_tooltipBackgroundColor.withOpacity(
+                    AppParameters.tooltipBackgroundOpacity,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    AppParameters.size_tooltipBorderRadius,
+                  ),
                 ),
                 child: Text(
                   explanation,

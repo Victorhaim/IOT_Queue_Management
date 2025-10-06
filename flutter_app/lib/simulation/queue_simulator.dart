@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:math';
-import 'queue_repository.dart';
+import '../shared/firebase_queue_service.dart';
 import 'queue_manager.dart';
 
 /// Simulates ESP32 queue + sensor updates by writing to Firebase RTDB.
 class QueueSimulator {
   QueueSimulator({
-    QueueRepository? repository,
+    FirebaseQueueService? queueService,
     this.queueId = 'queueA',
     Duration? interval,
     int numberOfLines = 3,
     int maxSize = 0,
-  })  : _repo = repository ?? QueueRepository(),
+  })  : _queueService = queueService ?? FirebaseQueueService(),
         _interval = interval ?? const Duration(seconds: 3),
         _qm = QueueManagerDart(maxSize: maxSize, numberOfLines: numberOfLines);
 
-  final QueueRepository _repo;
+  final FirebaseQueueService _queueService;
   final String queueId;
   final Duration _interval;
   final QueueManagerDart _qm;
@@ -66,9 +66,10 @@ class QueueSimulator {
     }
 
     final data = _qm.toJson();
-    await _repo.updateQueue(queueId, {
+    await _queueService.updateQueueFields(queueId, {
       'name': 'Queue Hub (Simulated)',
       'length': data['totalPeople'],
+      'totalPeople': data['totalPeople'],
       'lines': data['lines'],
       'recommendedLine': data['recommendedLine'],
       'sensors': sensorMap,

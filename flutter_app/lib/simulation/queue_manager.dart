@@ -1,3 +1,5 @@
+import '../shared/queue_logic.dart';
+
 /// Dart adaptation of the C++ QueueManager for simulation and UI decisions.
 /// Chooses the line with the fewest people (ties -> lowest line number).
 class QueueManagerDart {
@@ -59,16 +61,7 @@ class QueueManagerDart {
   }
 
   int getNextLineNumber() {
-    if (_lines.isEmpty) return -1;
-    int bestLine = -1;
-    int bestCount = 1 << 30;
-    _lines.forEach((line, count) {
-      if (count < bestCount || (count == bestCount && line < bestLine)) {
-        bestLine = line;
-        bestCount = count;
-      }
-    });
-    return bestLine;
+    return QueueLogic.getNextLineNumber(_lines);
   }
 
   Map<String, dynamic> toJson() => {

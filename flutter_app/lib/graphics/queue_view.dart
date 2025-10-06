@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import '../controllers/queue_repository.dart';
-import '../controllers/queue_data.dart';
+import '../shared/firebase_queue_service.dart';
+import '../shared/queue_structures.dart';
 
 /// Displays a single queue's information using a realtime stream.
 class QueueView extends StatelessWidget {
-  QueueView({super.key, required this.queueId, QueueRepository? repository})
-      : _repository = repository ?? QueueRepository();
+  QueueView({super.key, required this.queueId, FirebaseQueueService? queueService})
+      : _queueService = queueService ?? FirebaseQueueService();
 
   final String queueId;
-  final QueueRepository _repository;
+  final FirebaseQueueService _queueService;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Queue: $queueId')),
       body: StreamBuilder<QueueData>(
-        stream: _repository.watchQueue(queueId),
+        stream: _queueService.watchQueueUpdates(queueId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -34,7 +34,7 @@ class QueueView extends StatelessWidget {
               children: [
                 Text(q.name, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
-                Text('Length: ${q.length}', style: Theme.of(context).textTheme.titleLarge),
+                Text('Length: ${q.totalPeople}', style: Theme.of(context).textTheme.titleLarge),
                 if (q.recommendedLine != null) ...[
                   const SizedBox(height: 8),
                   Row(
@@ -46,18 +46,18 @@ class QueueView extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 12),
-                if (q.updatedAt != null)
-                  Text('Updated: ${q.updatedAt}')
+                if (q.lastUpdated != null)
+                  Text('Updated: ${q.lastUpdated}')
                 else
                   const Text('Updated: -'),
-                if (q.lines.isNotEmpty) ...[
+                if (q.lineDistribution.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   Text('Lines', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 12,
                     runSpacing: 8,
-                    children: q.lines.entries.map((e) {
+                    children: q.lineDistribution.entries.map((e) {
                       final isRec = q.recommendedLine == int.tryParse(e.key);
                       return Chip(
                         label: Text('Line ${e.key}: ${e.value}${isRec ? ' ✓' : ''}'),
@@ -70,10 +70,10 @@ class QueueView extends StatelessWidget {
                 Text('Sensors', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: q.sensors.isEmpty
+                  child: q.sensorData.isEmpty
                       ? const Text('No sensor data')
                       : ListView(
-                          children: q.sensors.entries
+                          children: q.sensorData.entries
                               .map((e) => ListTile(
                                     dense: true,
                                     title: Text(e.key),
@@ -86,7 +86,7 @@ class QueueView extends StatelessWidget {
                 ElevatedButton.icon(
                   onPressed: () async {
                     // Simple demo increment
-                    await _repository.updateQueueLength(queueId, q.length + 1);
+                    await _queueService.updateTotalPeople(queueId, q.totalPeople + 1);
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Increment Length'),
