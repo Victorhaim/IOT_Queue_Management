@@ -23,7 +23,8 @@
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
 #include "config.h"
-#include "Queue/QueueManager.h"
+#include "../shared/cpp/QueueManager.h"
+#include "../shared/cpp/QueueStructures.h"
 
 // Firebase objects
 FirebaseData fbdo;

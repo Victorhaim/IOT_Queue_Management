@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:math';
-import '../shared/firebase_queue_service.dart';
-import 'queue_manager.dart';
+import '../native/queue_manager_ffi.dart';
+import '../services/firebase_queue_service.dart';
 
-/// Simulates ESP32 queue + sensor updates by writing to Firebase RTDB.
+/// Simulates ESP32 queue + sensor updates by writing to Firebase RTDB
+/// Uses C++ queue logic via FFI (same as ESP32) and Firebase for data sync
 class QueueSimulator {
   QueueSimulator({
     FirebaseQueueService? queueService,
@@ -13,12 +14,12 @@ class QueueSimulator {
     int maxSize = 0,
   })  : _queueService = queueService ?? FirebaseQueueService(),
         _interval = interval ?? const Duration(seconds: 3),
-        _qm = QueueManagerDart(maxSize: maxSize, numberOfLines: numberOfLines);
+        _queueManager = QueueManagerFFI(maxSize, numberOfLines);
 
   final FirebaseQueueService _queueService;
   final String queueId;
   final Duration _interval;
-  final QueueManagerDart _qm;
+  final QueueManagerFFI _queueManager; // Using C++ implementation via FFI!
   final _rand = Random();
 
   Timer? _timer;
@@ -38,40 +39,48 @@ class QueueSimulator {
     _timer = null;
   }
 
+  /// Cleanup FFI resources
+  void dispose() {
+    stop();
+    _queueManager.dispose();
+  }
+
   void _writeUpdate() async {
-    // Randomly decide operations for each tick: enqueue some users.
+    // Randomly decide operations for each tick using C++ QueueManager
     final ops = _rand.nextInt(3) + 1; // 1..3 operations
     for (var i = 0; i < ops; i++) {
       if (_rand.nextBool()) {
-        // Enqueue to auto-selected line
-        _qm.enqueue();
+        // Enqueue to auto-selected line (C++ chooses best line)
+        _queueManager.enqueue();
       } else {
         // Occasionally dequeue from a random line
-        final line = _rand.nextInt(_qm.numberOfLines) + 1;
+        final line = _rand.nextInt(_queueManager.numberOfLines) + 1;
         if (_rand.nextBool()) {
-          _qm.dequeue(line);
+          _queueManager.dequeue(line);
         } else {
-          _qm.enqueueOnLine(line);
+          _queueManager.enqueueOnLine(line);
         }
       }
     }
 
-    // Generate sensor-ish values per line
+    // Generate sensor-ish values per line using C++ data
     final sensorMap = <String, dynamic>{};
-    for (var line = 1; line <= _qm.numberOfLines; line++) {
+    for (var line = 1; line <= _queueManager.numberOfLines; line++) {
       sensorMap['line$line'] = {
-        'people': _qm.getLineCount(line),
+        'people': _queueManager.getLineCount(line),
         'ultrasonic': 100 + _rand.nextInt(60),
       };
     }
 
-    final data = _qm.toJson();
+    // Use C++ queue logic for all decisions - NO Dart duplicates!
+    final queueData = _queueManager.toJson();
+
     await _queueService.updateQueueFields(queueId, {
       'name': 'Queue Hub (Simulated)',
-      'length': data['totalPeople'],
-      'totalPeople': data['totalPeople'],
-      'lines': data['lines'],
-      'recommendedLine': data['recommendedLine'],
+      'length': queueData['totalPeople'],
+      'totalPeople': queueData['totalPeople'],
+      'lines': queueData['lines'],
+      'recommendedLine': queueData['recommendedLine'],
       'sensors': sensorMap,
     });
   }

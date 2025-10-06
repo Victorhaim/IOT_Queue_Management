@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import '../shared/firebase_queue_service.dart';
-import '../shared/queue_structures.dart';
+import '../services/firebase_queue_service.dart';
 
 /// Displays a single queue's information using a realtime stream.
+/// Uses C++ queue logic via Firebase data (no Dart queue logic duplicates)
 class QueueView extends StatelessWidget {
-  QueueView({super.key, required this.queueId, FirebaseQueueService? queueService})
-      : _queueService = queueService ?? FirebaseQueueService();
+  QueueView({
+    super.key,
+    required this.queueId,
+    FirebaseQueueService? queueService,
+  }) : _queueService = queueService ?? FirebaseQueueService();
 
   final String queueId;
   final FirebaseQueueService _queueService;
@@ -14,8 +17,8 @@ class QueueView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Queue: $queueId')),
-      body: StreamBuilder<QueueData>(
-        stream: _queueService.watchQueueUpdates(queueId),
+      body: StreamBuilder<Map<String, dynamic>>(
+        stream: _queueService.watchQueueUpdatesRaw(queueId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -26,41 +29,55 @@ class QueueView extends StatelessWidget {
           if (!snapshot.hasData) {
             return const Center(child: Text('No data'));
           }
-          final q = snapshot.data!;
+          
+          final data = snapshot.data!;
+          final name = data['name']?.toString() ?? 'Unknown Queue';
+          final totalPeople = data['totalPeople'] ?? data['length'] ?? 0;
+          final recommendedLine = data['recommendedLine'];
+          final lines = data['lines'] as Map<String, dynamic>? ?? {};
+          final sensors = data['sensors'] as Map<String, dynamic>? ?? {};
+          final lastUpdated = data['updatedAt'];
+          
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(q.name, style: Theme.of(context).textTheme.headlineMedium),
+                Text(name, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
-                Text('Length: ${q.totalPeople}', style: Theme.of(context).textTheme.titleLarge),
-                if (q.recommendedLine != null) ...[
+                Text(
+                  'Length: $totalPeople',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                if (recommendedLine != null) ...[
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       const Icon(Icons.flag, size: 20),
                       const SizedBox(width: 6),
-                      Text('Recommended Line: ${q.recommendedLine}')
+                      Text('Recommended Line: $recommendedLine'),
                     ],
                   ),
                 ],
                 const SizedBox(height: 12),
-                if (q.lastUpdated != null)
-                  Text('Updated: ${q.lastUpdated}')
+                if (lastUpdated != null)
+                  Text('Updated: ${DateTime.fromMillisecondsSinceEpoch(lastUpdated)}')
                 else
                   const Text('Updated: -'),
-                if (q.lineDistribution.isNotEmpty) ...[
+                if (lines.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   Text('Lines', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 12,
                     runSpacing: 8,
-                    children: q.lineDistribution.entries.map((e) {
-                      final isRec = q.recommendedLine == int.tryParse(e.key);
+                    children: lines.entries.map((e) {
+                      final lineNum = int.tryParse(e.key) ?? 0;
+                      final isRec = recommendedLine == lineNum;
                       return Chip(
-                        label: Text('Line ${e.key}: ${e.value}${isRec ? ' ✓' : ''}'),
+                        label: Text(
+                          'Line ${e.key}: ${e.value}${isRec ? ' ✓' : ''}',
+                        ),
                         backgroundColor: isRec ? Colors.green.shade200 : null,
                       );
                     }).toList(),
@@ -70,23 +87,28 @@ class QueueView extends StatelessWidget {
                 Text('Sensors', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Expanded(
-                  child: q.sensorData.isEmpty
+                  child: sensors.isEmpty
                       ? const Text('No sensor data')
                       : ListView(
-                          children: q.sensorData.entries
-                              .map((e) => ListTile(
-                                    dense: true,
-                                    title: Text(e.key),
-                                    trailing: Text('${e.value}'),
-                                  ))
+                          children: sensors.entries
+                              .map(
+                                (e) => ListTile(
+                                  dense: true,
+                                  title: Text(e.key),
+                                  trailing: Text('${e.value}'),
+                                ),
+                              )
                               .toList(),
                         ),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton.icon(
                   onPressed: () async {
-                    // Simple demo increment
-                    await _queueService.updateTotalPeople(queueId, q.totalPeople + 1);
+                    // Simple demo increment using raw Firebase update
+                    await _queueService.updateQueueFields(queueId, {
+                      'totalPeople': totalPeople + 1,
+                      'length': totalPeople + 1,
+                    });
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Increment Length'),
