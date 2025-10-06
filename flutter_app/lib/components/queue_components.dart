@@ -3,6 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
 import '../widgets/animated_waves.dart';
 import '../widgets/hover_box.dart';
+import '../widgets/queue_view.dart';
+import '../controllers/queue_simulator.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -34,18 +37,32 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   late AnimationController _clockController;
   late AnimationController _placeHoverController;
   late AnimationController _waitHoverController;
+  QueueSimulator? _simulator; // Lazy-created to avoid Firebase access before init (esp. in tests)
+  bool _simRunning = false;
+  static const bool _autoStartSimulation = false; // Flip to true for demo auto-run
   
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
   String _firebaseStatus = 'Connecting...';
   String _testResult = '';
+  bool _showDebug = false; // Toggle for showing raw queue snapshot
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
     _testFirebaseConnection();
+    // Optionally auto-start simulation if Firebase is ready
+    if (_autoStartSimulation) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Firebase.apps.isNotEmpty && !_simRunning) {
+          _simulator ??= QueueSimulator();
+          _simulator!.start();
+          setState(() { _simRunning = true; });
+        }
+      });
+    }
   }
 
   void _testFirebaseConnection() async {
@@ -151,6 +168,16 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
               _buildHoverBoxes(),
               SizedBox(height: AppParameters.size_boxesToButtonSpacing),
               _buildAnimationButton(),
+              const SizedBox(height: 12),
+              _buildQueueViewButton(),
+              const SizedBox(height: 12),
+              _buildSimulationButton(),
+              const SizedBox(height: 12),
+              _buildDebugToggle(),
+              if (_showDebug) ...[
+                const SizedBox(height: 12),
+                _buildDebugPanel(),
+              ],
               SizedBox(height: 20),
               _buildFirebaseStatus(),
               SizedBox(height: 10),
@@ -176,27 +203,40 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
   }
 
   Widget _buildAnimatedNumber() {
-    return SizedBox(
-      width: AppParameters.size_maxCircleRadius,
-      height: AppParameters.size_maxCircleRadius,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          AnimatedWaves(
-            controller: _waveController,
-            isAnimating: _isAnimating,
+    final ref = FirebaseDatabase.instance.ref('queues/queueA/recommendedLine');
+    return StreamBuilder<DatabaseEvent>(
+      stream: ref.onValue,
+      builder: (context, snapshot) {
+        String display = AppStrings.string_queueNumber;
+        if (snapshot.hasData) {
+          final val = snapshot.data!.snapshot.value;
+            if (val != null) {
+              display = val.toString();
+            }
+        }
+        return SizedBox(
+          width: AppParameters.size_maxCircleRadius,
+          height: AppParameters.size_maxCircleRadius,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              AnimatedWaves(
+                controller: _waveController,
+                isAnimating: _isAnimating,
+              ),
+              Text(
+                display,
+                style: TextStyle(
+                  fontSize: AppParameters.size_queueNumberFontSize,
+                  fontWeight: FontWeight.w900,
+                  fontFamily: AppParameters.string_expandedFontFamily,
+                  color: AppParameters.color_primaryBlue,
+                ),
+              ),
+            ],
           ),
-          Text(
-            AppStrings.string_queueNumber,
-            style: TextStyle(
-              fontSize: AppParameters.size_queueNumberFontSize,
-              fontWeight: FontWeight.w900,
-              fontFamily: AppParameters.string_expandedFontFamily,
-              color: AppParameters.color_primaryBlue,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -206,16 +246,7 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          HoverBox(
-            icon: AppAssets.string_queueIcon,
-            text: AppStrings.string_placeInLineText,
-            number: AppStrings.string_placeInLineNumber,
-            suffix: '',
-            controller: _placeHoverController,
-            isHovered: _isPlaceHovered,
-            explanation: AppStrings.string_placeTooltip,
-            onHover: _handlePlaceHover,
-          ),
+          _buildDynamicPlaceBox(),
           SizedBox(width: AppParameters.size_hoverBoxSpacing),
           HoverBox(
             icon: AppAssets.string_clockIcon,
@@ -234,6 +265,191 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
     );
   }
 
+  Widget _buildDynamicPlaceBox() {
+    final queueRef = FirebaseDatabase.instance.ref('queues/queueA');
+    return StreamBuilder<DatabaseEvent>(
+      stream: queueRef.onValue,
+      builder: (context, snapshot) {
+        // Use placeholder instead of static constant so it's obvious when data hasn't arrived
+        String placeDisplay = '...';
+  String dynamicTooltip = AppStrings.string_placeTooltip;
+  String? lineContext; // store recommended line label
+        Map rawMap = {};
+        if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
+          final raw = snapshot.data!.snapshot.value as Map;
+          final rec = raw['recommendedLine'];
+          final lines = raw['lines'];
+          rawMap = raw; // capture for debug panel
+          if (lines == null) {
+            // Attempt a one-time initialization if lines missing
+            _initializeQueueNode(queueRef);
+            dynamicTooltip = 'Initializing queue lines...';
+          }
+          int? recommendedLine;
+          if (rec is int) recommendedLine = rec; else if (rec is String) recommendedLine = int.tryParse(rec);
+          // If recommendedLine not provided yet but lines exist, compute locally (mirrors server/device logic)
+          if (recommendedLine == null && lines is Map) {
+            int? bestLine;
+            int bestCount = 1 << 30;
+            lines.forEach((k, v) {
+              int count = _extractPeopleCount(v);
+              final ln = int.tryParse(k.toString());
+              if (ln != null) {
+                if (count < bestCount || (count == bestCount && (bestLine == null || (bestLine != null && ln < bestLine!)))) {
+                  bestLine = ln; bestCount = count;
+                }
+              }
+            });
+            recommendedLine = bestLine;
+          }
+          if (recommendedLine != null && lines is Map) {
+            final key = '${recommendedLine}';
+            final currentCountRaw = lines[key];
+            final int currentCount = _extractPeopleCount(currentCountRaw);
+            placeDisplay = (currentCount + 1).toString();
+            lineContext = 'L$recommendedLine';
+            dynamicTooltip = 'Recommended line $recommendedLine, current people: $currentCount, you would be #$placeDisplay';
+            // ignore: avoid_print
+            print('[PlaceBox] rec=$recommendedLine count=$currentCount place=$placeDisplay');
+          }
+        }
+        else if (snapshot.hasData && snapshot.data!.snapshot.value == null) {
+          // Entire node missing: initialize structure then show initializing state
+          _initializeQueueNode(queueRef);
+          dynamicTooltip = 'Creating queue structure...';
+        }
+        if (_showDebug) {
+          // ignore: avoid_print
+          print('[DebugPanel] Raw queue snapshot: ' + rawMap.toString());
+        }
+        return HoverBox(
+          icon: AppAssets.string_queueIcon,
+          text: lineContext == null ? AppStrings.string_placeInLineText : '${AppStrings.string_placeInLineText}($lineContext) ',
+          number: placeDisplay,
+          suffix: '',
+          controller: _placeHoverController,
+          isHovered: _isPlaceHovered,
+          explanation: dynamicTooltip,
+          onHover: _handlePlaceHover,
+        );
+      },
+    );
+  }
+
+  // Initialize queue node with empty lines if missing to avoid perpetual '...'
+  Future<void> _initializeQueueNode(DatabaseReference queueRef) async {
+    try {
+      final snap = await queueRef.get();
+      if (!snap.exists) {
+        await queueRef.set({
+          'name': 'Queue Hub (Init)',
+          'length': 0,
+          'lines': { '1': 0, '2': 0, '3': 0 },
+          'recommendedLine': 1,
+          'sensors': {},
+          'updatedAt': ServerValue.timestamp,
+        });
+        // ignore: avoid_print
+        print('[Init] queueA created');
+      } else {
+        final val = snap.value;
+        if (val is Map && val['lines'] == null) {
+          await queueRef.update({
+            'lines': { '1': 0, '2': 0, '3': 0 },
+            'recommendedLine': 1,
+            'updatedAt': ServerValue.timestamp,
+          });
+          // ignore: avoid_print
+          print('[Init] queueA lines initialized');
+        }
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('[Init] queueA initialization error: $e');
+    }
+  }
+
+  // Supports multiple possible formats for a line entry:
+  // - int (direct count)
+  // - String numeric
+  // - Map { 'people': <int|string>, ... }
+  // - Map { 'count': <int|string>, ... }
+  int _extractPeopleCount(dynamic v) {
+    if (v is int) return v;
+    if (v is String) return int.tryParse(v) ?? 0;
+    if (v is Map) {
+      final people = v['people'] ?? v['count'] ?? v['value'];
+      if (people is int) return people;
+      if (people is String) return int.tryParse(people) ?? 0;
+    }
+    return 0;
+  }
+
+  Widget _buildDebugToggle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Debug', style: TextStyle(color: Colors.grey.shade700)),
+        Switch(
+          value: _showDebug,
+          onChanged: (v) => setState(() => _showDebug = v),
+          activeColor: Colors.deepOrange,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDebugPanel() {
+    final ref = FirebaseDatabase.instance.ref('queues/queueA');
+    return Container(
+      width: 360,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade400),
+      ),
+      child: StreamBuilder<DatabaseEvent>(
+        stream: ref.onValue,
+        builder: (context, snap) {
+          if (!snap.hasData) {
+            return const Text('Waiting for queue snapshot...', style: TextStyle(fontSize: 12));
+          }
+            final val = snap.data!.snapshot.value;
+            if (val is Map) {
+              final lines = val['lines'];
+              final rec = val['recommendedLine'];
+              return DefaultTextStyle(
+                style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('DEBUG QUEUE SNAPSHOT'),
+                    const SizedBox(height: 4),
+                    Text('recommendedLine: $rec'),
+                    Text('lines: ${lines is Map ? lines : lines.toString()}'),
+                    Text('length: ${val['length']} updatedAt: ${val['updatedAt']}'),
+                    if (lines is Map && rec != null) ...[
+                      const Divider(),
+                      Builder(builder: (_) {
+                        int currentCount = 0;
+                        final lineKey = rec.toString();
+                        final raw = lines[lineKey];
+                        if (raw is int) currentCount = raw; else if (raw is String) currentCount = int.tryParse(raw) ?? 0;
+                        final place = currentCount + 1;
+                        return Text('Derived place for line $rec: $place (count=$currentCount)');
+                      }),
+                    ],
+                  ],
+                ),
+              );
+            }
+            return Text('Snapshot (non-map): ${val.toString()}', style: const TextStyle(fontSize: 11));
+        },
+      ),
+    );
+  }
+
   Widget _buildAnimationButton() {
     return ElevatedButton(
       onPressed: _isAnimating ? null : _toggleAnimation,
@@ -248,6 +464,55 @@ class _QueueScreenState extends State<QueueScreen> with TickerProviderStateMixin
       child: Text(
         _isAnimating ? AppStrings.string_animatingText : AppStrings.string_startAnimationText,
         style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
+      ),
+    );
+  }
+
+  Widget _buildQueueViewButton() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => QueueView(queueId: 'queueA'),
+          ),
+        );
+      },
+      icon: const Icon(Icons.list),
+      label: const Text('Open QueueA Live View'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(
+          horizontal: AppParameters.size_buttonHorizontalPadding, 
+          vertical: AppParameters.size_buttonVerticalPadding
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimulationButton() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        setState(() {
+          if (_simRunning) {
+            _simulator?.stop();
+            _simRunning = false;
+          } else {
+            _simulator ??= QueueSimulator();
+            _simulator!.start();
+            _simRunning = true;
+          }
+        });
+      },
+      icon: Icon(_simRunning ? Icons.stop : Icons.play_arrow),
+      label: Text(_simRunning ? 'Stop Simulation' : 'Start Simulation'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _simRunning ? Colors.redAccent : Colors.teal,
+        foregroundColor: Colors.white,
+        padding: EdgeInsets.symmetric(
+          horizontal: AppParameters.size_buttonHorizontalPadding, 
+          vertical: AppParameters.size_buttonVerticalPadding
+        ),
       ),
     );
   }
