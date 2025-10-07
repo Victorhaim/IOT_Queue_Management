@@ -8,6 +8,7 @@
 #include <iomanip>
 #include "QueueManager.h"
 #include "FirebaseClient.h"
+#include "FirebaseStructureBuilder.h"
 
 #include <fstream>
 #include <sstream>
@@ -226,38 +227,29 @@ private:
     {
         try
         {
-            // Write data for each queue line separately
+            // Collect data for all lines
+            std::vector<FirebaseStructureBuilder::LineData> allLinesData;
             int totalPeople = 0;
-            int recommendedLineLocal = -1;
-            int minPeople = INT32_MAX;
-            auto nowSys = std::chrono::system_clock::now();
-            auto epochMs = std::chrono::duration_cast<std::chrono::milliseconds>(nowSys.time_since_epoch()).count();
+
             for (int line = 1; line <= numberOfLines; ++line)
             {
                 int currentOccupancy = queueManager->getLineCount(line);
                 double throughputFactor = throughputFactors[line - 1];
-                double averageWaitTime = (throughputFactor > 0.0) ? currentOccupancy / throughputFactor : 0.0;
+                double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
+                    currentOccupancy, throughputFactor);
+
                 totalPeople += currentOccupancy;
-                if (currentOccupancy < minPeople)
-                {
-                    minPeople = currentOccupancy;
-                    recommendedLineLocal = line;
-                }
 
-                // Create JSON data for this specific queue line
-                std::ostringstream json;
-                json << "{\n";
-                json << "    \"currentOccupancy\": " << currentOccupancy << ",\n";
-                json << "    \"throughputFactor\": " << std::fixed << std::setprecision(4) << throughputFactor << ",\n";
-                json << "    \"averageWaitTime\": " << std::fixed << std::setprecision(2) << averageWaitTime << ",\n";
-                json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n"; // human readable
-                json << "    \"lineNumber\": " << line << "\n";
-                json << "}\n";
+                // Create line data object
+                FirebaseStructureBuilder::LineData lineData(
+                    currentOccupancy, throughputFactor, averageWaitTime, line);
+                allLinesData.push_back(lineData);
 
-                // Write to Firebase path for this specific line
-                std::string queuePath = "queues/line" + std::to_string(line);
+                // Generate JSON and write to Firebase for this specific line
+                std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
+                std::string queuePath = FirebaseStructureBuilder::getLineDataPath(line);
 
-                if (firebaseClient->updateData(queuePath, json.str()))
+                if (firebaseClient->updateData(queuePath, json))
                 {
                     std::cout << "✅ Line " << line << " updated - Occupancy: " << currentOccupancy
                               << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
@@ -269,21 +261,21 @@ private:
                 }
             }
 
-            // Also write aggregated queue object expected by Flutter UI
-            // Path: currentBest (queueId = "currentBest")
-            if (numberOfLines > 0)
+            // Calculate recommended line and write aggregated data
+            if (!allLinesData.empty())
             {
-                std::ostringstream agg;
-                agg << "{\n";
-                agg << "  \"totalPeople\": " << totalPeople << ",\n";
-                agg << "  \"numberOfLines\": " << numberOfLines << ",\n";
-                agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << "\n";
-                agg << "}\n";
+                int recommendedLine = FirebaseStructureBuilder::calculateRecommendedLine(allLinesData);
 
-                if (firebaseClient->updateData("currentBest", agg.str()))
+                FirebaseStructureBuilder::AggregatedData aggData(
+                    totalPeople, numberOfLines, recommendedLine);
+
+                std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
+                std::string aggPath = FirebaseStructureBuilder::getAggregatedDataPath();
+
+                if (firebaseClient->updateData(aggPath, aggJson))
                 {
                     std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
-                              << " recommendedLine=" << recommendedLineLocal << std::endl;
+                              << " recommendedLine=" << recommendedLine << std::endl;
                 }
                 else
                 {
@@ -295,17 +287,6 @@ private:
         {
             std::cerr << "Error writing to Firebase: " << e.what() << std::endl;
         }
-    }
-
-    std::string getCurrentTimestamp()
-    {
-        auto now = std::chrono::system_clock::now();
-        auto time_t = std::chrono::system_clock::to_time_t(now);
-        auto tm = *std::localtime(&time_t);
-
-        std::ostringstream oss;
-        oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-        return oss.str();
     }
 };
 
