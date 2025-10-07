@@ -1,0 +1,2 @@
+C:\msys64\mingw64\bin\ar.exe qc "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\lib\libqueue_manager_static.a" CMakeFiles/queue_manager_static.dir/QueueManager.cpp.obj CMakeFiles/queue_manager_static.dir/QueueStructures.cpp.obj CMakeFiles/queue_manager_static.dir/FirebaseClient.cpp.obj CMakeFiles/queue_manager_static.dir/SimpleHttpClient.cpp.obj
+C:\msys64\mingw64\bin\ranlib.exe "C:\Users\t-tseroussi\Documents\IoT project\IOT_Queue_Management\shared\lib\libqueue_manager_static.a"
