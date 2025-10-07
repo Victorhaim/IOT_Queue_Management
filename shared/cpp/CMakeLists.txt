@@ -12,7 +12,7 @@ set(SOURCES
     SimpleHttpClient.cpp
 )
 
-# Create shared library for FFI
+# Create shared library for simulation and ESP32
 add_library(queue_manager_shared SHARED ${SOURCES})
 
 # Set output directory for different platforms

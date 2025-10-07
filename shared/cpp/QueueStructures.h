@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <vector>
 
-/// C++ structures for queue data that can be shared between ESP32 and Flutter
-/// Designed to be FFI-compatible and memory-efficient
+/// C++ structures for queue data that can be shared between ESP32 and simulation
+/// Designed to be memory-efficient and Firebase-compatible
 
 struct QueueLineData
 {

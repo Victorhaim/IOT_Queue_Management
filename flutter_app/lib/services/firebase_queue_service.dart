@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 
 /// Firebase service for queue data operations
-/// This is the ONLY Firebase-related code - queue logic is handled by C++ via FFI
+/// Handles Firebase Realtime Database communication for queue data
 class FirebaseQueueService {
   FirebaseQueueService({FirebaseDatabase? database})
     : _database = database ?? FirebaseDatabase.instance;
