@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Add source files
 set(SOURCES
     QueueManager.cpp
-    QueueStructures.cpp
+    FirebaseStructureBuilder.cpp
     FirebaseClient.cpp
     SimpleHttpClient.cpp
 )

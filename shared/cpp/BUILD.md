@@ -11,14 +11,14 @@ You need a C++ compiler installed:
 ### Windows (Visual Studio)
 ```cmd
 cd shared\cpp
-cl /LD /EHsc QueueManager.cpp QueueStructures.cpp FirebaseStructureBuilder.cpp /Fe:queue_manager_shared.dll
+cl /LD /EHsc QueueManager.cpp FirebaseStructureBuilder.cpp /Fe:queue_manager_shared.dll
 copy queue_manager_shared.dll ..\..\flutter_app\lib\native\windows\
 ```
 
 ### Windows (MinGW-w64)
 ```cmd
 cd shared\cpp
-g++ -shared -fPIC -o queue_manager_shared.dll QueueManager.cpp QueueStructures.cpp FirebaseStructureBuilder.cpp
+g++ -shared -fPIC -o queue_manager_shared.dll QueueManager.cpp FirebaseStructureBuilder.cpp
 copy queue_manager_shared.dll ..\..\flutter_app\lib\native\windows\
 ```
 
@@ -28,7 +28,7 @@ cd shared/cpp
 # Build universal (if you need both arm64 and x86_64, add -arch arm64 -arch x86_64)
 clang++ -std=c++17 -O2 -fPIC -dynamiclib \
 	-o libqueue_manager_shared.dylib \
-	QueueManager.cpp QueueStructures.cpp FirebaseStructureBuilder.cpp
+	QueueManager.cpp FirebaseStructureBuilder.cpp
 
 # Create (or reuse) destination inside the Flutter project
 mkdir -p ../../flutter_app/native/macos
@@ -43,7 +43,7 @@ Note: The previous path `flutter_app/lib/native/macos` did not exist. We now pla
 ### Linux
 ```bash
 cd shared/cpp
-g++ -shared -fPIC -o libqueue_manager_shared.so QueueManager.cpp QueueStructures.cpp FirebaseStructureBuilder.cpp
+g++ -shared -fPIC -o libqueue_manager_shared.so QueueManager.cpp FirebaseStructureBuilder.cpp
 cp libqueue_manager_shared.so ../../flutter_app/lib/native/linux/
 ```
 
@@ -67,7 +67,7 @@ sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
 ```bash
 cd shared/cpp
 clang++ -std=c++17 -O2 -pthread \
-	QueueSimulator.cpp QueueManager.cpp QueueStructures.cpp \
+	QueueSimulator.cpp QueueManager.cpp \
 	FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp \
 	-lcurl -o queue_sim
 ./queue_sim
@@ -76,14 +76,14 @@ clang++ -std=c++17 -O2 -pthread \
 ### Build & Run Simulator (Windows using MSVC)
 ```cmd
 cd shared\cpp
-cl /EHsc /O2 QueueSimulator.cpp QueueManager.cpp QueueStructures.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp winhttp.lib /Fe:queue_sim.exe
+cl /EHsc /O2 QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp winhttp.lib /Fe:queue_sim.exe
 queue_sim.exe
 ```
 
 ### Build & Run Simulator (Windows MinGW + curl)
 Optionally you can also link libcurl on Windows instead of WinHTTP by removing the `_WIN32` define (not default):
 ```bash
-g++ -std=c++17 -O2 -pthread QueueSimulator.cpp QueueManager.cpp QueueStructures.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp -lcurl -o queue_sim.exe
+g++ -std=c++17 -O2 -pthread QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp -lcurl -o queue_sim.exe
 ```
 
 ## Alternative: Use CMake (if installed)

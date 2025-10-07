@@ -24,7 +24,6 @@
 #include "addons/RTDBHelper.h"
 #include "config.h"
 #include "../shared/cpp/QueueManager.h"
-#include "../shared/cpp/QueueStructures.h"
 #include "../shared/cpp/FirebaseStructureBuilder.h"
 
 // Firebase objects
