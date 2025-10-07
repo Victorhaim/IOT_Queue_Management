@@ -2,7 +2,10 @@
 
 #include <string>
 
-// Simple HTTP client using Windows WinHTTP API
+// Simple cross-platform HTTP client:
+//  - Windows: WinHTTP API
+//  - Non-Windows (macOS/Linux): libcurl
+// Supports minimal Firebase REST operations (PUT, PATCH, DELETE, optional GET)
 class SimpleHttpClient
 {
 private:

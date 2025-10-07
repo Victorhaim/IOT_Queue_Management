@@ -227,11 +227,22 @@ private:
         try
         {
             // Write data for each queue line separately
+            int totalPeople = 0;
+            int recommendedLineLocal = -1;
+            int minPeople = INT32_MAX;
+            auto nowSys = std::chrono::system_clock::now();
+            auto epochMs = std::chrono::duration_cast<std::chrono::milliseconds>(nowSys.time_since_epoch()).count();
             for (int line = 1; line <= numberOfLines; ++line)
             {
                 int currentOccupancy = queueManager->getLineCount(line);
                 double throughputFactor = throughputFactors[line - 1];
                 double averageWaitTime = (throughputFactor > 0.0) ? currentOccupancy / throughputFactor : 0.0;
+                totalPeople += currentOccupancy;
+                if (currentOccupancy < minPeople)
+                {
+                    minPeople = currentOccupancy;
+                    recommendedLineLocal = line;
+                }
 
                 // Create JSON data for this specific queue line
                 std::ostringstream json;
@@ -239,7 +250,8 @@ private:
                 json << "    \"currentOccupancy\": " << currentOccupancy << ",\n";
                 json << "    \"throughputFactor\": " << std::fixed << std::setprecision(4) << throughputFactor << ",\n";
                 json << "    \"averageWaitTime\": " << std::fixed << std::setprecision(2) << averageWaitTime << ",\n";
-                json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n";
+                json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n"; // human readable
+                json << "    \"updatedAt\": " << epochMs << ",\n"; // numeric timestamp for Flutter
                 json << "    \"lineNumber\": " << line << ",\n";
                 json << "    \"serviceCompletions\": " << serviceCompletionCounts[line - 1] << "\n";
                 json << "}\n";
@@ -256,6 +268,39 @@ private:
                 else
                 {
                     std::cerr << "❌ Failed to update Firebase for line " << line << std::endl;
+                }
+            }
+
+            // Also write aggregated queue object expected by Flutter UI
+            // Path: queues/main (queueId = "main")
+            if (numberOfLines > 0)
+            {
+                std::ostringstream agg;
+                agg << "{\n";
+                agg << "  \"name\": \"Simulated Queue\",\n";
+                agg << "  \"totalPeople\": " << totalPeople << ",\n";
+                agg << "  \"numberOfLines\": " << numberOfLines << ",\n";
+                agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << ",\n";
+                agg << "  \"updatedAt\": " << epochMs << ",\n";
+                // lines map
+                agg << "  \"lines\": {";
+                for (int line = 1; line <= numberOfLines; ++line)
+                {
+                    int currentOccupancy = queueManager->getLineCount(line);
+                    agg << "\"" << line << "\": " << currentOccupancy;
+                    if (line < numberOfLines) agg << ", ";
+                }
+                agg << "}\n";
+                agg << "}\n";
+
+                if (firebaseClient->updateData("queues/main", agg.str()))
+                {
+                    std::cout << "✅ Aggregated queue object updated (queues/main) totalPeople=" << totalPeople
+                              << " recommendedLine=" << recommendedLineLocal << std::endl;
+                }
+                else
+                {
+                    std::cerr << "❌ Failed to update aggregated queue object" << std::endl;
                 }
             }
         }

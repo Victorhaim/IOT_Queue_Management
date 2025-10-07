@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/firebase_queue_service.dart';
+import 'dart:developer' as dev;
 
 /// Displays a single queue's information using a realtime stream.
 /// Uses C++ queue logic via Firebase data (no Dart queue logic duplicates)
@@ -31,12 +32,31 @@ class QueueView extends StatelessWidget {
           }
 
           final data = snapshot.data!;
+
+          // Helpers
+          int? _asInt(dynamic v) {
+            if (v is int) return v;
+            if (v is double) return v.toInt();
+            if (v is String) return int.tryParse(v);
+            return null;
+          }
+
+            Map<String, dynamic> _normalizeMap(dynamic raw) {
+            if (raw is Map) {
+              return raw.map((k, v) => MapEntry(k.toString(), v));
+            }
+            return const {};
+          }
+
           final name = data['name']?.toString() ?? 'Unknown Queue';
-          final totalPeople = data['totalPeople'] ?? data['length'] ?? 0;
-          final recommendedLine = data['recommendedLine'];
-          final lines = data['lines'] as Map<String, dynamic>? ?? {};
-          final sensors = data['sensors'] as Map<String, dynamic>? ?? {};
-          final lastUpdated = data['updatedAt'];
+          final totalPeople = _asInt(data['totalPeople']) ?? _asInt(data['length']) ?? 0;
+          final recommendedLine = _asInt(data['recommendedLine']);
+          final lines = _normalizeMap(data['lines']);
+          final sensors = _normalizeMap(data['sensors']);
+          final lastUpdatedRaw = data['updatedAt'];
+          final lastUpdated = (lastUpdatedRaw is int) ? lastUpdatedRaw : null;
+
+      dev.log('QueueView data update: totalPeople=$totalPeople lines=${lines.length}', name: 'QueueView');
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -61,9 +81,7 @@ class QueueView extends StatelessWidget {
                 ],
                 const SizedBox(height: 12),
                 if (lastUpdated != null)
-                  Text(
-                    'Updated: ${DateTime.fromMillisecondsSinceEpoch(lastUpdated)}',
-                  )
+                  Text('Updated: ${DateTime.fromMillisecondsSinceEpoch(lastUpdated)}')
                 else
                   const Text('Updated: -'),
                 if (lines.isNotEmpty) ...[
