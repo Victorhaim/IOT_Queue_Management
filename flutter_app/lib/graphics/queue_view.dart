@@ -50,6 +50,7 @@ class QueueView extends StatelessWidget {
 
           final name = data['name']?.toString() ?? 'Unknown Queue';
           final totalPeople = _asInt(data['totalPeople']) ?? _asInt(data['length']) ?? 0;
+          final numberOfLines = _asInt(data['numberOfLines']) ?? 0;
           final recommendedLine = _asInt(data['recommendedLine']);
           final lines = _normalizeMap(data['lines']);
           final sensors = _normalizeMap(data['sensors']);
@@ -66,7 +67,7 @@ class QueueView extends StatelessWidget {
                 Text(name, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
                 Text(
-                  'Length: $totalPeople',
+                  'Total People: $totalPeople${numberOfLines > 0 ? ' (${numberOfLines} lines)' : ''}',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 if (recommendedLine != null) ...[
@@ -127,11 +128,10 @@ class QueueView extends StatelessWidget {
                     // Simple demo increment using raw Firebase update
                     await _queueService.updateQueueFields(queueId, {
                       'totalPeople': totalPeople + 1,
-                      'length': totalPeople + 1,
                     });
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Increment Length'),
+                  label: const Text('Increment Total People'),
                 ),
               ],
             ),

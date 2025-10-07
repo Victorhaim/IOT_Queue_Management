@@ -189,7 +189,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildAnimatedNumber() {
-    final ref = FirebaseDatabase.instance.ref('queues/queueA/recommendedLine');
+    final ref = FirebaseDatabase.instance.ref('queues/main/recommendedLine');
     return StreamBuilder<DatabaseEvent>(
       stream: ref.onValue,
       builder: (context, snapshot) {
@@ -252,7 +252,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicPlaceBox() {
-    final queueRef = FirebaseDatabase.instance.ref('queues/queueA');
+    final queueRef = FirebaseDatabase.instance.ref('queues/main');
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
@@ -339,30 +339,30 @@ class _QueueScreenState extends State<QueueScreen>
       final snap = await queueRef.get();
       if (!snap.exists) {
         await queueRef.set({
-          'name': 'Queue Hub (Init)',
-          'length': 0,
-          'lines': {'1': 0, '2': 0, '3': 0},
+          'name': 'Simulated Queue (Init)',
+          'totalPeople': 0,
+          'numberOfLines': 2,
           'recommendedLine': 1,
-          'sensors': {},
+          'lines': {'1': 0, '2': 0},
           'updatedAt': ServerValue.timestamp,
         });
         // ignore: avoid_print
-        print('[Init] queueA created');
+        print('[Init] queues/main created');
       } else {
         final val = snap.value;
         if (val is Map && val['lines'] == null) {
           await queueRef.update({
-            'lines': {'1': 0, '2': 0, '3': 0},
+            'lines': {'1': 0, '2': 0},
             'recommendedLine': 1,
             'updatedAt': ServerValue.timestamp,
           });
           // ignore: avoid_print
-          print('[Init] queueA lines initialized');
+          print('[Init] queues/main lines initialized');
         }
       }
     } catch (e) {
       // ignore: avoid_print
-      print('[Init] queueA initialization error: $e');
+      print('[Init] queues/main initialization error: $e');
     }
   }
 
@@ -397,7 +397,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDebugPanel() {
-    final ref = FirebaseDatabase.instance.ref('queues/queueA');
+    final ref = FirebaseDatabase.instance.ref('queues/main');
     return Container(
       width: 360,
       padding: const EdgeInsets.all(12),
@@ -428,9 +428,7 @@ class _QueueScreenState extends State<QueueScreen>
                   const SizedBox(height: 4),
                   Text('recommendedLine: $rec'),
                   Text('lines: ${lines is Map ? lines : lines.toString()}'),
-                  Text(
-                    'length: ${val['length']} updatedAt: ${val['updatedAt']}',
-                  ),
+                  Text('length: ${val['totalPeople']} updatedAt: ${val['updatedAt']}'),
                   if (lines is Map && rec != null) ...[
                     const Divider(),
                     Builder(
@@ -487,10 +485,10 @@ class _QueueScreenState extends State<QueueScreen>
       onPressed: () {
         Navigator.of(
           context,
-        ).push(MaterialPageRoute(builder: (_) => QueueView(queueId: 'queueA')));
+        ).push(MaterialPageRoute(builder: (_) => QueueView(queueId: 'main')));
       },
       icon: const Icon(Icons.list),
-      label: const Text('Open QueueA Live View'),
+      label: const Text('Open Queue Live View'),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
@@ -574,21 +572,17 @@ class _QueueScreenState extends State<QueueScreen>
     });
 
     try {
-      // Write test data to Realtime Database
+      // Write test data to Realtime Database - using the same path as C++ simulator
       DatabaseReference ref = FirebaseDatabase.instance.ref(
-        'queue_data/test_queue',
+        'queues/main',
       );
-      await ref.set({
-        'queue_number': 5,
-        'people_in_line': 8,
-        'estimated_wait_time': 15,
-        'timestamp': ServerValue.timestamp,
-        'status': 'active',
-        'sensor_data': {
-          'temperature': 23.5,
-          'occupancy': 0.7,
-          'last_update': DateTime.now().toIso8601String(),
-        },
+      await ref.update({
+        'totalPeople': 12,
+        'recommendedLine': 2,
+        'lines': {'1': 5, '2': 7},
+        'numberOfLines': 2,
+        'name': 'Test Queue from Flutter',
+        'updatedAt': ServerValue.timestamp,
       });
 
       setState(() {
