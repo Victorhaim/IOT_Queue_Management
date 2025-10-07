@@ -265,6 +265,7 @@ class _QueueScreenState extends State<QueueScreen>
           final raw = snapshot.data!.snapshot.value as Map;
           final rec = raw['recommendedLine'];
           final lines = raw['lines'];
+          final recommendedLineCount = raw['recommendedLineCount']; // New field from C++
           rawMap = raw; // capture for debug panel
           if (lines == null) {
             // Attempt a one-time initialization if lines missing
@@ -276,8 +277,42 @@ class _QueueScreenState extends State<QueueScreen>
             recommendedLine = rec;
           else if (rec is String)
             recommendedLine = int.tryParse(rec);
+          
+          // Use the recommendedLineCount from C++ if available, otherwise compute locally
+          if (recommendedLine != null && recommendedLineCount != null) {
+            // Use the count directly from C++ simulator
+            int currentCount = 0;
+            if (recommendedLineCount is int) {
+              currentCount = recommendedLineCount;
+            } else if (recommendedLineCount is String) {
+              currentCount = int.tryParse(recommendedLineCount) ?? 0;
+            }
+            
+            placeDisplay = (currentCount + 1).toString();
+            lineContext = 'L$recommendedLine';
+            dynamicTooltip =
+                'Recommended line $recommendedLine, current people: $currentCount, you would be #$placeDisplay';
+            // ignore: avoid_print
+            print(
+              '[PlaceBox] rec=$recommendedLine count=$currentCount place=$placeDisplay (from C++)',
+            );
+          }
+          // Fallback to local computation if recommendedLineCount not available
+          else if (recommendedLine != null && lines is Map) {
+            final key = '${recommendedLine}';
+            final currentCountRaw = lines[key];
+            final int currentCount = _extractPeopleCount(currentCountRaw);
+            placeDisplay = (currentCount + 1).toString();
+            lineContext = 'L$recommendedLine';
+            dynamicTooltip =
+                'Recommended line $recommendedLine, current people: $currentCount, you would be #$placeDisplay';
+            // ignore: avoid_print
+            print(
+              '[PlaceBox] rec=$recommendedLine count=$currentCount place=$placeDisplay (computed locally)',
+            );
+          }
           // If recommendedLine not provided yet but lines exist, compute locally (mirrors server/device logic)
-          if (recommendedLine == null && lines is Map) {
+          else if (recommendedLine == null && lines is Map) {
             int? bestLine;
             int bestCount = 1 << 30;
             lines.forEach((k, v) {
@@ -293,20 +328,12 @@ class _QueueScreenState extends State<QueueScreen>
                 }
               }
             });
-            recommendedLine = bestLine;
-          }
-          if (recommendedLine != null && lines is Map) {
-            final key = '${recommendedLine}';
-            final currentCountRaw = lines[key];
-            final int currentCount = _extractPeopleCount(currentCountRaw);
-            placeDisplay = (currentCount + 1).toString();
-            lineContext = 'L$recommendedLine';
-            dynamicTooltip =
-                'Recommended line $recommendedLine, current people: $currentCount, you would be #$placeDisplay';
-            // ignore: avoid_print
-            print(
-              '[PlaceBox] rec=$recommendedLine count=$currentCount place=$placeDisplay',
-            );
+            if (bestLine != null) {
+              placeDisplay = (bestCount + 1).toString();
+              lineContext = 'L$bestLine';
+              dynamicTooltip =
+                  'Computed recommended line $bestLine, current people: $bestCount, you would be #$placeDisplay';
+            }
           }
         } else if (snapshot.hasData && snapshot.data!.snapshot.value == null) {
           // Entire node missing: initialize structure then show initializing state
@@ -419,6 +446,7 @@ class _QueueScreenState extends State<QueueScreen>
           if (val is Map) {
             final lines = val['lines'];
             final rec = val['recommendedLine'];
+            final recCount = val['recommendedLineCount'];
             return DefaultTextStyle(
               style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
               child: Column(
@@ -427,6 +455,7 @@ class _QueueScreenState extends State<QueueScreen>
                   const Text('DEBUG QUEUE SNAPSHOT'),
                   const SizedBox(height: 4),
                   Text('recommendedLine: $rec'),
+                  Text('recommendedLineCount: $recCount'),
                   Text('lines: ${lines is Map ? lines : lines.toString()}'),
                   Text('length: ${val['totalPeople']} updatedAt: ${val['updatedAt']}'),
                   if (lines is Map && rec != null) ...[
@@ -434,15 +463,24 @@ class _QueueScreenState extends State<QueueScreen>
                     Builder(
                       builder: (_) {
                         int currentCount = 0;
-                        final lineKey = rec.toString();
-                        final raw = lines[lineKey];
-                        if (raw is int)
-                          currentCount = raw;
-                        else if (raw is String)
-                          currentCount = int.tryParse(raw) ?? 0;
+                        // Prefer C++ provided count, fallback to local computation
+                        if (recCount != null) {
+                          if (recCount is int) {
+                            currentCount = recCount;
+                          } else if (recCount is String) {
+                            currentCount = int.tryParse(recCount) ?? 0;
+                          }
+                        } else {
+                          final lineKey = rec.toString();
+                          final raw = lines[lineKey];
+                          if (raw is int)
+                            currentCount = raw;
+                          else if (raw is String)
+                            currentCount = int.tryParse(raw) ?? 0;
+                        }
                         final place = currentCount + 1;
                         return Text(
-                          'Derived place for line $rec: $place (count=$currentCount)',
+                          'Your place for line $rec: $place (count=$currentCount)',
                         );
                       },
                     ),

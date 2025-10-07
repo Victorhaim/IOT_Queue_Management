@@ -275,12 +275,20 @@ private:
             // Path: queues/main (queueId = "main")
             if (numberOfLines > 0)
             {
+                // Get the count of people in the recommended line
+                int recommendedLineCount = 0;
+                if (recommendedLineLocal != -1)
+                {
+                    recommendedLineCount = queueManager->getLineCount(recommendedLineLocal);
+                }
+
                 std::ostringstream agg;
                 agg << "{\n";
                 agg << "  \"name\": \"Simulated Queue\",\n";
                 agg << "  \"totalPeople\": " << totalPeople << ",\n";
                 agg << "  \"numberOfLines\": " << numberOfLines << ",\n";
                 agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << ",\n";
+                agg << "  \"recommendedLineCount\": " << recommendedLineCount << ",\n";
                 agg << "  \"updatedAt\": " << epochMs << ",\n";
                 // lines map
                 agg << "  \"lines\": {";
@@ -296,7 +304,8 @@ private:
                 if (firebaseClient->updateData("queues/main", agg.str()))
                 {
                     std::cout << "✅ Aggregated queue object updated (queues/main) totalPeople=" << totalPeople
-                              << " recommendedLine=" << recommendedLineLocal << std::endl;
+                              << " recommendedLine=" << recommendedLineLocal 
+                              << " recommendedLineCount=" << recommendedLineCount << std::endl;
                 }
                 else
                 {
