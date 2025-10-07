@@ -5,7 +5,8 @@
 
 /// Shared QueueManager implementation for ESP32 and simulation
 /// Manages queue lines using a simple array-based approach suitable for microcontrollers
-class QueueManager {
+class QueueManager
+{
 public:
     QueueManager(int maxSize, int numberOfLines);
     ~QueueManager() = default;
