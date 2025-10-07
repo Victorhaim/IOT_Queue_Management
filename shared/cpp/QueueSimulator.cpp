@@ -251,9 +251,7 @@ private:
                 json << "    \"throughputFactor\": " << std::fixed << std::setprecision(4) << throughputFactor << ",\n";
                 json << "    \"averageWaitTime\": " << std::fixed << std::setprecision(2) << averageWaitTime << ",\n";
                 json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n"; // human readable
-                json << "    \"updatedAt\": " << epochMs << ",\n"; // numeric timestamp for Flutter
-                json << "    \"lineNumber\": " << line << ",\n";
-                json << "    \"serviceCompletions\": " << serviceCompletionCounts[line - 1] << "\n";
+                json << "    \"lineNumber\": " << line << "\n";
                 json << "}\n";
 
                 // Write to Firebase path for this specific line
@@ -272,40 +270,20 @@ private:
             }
 
             // Also write aggregated queue object expected by Flutter UI
-            // Path: queues/main (queueId = "main")
+            // Path: currentBest (queueId = "currentBest")
             if (numberOfLines > 0)
             {
-                // Get the count of people in the recommended line
-                int recommendedLineCount = 0;
-                if (recommendedLineLocal != -1)
-                {
-                    recommendedLineCount = queueManager->getLineCount(recommendedLineLocal);
-                }
-
                 std::ostringstream agg;
                 agg << "{\n";
-                agg << "  \"name\": \"Simulated Queue\",\n";
                 agg << "  \"totalPeople\": " << totalPeople << ",\n";
                 agg << "  \"numberOfLines\": " << numberOfLines << ",\n";
-                agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << ",\n";
-                agg << "  \"recommendedLineCount\": " << recommendedLineCount << ",\n";
-                agg << "  \"updatedAt\": " << epochMs << ",\n";
-                // lines map
-                agg << "  \"lines\": {";
-                for (int line = 1; line <= numberOfLines; ++line)
-                {
-                    int currentOccupancy = queueManager->getLineCount(line);
-                    agg << "\"" << line << "\": " << currentOccupancy;
-                    if (line < numberOfLines) agg << ", ";
-                }
-                agg << "}\n";
+                agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << "\n";
                 agg << "}\n";
 
-                if (firebaseClient->updateData("queues/main", agg.str()))
+                if (firebaseClient->updateData("currentBest", agg.str()))
                 {
-                    std::cout << "✅ Aggregated queue object updated (queues/main) totalPeople=" << totalPeople
-                              << " recommendedLine=" << recommendedLineLocal 
-                              << " recommendedLineCount=" << recommendedLineCount << std::endl;
+                    std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
+                              << " recommendedLine=" << recommendedLineLocal << std::endl;
                 }
                 else
                 {

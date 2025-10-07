@@ -189,7 +189,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildAnimatedNumber() {
-    final ref = FirebaseDatabase.instance.ref('queues/main/recommendedLine');
+    final ref = FirebaseDatabase.instance.ref('currentBest/recommendedLine');
     return StreamBuilder<DatabaseEvent>(
       stream: ref.onValue,
       builder: (context, snapshot) {
@@ -252,7 +252,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicPlaceBox() {
-    final queueRef = FirebaseDatabase.instance.ref('queues/main');
+    final queueRef = FirebaseDatabase.instance.ref('currentBest');
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
@@ -265,7 +265,8 @@ class _QueueScreenState extends State<QueueScreen>
           final raw = snapshot.data!.snapshot.value as Map;
           final rec = raw['recommendedLine'];
           final lines = raw['lines'];
-          final recommendedLineCount = raw['recommendedLineCount']; // New field from C++
+          final recommendedLineCount =
+              raw['recommendedLineCount']; // New field from C++
           rawMap = raw; // capture for debug panel
           if (lines == null) {
             // Attempt a one-time initialization if lines missing
@@ -277,7 +278,7 @@ class _QueueScreenState extends State<QueueScreen>
             recommendedLine = rec;
           else if (rec is String)
             recommendedLine = int.tryParse(rec);
-          
+
           // Use the recommendedLineCount from C++ if available, otherwise compute locally
           if (recommendedLine != null && recommendedLineCount != null) {
             // Use the count directly from C++ simulator
@@ -287,7 +288,7 @@ class _QueueScreenState extends State<QueueScreen>
             } else if (recommendedLineCount is String) {
               currentCount = int.tryParse(recommendedLineCount) ?? 0;
             }
-            
+
             placeDisplay = (currentCount + 1).toString();
             lineContext = 'L$recommendedLine';
             dynamicTooltip =
@@ -366,15 +367,12 @@ class _QueueScreenState extends State<QueueScreen>
       final snap = await queueRef.get();
       if (!snap.exists) {
         await queueRef.set({
-          'name': 'Simulated Queue (Init)',
           'totalPeople': 0,
           'numberOfLines': 2,
           'recommendedLine': 1,
-          'lines': {'1': 0, '2': 0},
-          'updatedAt': ServerValue.timestamp,
         });
         // ignore: avoid_print
-        print('[Init] queues/main created');
+        print('[Init] currentBest created');
       } else {
         final val = snap.value;
         if (val is Map && val['lines'] == null) {
@@ -384,12 +382,12 @@ class _QueueScreenState extends State<QueueScreen>
             'updatedAt': ServerValue.timestamp,
           });
           // ignore: avoid_print
-          print('[Init] queues/main lines initialized');
+          print('[Init] currentBest lines initialized');
         }
       }
     } catch (e) {
       // ignore: avoid_print
-      print('[Init] queues/main initialization error: $e');
+      print('[Init] currentBest initialization error: $e');
     }
   }
 
@@ -424,7 +422,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDebugPanel() {
-    final ref = FirebaseDatabase.instance.ref('queues/main');
+    final ref = FirebaseDatabase.instance.ref('currentBest');
     return Container(
       width: 360,
       padding: const EdgeInsets.all(12),
@@ -457,7 +455,9 @@ class _QueueScreenState extends State<QueueScreen>
                   Text('recommendedLine: $rec'),
                   Text('recommendedLineCount: $recCount'),
                   Text('lines: ${lines is Map ? lines : lines.toString()}'),
-                  Text('length: ${val['totalPeople']} updatedAt: ${val['updatedAt']}'),
+                  Text(
+                    'length: ${val['totalPeople']} updatedAt: ${val['updatedAt']}',
+                  ),
                   if (lines is Map && rec != null) ...[
                     const Divider(),
                     Builder(
@@ -521,9 +521,9 @@ class _QueueScreenState extends State<QueueScreen>
   Widget _buildQueueViewButton() {
     return ElevatedButton.icon(
       onPressed: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => QueueView(queueId: 'main')));
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => QueueView(queueId: 'currentBest')),
+        );
       },
       icon: const Icon(Icons.list),
       label: const Text('Open Queue Live View'),
@@ -611,16 +611,11 @@ class _QueueScreenState extends State<QueueScreen>
 
     try {
       // Write test data to Realtime Database - using the same path as C++ simulator
-      DatabaseReference ref = FirebaseDatabase.instance.ref(
-        'queues/main',
-      );
+      DatabaseReference ref = FirebaseDatabase.instance.ref('currentBest');
       await ref.update({
         'totalPeople': 12,
-        'recommendedLine': 2,
-        'lines': {'1': 5, '2': 7},
         'numberOfLines': 2,
-        'name': 'Test Queue from Flutter',
-        'updatedAt': ServerValue.timestamp,
+        'recommendedLine': 2,
       });
 
       setState(() {
