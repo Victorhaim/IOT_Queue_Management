@@ -36,9 +36,12 @@ public:
         int totalPeople;
         int numberOfLines;
         int recommendedLine;
+        double averageWaitTime;
+        int currentOccupancy;
 
-        AggregatedData(int total, int numLines, int recommended)
-            : totalPeople(total), numberOfLines(numLines), recommendedLine(recommended) {}
+        AggregatedData(int total, int numLines, int recommended, double waitTime = 0.0, int occupancy = 0)
+            : totalPeople(total), numberOfLines(numLines), recommendedLine(recommended),
+              averageWaitTime(waitTime), currentOccupancy(occupancy) {}
     };
 
     /**
@@ -68,13 +71,16 @@ public:
     /**
      * Calculate recommended line based on occupancy and wait times
      * Returns the line number with the shortest effective wait time
-     */
-    static int calculateRecommendedLine(const std::vector<LineData> &allLines);
-
-    /**
-     * Calculate recommended line for array-based data (works with both vector and array)
+     * Works with both C++ vectors (use .data()) and C-style arrays
      */
     static int calculateRecommendedLine(const LineData *allLines, int numberOfLines);
+
+    /**
+     * Create AggregatedData with recommended line and duplicated wait time/occupancy info
+     * This function automatically finds the recommended line and copies its data
+     * Works with both C++ vectors (use .data()) and C-style arrays
+     */
+    static AggregatedData createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines);
 
     /**
      * Calculate average wait time based on occupancy and throughput

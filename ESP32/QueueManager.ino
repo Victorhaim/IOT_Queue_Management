@@ -372,12 +372,9 @@ void sendDataToFirebase()
     }
   }
 
-  // Calculate recommended line and update aggregated data
-  int recommendedLine = FirebaseStructureBuilder::calculateRecommendedLine(
-      allLines, NUMBER_OF_LINES);
-
-  FirebaseStructureBuilder::AggregatedData aggData(
-      totalPeople, NUMBER_OF_LINES, recommendedLine);
+  // Calculate recommended line and update aggregated data using shared function
+  FirebaseStructureBuilder::AggregatedData aggData =
+      FirebaseStructureBuilder::createAggregatedData(allLines, totalPeople, NUMBER_OF_LINES);
 
   // Generate aggregated JSON and update Firebase
   std::string aggJsonStr = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);

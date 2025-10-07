@@ -264,10 +264,8 @@ private:
             // Calculate recommended line and write aggregated data
             if (!allLinesData.empty())
             {
-                int recommendedLine = FirebaseStructureBuilder::calculateRecommendedLine(allLinesData);
-
-                FirebaseStructureBuilder::AggregatedData aggData(
-                    totalPeople, numberOfLines, recommendedLine);
+                FirebaseStructureBuilder::AggregatedData aggData =
+                    FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
 
                 std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
                 std::string aggPath = FirebaseStructureBuilder::getAggregatedDataPath();
@@ -275,7 +273,7 @@ private:
                 if (firebaseClient->updateData(aggPath, aggJson))
                 {
                     std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
-                              << " recommendedLine=" << recommendedLine << std::endl;
+                              << " recommendedLine=" << aggData.recommendedLine << std::endl;
                 }
                 else
                 {
