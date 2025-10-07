@@ -87,7 +87,7 @@ class AppStrings {
   static const String string_appTitle = 'Queue Display';
   static const String string_goToLineText = 'GO TO LINE';
   static const String string_queueNumber = '';
-  static const String string_placeInLineText = 'place in line: ';
+  static const String string_placeInLineText = 'people before you: ';
   static const String string_placeInLineNumber = '';
   static const String string_waitTimeText = 'wait time: ';
   static const String string_waitTimeNumber = '';

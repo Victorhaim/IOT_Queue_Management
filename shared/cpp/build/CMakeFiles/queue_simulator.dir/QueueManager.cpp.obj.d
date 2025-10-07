@@ -55,6 +55,32 @@ CMakeFiles/queue_simulator.dir/QueueManager.cpp.obj: \
  C:/msys64/mingw64/include/c++/15.2.0/bits/std_abs.h \
  C:/msys64/mingw64/include/c++/15.2.0/pstl/glue_algorithm_defs.h \
  C:/msys64/mingw64/include/c++/15.2.0/pstl/execution_defs.h \
+ C:/msys64/mingw64/include/c++/15.2.0/vector \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/requires_hosted.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/allocator.h \
+ C:/msys64/mingw64/include/c++/15.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/new_allocator.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/memoryfwd.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/stl_uninitialized.h \
+ C:/msys64/mingw64/include/c++/15.2.0/ext/alloc_traits.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/alloc_traits.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/stl_vector.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/stl_bvector.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/functional_hash.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/hash_bytes.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/refwrap.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/invoke.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/stl_function.h \
+ C:/msys64/mingw64/include/c++/15.2.0/backward/binders.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/range_access.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/vector.tcc \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/memory_resource.h \
+ C:/msys64/mingw64/include/c++/15.2.0/cstddef \
+ C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stddef.h \
+ C:/msys64/mingw64/include/stddef.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/uses_allocator.h \
+ C:/msys64/mingw64/include/c++/15.2.0/bits/uses_allocator_args.h \
+ C:/msys64/mingw64/include/c++/15.2.0/tuple \
  C:/msys64/mingw64/include/c++/15.2.0/cstring \
  C:/msys64/mingw64/include/string.h \
  C:/msys64/mingw64/include/sec_api/string_s.h

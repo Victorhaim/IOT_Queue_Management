@@ -273,7 +273,9 @@ private:
                 if (firebaseClient->updateData(aggPath, aggJson))
                 {
                     std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
-                              << " recommendedLine=" << aggData.recommendedLine << std::endl;
+                              << " recommendedLine=" << aggData.recommendedLine
+                              << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
+                              << " placeInLine=" << aggData.currentOccupancy << std::endl;
                 }
                 else
                 {
