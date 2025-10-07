@@ -3,7 +3,6 @@ import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
 import '../graphics/animated_waves.dart';
 import '../graphics/hover_box.dart';
-import '../graphics/queue_view.dart';
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -42,51 +41,11 @@ class _QueueScreenState extends State<QueueScreen>
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
-  String _firebaseStatus = 'Connecting...';
-  String _testResult = '';
-  bool _showDebug = false; // Toggle for showing raw queue snapshot
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
-    _testFirebaseConnection();
-  }
-
-  void _testFirebaseConnection() async {
-    try {
-      // Simple Firebase test - just check if Firebase is initialized
-      setState(() {
-        _firebaseStatus = '✅ Connected';
-      });
-
-      print('Firebase initialized successfully!');
-
-      // Optional: Try a simple Realtime Database operation (but don't block on it)
-      _tryRealtimeDatabaseTest();
-    } catch (e) {
-      setState(() {
-        _firebaseStatus = '❌ Error: $e';
-      });
-
-      print('Firebase connection error: $e');
-    }
-  }
-
-  void _tryRealtimeDatabaseTest() async {
-    try {
-      // Try to write to Realtime Database in the background
-      DatabaseReference ref = FirebaseDatabase.instance.ref('test/connection');
-      await ref.set({
-        'timestamp': ServerValue.timestamp,
-        'status': 'connected',
-        'message': 'Realtime Database is working!',
-      });
-
-      print('Realtime Database test successful!');
-    } catch (e) {
-      print('Realtime Database test failed (but Firebase Core is working): $e');
-    }
   }
 
   void _initializeControllers() {
@@ -140,36 +99,27 @@ class _QueueScreenState extends State<QueueScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppParameters.color_backgroundColor,
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 50), // Top padding
-              _buildTitle(),
-              SizedBox(height: AppParameters.size_titleToNumberSpacing),
-              _buildAnimatedNumber(),
-              SizedBox(height: AppParameters.size_numberToBoxesSpacing),
-              _buildHoverBoxes(),
-              SizedBox(height: AppParameters.size_boxesToButtonSpacing),
-              _buildAnimationButton(),
-              const SizedBox(height: 12),
-              _buildQueueViewButton(),
-              const SizedBox(height: 12),
-              _buildDebugToggle(),
-              if (_showDebug) ...[
-                const SizedBox(height: 12),
-                _buildDebugPanel(),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 50), // Top padding
+                _buildTitle(),
+                SizedBox(height: AppParameters.size_titleToNumberSpacing),
+                _buildAnimatedNumber(),
+                SizedBox(height: AppParameters.size_numberToBoxesSpacing),
+                _buildHoverBoxes(),
+                SizedBox(height: AppParameters.size_boxesToButtonSpacing),
+                _buildAnimationButton(),
+                SizedBox(height: 50), // Bottom padding
               ],
-              SizedBox(height: 20),
-              _buildFirebaseStatus(),
-              SizedBox(height: 10),
-              _buildTestFirebaseButton(),
-              SizedBox(height: 50), // Bottom padding
-            ],
+            ),
           ),
         ),
       ),
@@ -260,14 +210,12 @@ class _QueueScreenState extends State<QueueScreen>
         String placeDisplay = '...';
         String dynamicTooltip = AppStrings.string_placeTooltip;
         String? lineContext; // store recommended line label
-        Map rawMap = {};
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
           final raw = snapshot.data!.snapshot.value as Map;
           final rec = raw['recommendedLine'];
           final lines = raw['lines'];
           final recommendedLineCount =
               raw['recommendedLineCount']; // New field from C++
-          rawMap = raw; // capture for debug panel
           if (lines == null) {
             // Attempt a one-time initialization if lines missing
             _initializeQueueNode(queueRef);
@@ -341,10 +289,6 @@ class _QueueScreenState extends State<QueueScreen>
           _initializeQueueNode(queueRef);
           dynamicTooltip = 'Creating queue structure...';
         }
-        if (_showDebug) {
-          // ignore: avoid_print
-          print('[DebugPanel] Raw queue snapshot: ' + rawMap.toString());
-        }
         return HoverBox(
           icon: AppAssets.string_queueIcon,
           text: lineContext == null
@@ -407,97 +351,6 @@ class _QueueScreenState extends State<QueueScreen>
     return 0;
   }
 
-  Widget _buildDebugToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('Debug', style: TextStyle(color: Colors.grey.shade700)),
-        Switch(
-          value: _showDebug,
-          onChanged: (v) => setState(() => _showDebug = v),
-          activeColor: Colors.deepOrange,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDebugPanel() {
-    final ref = FirebaseDatabase.instance.ref('currentBest');
-    return Container(
-      width: 360,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade400),
-      ),
-      child: StreamBuilder<DatabaseEvent>(
-        stream: ref.onValue,
-        builder: (context, snap) {
-          if (!snap.hasData) {
-            return const Text(
-              'Waiting for queue snapshot...',
-              style: TextStyle(fontSize: 12),
-            );
-          }
-          final val = snap.data!.snapshot.value;
-          if (val is Map) {
-            final lines = val['lines'];
-            final rec = val['recommendedLine'];
-            final recCount = val['recommendedLineCount'];
-            return DefaultTextStyle(
-              style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('DEBUG QUEUE SNAPSHOT'),
-                  const SizedBox(height: 4),
-                  Text('recommendedLine: $rec'),
-                  Text('recommendedLineCount: $recCount'),
-                  Text('lines: ${lines is Map ? lines : lines.toString()}'),
-                  Text(
-                    'length: ${val['totalPeople']} updatedAt: ${val['updatedAt']}',
-                  ),
-                  if (lines is Map && rec != null) ...[
-                    const Divider(),
-                    Builder(
-                      builder: (_) {
-                        int currentCount = 0;
-                        // Prefer C++ provided count, fallback to local computation
-                        if (recCount != null) {
-                          if (recCount is int) {
-                            currentCount = recCount;
-                          } else if (recCount is String) {
-                            currentCount = int.tryParse(recCount) ?? 0;
-                          }
-                        } else {
-                          final lineKey = rec.toString();
-                          final raw = lines[lineKey];
-                          if (raw is int)
-                            currentCount = raw;
-                          else if (raw is String)
-                            currentCount = int.tryParse(raw) ?? 0;
-                        }
-                        final place = currentCount + 1;
-                        return Text(
-                          'Your place for line $rec: $place (count=$currentCount)',
-                        );
-                      },
-                    ),
-                  ],
-                ],
-              ),
-            );
-          }
-          return Text(
-            'Snapshot (non-map): ${val.toString()}',
-            style: const TextStyle(fontSize: 11),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildAnimationButton() {
     return ElevatedButton(
       onPressed: _isAnimating ? null : _toggleAnimation,
@@ -516,120 +369,6 @@ class _QueueScreenState extends State<QueueScreen>
         style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
       ),
     );
-  }
-
-  Widget _buildQueueViewButton() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => QueueView(queueId: 'currentBest')),
-        );
-      },
-      icon: const Icon(Icons.list),
-      label: const Text('Open Queue Live View'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(
-          horizontal: AppParameters.size_buttonHorizontalPadding,
-          vertical: AppParameters.size_buttonVerticalPadding,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFirebaseStatus() {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _firebaseStatus.contains('✅')
-            ? Colors.green.shade50
-            : Colors.red.shade50,
-        border: Border.all(
-          color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            _firebaseStatus.contains('✅') ? Icons.cloud_done : Icons.cloud_off,
-            color: _firebaseStatus.contains('✅') ? Colors.green : Colors.red,
-            size: 20,
-          ),
-          SizedBox(width: 8),
-          Text(
-            'Firebase: $_firebaseStatus',
-            style: TextStyle(
-              color: _firebaseStatus.contains('✅')
-                  ? Colors.green.shade800
-                  : Colors.red.shade800,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTestFirebaseButton() {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: _testFirebaseWrite,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          ),
-          child: Text('Test Realtime Database'),
-        ),
-        if (_testResult.isNotEmpty)
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text(
-              _testResult,
-              style: TextStyle(
-                fontSize: 12,
-                color: _testResult.contains('Success')
-                    ? Colors.green
-                    : Colors.red,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-      ],
-    );
-  }
-
-  void _testFirebaseWrite() async {
-    setState(() {
-      _testResult = 'Writing to Realtime Database...';
-    });
-
-    try {
-      // Write test data to Realtime Database - using the same path as C++ simulator
-      DatabaseReference ref = FirebaseDatabase.instance.ref('currentBest');
-      await ref.update({
-        'totalPeople': 12,
-        'numberOfLines': 2,
-        'recommendedLine': 2,
-      });
-
-      setState(() {
-        _testResult = '✅ Success! Data written to Realtime Database';
-      });
-
-      print('Realtime Database write test successful!');
-    } catch (e) {
-      setState(() {
-        _testResult = '❌ Error: ${e.toString()}';
-      });
-
-      print('Firebase write test failed: $e');
-    }
   }
 
   void _handlePlaceHover(bool hovered) {
