@@ -1,14 +1,14 @@
 #include "QueueManager.h"
 #include <cstring>
 
+// Implementation updated to use std::vector for line storage instead of fixed-size C array.
+
 QueueManager::QueueManager(int maxSize, int numberOfLines)
-    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0) {
-    
-    // Initialize all lines to 0 people
-    for (int i = 0; i < MAX_LINES; i++) {
-        m_lines[i] = 0;
-        m_lineCountsBuffer[i] = 0;
-    }
+    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines() {
+    if (m_numberOfLines < 0) m_numberOfLines = 0;
+    if (m_numberOfLines > MAX_LINES) m_numberOfLines = MAX_LINES; // enforce historical cap
+    m_lines.reserve(m_numberOfLines); // reserve capacity to avoid reallocations
+    m_lines.assign(m_numberOfLines, 0); // initialize with zeros
 }
 
 bool QueueManager::enqueue() {
@@ -21,7 +21,8 @@ bool QueueManager::enqueue() {
         return false;
     }
 
-    m_lines[lineNumber - 1]++; // Convert to 0-based indexing
+    // External API uses 1-based line numbers; internal storage is 0-based
+    m_lines[lineNumber - 1]++;
     m_totalPeople++;
     return true;
 }
@@ -36,7 +37,7 @@ bool QueueManager::dequeue(int lineNumber) {
         return false;
     }
 
-    m_lines[lineNumber - 1]--; // Convert to 0-based indexing
+    m_lines[lineNumber - 1]--;
     m_totalPeople--;
     return true;
 }
@@ -50,7 +51,7 @@ bool QueueManager::enqueueOnLine(int lineNumber) {
         return false;
     }
 
-    m_lines[lineNumber - 1]++; // Convert to 0-based indexing
+    m_lines[lineNumber - 1]++;
     m_totalPeople++;
     return true;
 }
@@ -76,16 +77,13 @@ int QueueManager::getNextLineNumber() const {
     }
 
     int minPeople = m_lines[0];
-    int bestLine = 1;
-
-    // Find line with fewest people (ties go to lowest line number)
+    int bestLine = 1; // return value stays 1-based
     for (int i = 1; i < m_numberOfLines; i++) {
         if (m_lines[i] < minPeople) {
             minPeople = m_lines[i];
-            bestLine = i + 1; // Convert back to 1-based
+            bestLine = i + 1; // convert to 1-based for public API
         }
     }
-
     return bestLine;
 }
 
@@ -98,7 +96,7 @@ int QueueManager::getLineCount(int lineNumber) const {
         return -1;
     }
     
-    return m_lines[lineNumber - 1]; // Convert to 0-based indexing
+    return m_lines[lineNumber - 1];
 }
 
 void QueueManager::setLineCount(int lineNumber, int count) {
@@ -119,18 +117,13 @@ void QueueManager::reset() {
     m_totalPeople = 0;
 }
 
-int* QueueManager::getLineCountsArray() const {
-    // Copy current line counts to buffer
-    for (int i = 0; i < m_numberOfLines; i++) {
-        m_lineCountsBuffer[i] = m_lines[i];
-    }
-    return m_lineCountsBuffer;
+const int* QueueManager::getLineCountsArray() const {
+    return m_lines.empty() ? nullptr : m_lines.data();
 }
 
 void QueueManager::updateFromArray(const int* lineCounts, int arraySize) {
     m_totalPeople = 0;
     int maxLines = (arraySize < m_numberOfLines) ? arraySize : m_numberOfLines;
-    
     for (int i = 0; i < maxLines; i++) {
         m_lines[i] = (lineCounts[i] < 0) ? 0 : lineCounts[i];
         m_totalPeople += m_lines[i];

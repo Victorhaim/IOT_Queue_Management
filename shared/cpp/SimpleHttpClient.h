@@ -1,5 +1,4 @@
-#ifndef SIMPLE_HTTP_CLIENT_H
-#define SIMPLE_HTTP_CLIENT_H
+#pragma once
 
 #include <string>
 
@@ -22,5 +21,3 @@ public:
 private:
     bool sendRequest(const std::string &method, const std::string &path, const std::string &data);
 };
-
-#endif // SIMPLE_HTTP_CLIENT_H

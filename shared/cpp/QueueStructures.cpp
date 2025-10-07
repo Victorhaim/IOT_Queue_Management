@@ -2,50 +2,36 @@
 #include <cstdlib>
 #include <ctime>
 
-// QueueSensorData implementation
+// QueueSensorData implementation (vector-based)
 bool QueueSensorData::addSensor(const char* name, float value, int64_t timestamp) {
-    if (sensorCount >= MAX_SENSORS || !name) {
-        return false;
-    }
-    
-    // Check if sensor already exists
-    for (int i = 0; i < sensorCount; i++) {
-        if (strcmp(sensors[i].name, name) == 0) {
-            sensors[i].value = value;
-            sensors[i].timestamp = timestamp;
+    if (!name) return false;
+    // Update existing
+    for (auto &s : sensors) {
+        if (strcmp(s.name, name) == 0) {
+            s.value = value;
+            s.timestamp = timestamp;
             return true;
         }
     }
-    
-    // Add new sensor
-    sensors[sensorCount].setName(name);
-    sensors[sensorCount].value = value;
-    sensors[sensorCount].timestamp = timestamp;
-    sensorCount++;
+    // Enforce capacity
+    if (sensors.size() >= static_cast<size_t>(MAX_SENSORS)) return false;
+    Sensor s; s.setName(name); s.value = value; s.timestamp = timestamp; sensors.push_back(s);
     return true;
 }
 
 float QueueSensorData::getSensorValue(const char* name) const {
     if (!name) return 0.0f;
-    
-    for (int i = 0; i < sensorCount; i++) {
-        if (strcmp(sensors[i].name, name) == 0) {
-            return sensors[i].value;
-        }
+    for (const auto &s : sensors) {
+        if (strcmp(s.name, name) == 0) return s.value;
     }
     return 0.0f;
 }
 
 bool QueueSensorData::removeSensor(const char* name) {
     if (!name) return false;
-    
-    for (int i = 0; i < sensorCount; i++) {
-        if (strcmp(sensors[i].name, name) == 0) {
-            // Shift remaining sensors down
-            for (int j = i; j < sensorCount - 1; j++) {
-                sensors[j] = sensors[j + 1];
-            }
-            sensorCount--;
+    for (auto it = sensors.begin(); it != sensors.end(); ++it) {
+        if (strcmp(it->name, name) == 0) {
+            sensors.erase(it); // vector maintains contiguity
             return true;
         }
     }
@@ -53,7 +39,7 @@ bool QueueSensorData::removeSensor(const char* name) {
 }
 
 void QueueSensorData::clear() {
-    sensorCount = 0;
+    sensors.clear();
 }
 
 // QueueData implementation
@@ -77,14 +63,16 @@ void QueueData::updateTimestamp() {
 }
 
 bool QueueData::setLineCount(int lineNumber, int count) {
-    if (lineNumber < 1 || lineNumber > numberOfLines || lineNumber > MAX_LINES) {
-        return false;
+    if (lineNumber < 1 || lineNumber > numberOfLines || lineNumber > MAX_LINES) return false;
+    int index = lineNumber - 1;
+    if (static_cast<int>(lines.size()) < numberOfLines) {
+        // Ensure vector populated up to numberOfLines if not already
+        while (static_cast<int>(lines.size()) < numberOfLines) {
+            lines.push_back(QueueLineData(static_cast<int>(lines.size()) + 1, 0));
+        }
     }
-    
-    int index = lineNumber - 1; // Convert to 0-based
     lines[index].lineNumber = lineNumber;
     lines[index].peopleCount = (count < 0) ? 0 : count;
-    
     updateTotalPeople();
     calculateRecommendedLine();
     updateTimestamp();
@@ -92,46 +80,30 @@ bool QueueData::setLineCount(int lineNumber, int count) {
 }
 
 int QueueData::getLineCount(int lineNumber) const {
-    if (lineNumber < 1 || lineNumber > numberOfLines || lineNumber > MAX_LINES) {
-        return -1;
-    }
-    
-    return lines[lineNumber - 1].peopleCount;
+    if (lineNumber < 1 || lineNumber > numberOfLines || lineNumber > MAX_LINES) return -1;
+    int index = lineNumber - 1;
+    if (index >= static_cast<int>(lines.size())) return -1;
+    return lines[index].peopleCount;
 }
 
 void QueueData::calculateRecommendedLine() {
-    if (numberOfLines == 0) {
-        recommendedLine = -1;
-        return;
-    }
-    
+    if (numberOfLines == 0 || lines.empty()) { recommendedLine = -1; return; }
+    // Ensure lines vector has at least numberOfLines elements
+    if (static_cast<int>(lines.size()) < numberOfLines) return; // can't calculate consistently yet
     int minPeople = lines[0].peopleCount;
     int bestLine = 1;
-    
-    // Reset all recommended flags
-    for (int i = 0; i < numberOfLines; i++) {
-        lines[i].isRecommended = false;
+    for (int i = 0; i < numberOfLines; ++i) lines[i].isRecommended = false;
+    for (int i = 1; i < numberOfLines; ++i) {
+        if (lines[i].peopleCount < minPeople) { minPeople = lines[i].peopleCount; bestLine = i + 1; }
     }
-    
-    // Find line with fewest people (ties go to lowest line number)
-    for (int i = 1; i < numberOfLines; i++) {
-        if (lines[i].peopleCount < minPeople) {
-            minPeople = lines[i].peopleCount;
-            bestLine = i + 1; // Convert back to 1-based
-        }
-    }
-    
     recommendedLine = bestLine;
-    if (bestLine > 0 && bestLine <= numberOfLines) {
-        lines[bestLine - 1].isRecommended = true;
-    }
+    if (bestLine >= 1 && bestLine <= numberOfLines) lines[bestLine - 1].isRecommended = true;
 }
 
 void QueueData::updateTotalPeople() {
     totalPeople = 0;
-    for (int i = 0; i < numberOfLines; i++) {
-        totalPeople += lines[i].peopleCount;
-    }
+    int limit = std::min(numberOfLines, static_cast<int>(lines.size()));
+    for (int i = 0; i < limit; i++) totalPeople += lines[i].peopleCount;
 }
 
 bool QueueData::isValid() const {
@@ -221,11 +193,13 @@ extern "C" {
     }
 
     int queue_data_get_sensor_count(QueueData* qd) {
-        return qd ? qd->sensorData.sensorCount : 0;
+        return qd ? static_cast<int>(qd->sensorData.sensors.size()) : 0;
     }
 
     const QueueLineData* queue_data_get_lines_array(QueueData* qd) {
-        return qd ? qd->lines : nullptr;
+        if (!qd) return nullptr;
+        if (qd->lines.empty()) return nullptr;
+        return qd->lines.data();
     }
 
     void queue_data_set_lines_from_array(QueueData* qd, const int* lineCounts, int arraySize) {

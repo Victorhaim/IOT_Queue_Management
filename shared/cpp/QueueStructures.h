@@ -1,8 +1,8 @@
-#ifndef QUEUE_STRUCTURES_H
-#define QUEUE_STRUCTURES_H
+#pragma once
 
 #include <cstring>
 #include <cstdint>
+#include <vector>
 
 /// C++ structures for queue data that can be shared between ESP32 and Flutter
 /// Designed to be FFI-compatible and memory-efficient
@@ -21,27 +21,23 @@ struct QueueLineData {
 struct QueueSensorData {
     static const int MAX_SENSOR_NAME_LENGTH = 32;
     static const int MAX_SENSORS = 16;
-    
+
     struct Sensor {
         char name[MAX_SENSOR_NAME_LENGTH];
         float value;
         int64_t timestamp; // Unix timestamp in milliseconds
-        
-        Sensor() : value(0.0f), timestamp(0) {
-            name[0] = '\0';
-        }
-        
+
+        Sensor() : value(0.0f), timestamp(0) { name[0] = '\0'; }
         void setName(const char* sensorName) {
             strncpy(name, sensorName, MAX_SENSOR_NAME_LENGTH - 1);
             name[MAX_SENSOR_NAME_LENGTH - 1] = '\0';
         }
     };
-    
-    Sensor sensors[MAX_SENSORS];
-    int sensorCount;
-    
-    QueueSensorData() : sensorCount(0) {}
-    
+
+    std::vector<Sensor> sensors; // capacity reserved to MAX_SENSORS; size() is active count
+
+    QueueSensorData() : sensors() { sensors.reserve(MAX_SENSORS); }
+
     bool addSensor(const char* name, float value, int64_t timestamp = 0);
     float getSensorValue(const char* name) const;
     bool removeSensor(const char* name);
@@ -60,13 +56,14 @@ struct QueueData {
     int recommendedLine;
     int64_t lastUpdated; // Unix timestamp in milliseconds
     
-    QueueLineData lines[MAX_LINES];
+    std::vector<QueueLineData> lines; // reserve MAX_LINES; size() == numberOfLines
     QueueSensorData sensorData;
     
-    QueueData() : totalPeople(0), maxCapacity(0), numberOfLines(0), 
-                  recommendedLine(-1), lastUpdated(0) {
+    QueueData() : totalPeople(0), maxCapacity(0), numberOfLines(0),
+                  recommendedLine(-1), lastUpdated(0), lines() {
         id[0] = '\0';
         name[0] = '\0';
+        lines.reserve(MAX_LINES);
     }
     
     void setId(const char* queueId);
@@ -113,5 +110,3 @@ extern "C" {
     const QueueLineData* queue_data_get_lines_array(QueueData* qd);
     void queue_data_set_lines_from_array(QueueData* qd, const int* lineCounts, int arraySize);
 }
-
-#endif // QUEUE_STRUCTURES_H

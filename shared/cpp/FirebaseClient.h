@@ -1,5 +1,4 @@
-#ifndef FIREBASE_CLIENT_H
-#define FIREBASE_CLIENT_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -24,5 +23,3 @@ public:
 
     void cleanup();
 };
-
-#endif // FIREBASE_CLIENT_H

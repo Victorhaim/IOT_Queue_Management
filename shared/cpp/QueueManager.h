@@ -1,7 +1,7 @@
-#ifndef QUEUE_MANAGER_H
-#define QUEUE_MANAGER_H
+#pragma once
 
 #include <algorithm>
+#include <vector>
 
 /// Shared QueueManager implementation for both ESP32 and Flutter (via FFI)
 /// Manages queue lines using a simple array-based approach suitable for microcontrollers
@@ -28,17 +28,16 @@ public:
     void reset();
 
     // FFI-friendly functions (C-style interface for Flutter)
-    int* getLineCountsArray() const;  // Returns array of line counts
+    const int* getLineCountsArray() const;  // Returns pointer to internal counts (valid while object lives)
     void updateFromArray(const int* lineCounts, int arraySize);
 
 private:
-    static const int MAX_LINES = 10; // Reasonable limit for ESP32 and most use cases
+    static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
 
     int m_maxSize;
     int m_numberOfLines;
     int m_totalPeople;
-    int m_lines[MAX_LINES]; // Array to store people count for each line (1-based indexing)
-    mutable int m_lineCountsBuffer[MAX_LINES]; // Buffer for FFI returns
+    std::vector<int> m_lines; // 0-based indexing internally
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
@@ -72,5 +71,3 @@ extern "C" {
     const int* queue_manager_get_line_counts_array(QueueManager* qm);
     void queue_manager_update_from_array(QueueManager* qm, const int* lineCounts, int arraySize);
 }
-
-#endif // QUEUE_MANAGER_H
