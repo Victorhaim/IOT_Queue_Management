@@ -91,7 +91,6 @@ class AppStrings {
   static const String string_placeInLineNumber = '';
   static const String string_waitTimeText = 'wait time: ';
   static const String string_waitTimeNumber = '';
-  static const String string_waitTimeSuffix = ' min';
   static const String string_startAnimationText = 'Start Animation';
   static const String string_animatingText = 'Animating...';
   static const String string_placeTooltip =

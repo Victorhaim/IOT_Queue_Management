@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
 import '../graphics/animated_waves.dart';
 import '../graphics/hover_box.dart';
+import '../parameters/time_conversion_util.dart';
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -239,6 +240,7 @@ class _QueueScreenState extends State<QueueScreen>
       stream: queueRef.onValue,
       builder: (context, snapshot) {
         String waitDisplay = '...';
+        String waitSuffix = '';
         String dynamicTooltip = AppStrings.string_waitTimeTooltip;
 
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
@@ -246,8 +248,12 @@ class _QueueScreenState extends State<QueueScreen>
           final averageWaitTime = raw['averageWaitTime'];
 
           if (averageWaitTime != null) {
-            double waitTimeMinutes = (averageWaitTime as num).toDouble();
-            waitDisplay = waitTimeMinutes.round().toString();
+            double waitTimeSeconds = (averageWaitTime as num).toDouble();
+            final formattedTime = TimeConversionUtil.getFormattedTime(
+              waitTimeSeconds,
+            );
+            waitDisplay = formattedTime['value']!;
+            waitSuffix = formattedTime['suffix']!;
           }
         }
 
@@ -255,7 +261,7 @@ class _QueueScreenState extends State<QueueScreen>
           icon: AppAssets.string_clockIcon,
           text: AppStrings.string_waitTimeText,
           number: waitDisplay,
-          suffix: AppStrings.string_waitTimeSuffix,
+          suffix: waitSuffix,
           controller: _waitHoverController,
           isHovered: _isWaitHovered,
           explanation: dynamicTooltip,
