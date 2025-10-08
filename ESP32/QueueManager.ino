@@ -323,16 +323,19 @@ void sendDataToFirebase()
     int arrayIndex = lineNumber - 1;
     int peopleCount = queueManager->getLineCount(lineNumber);
 
-    // Calculate throughput factor based on sensor data and historical patterns
-    // For ESP32, we'll use a simplified throughput calculation
-    // This could be enhanced with actual service time measurements
+    // Calculate throughput factor using shared measurement logic
+    // ESP32 should track actual service completion events, not use heuristics
+    // For now, use a more intelligent default based on queue state
     double throughputFactor = 0.5; // Default: 0.5 people per second service rate
 
-    // If there are people in line, adjust throughput based on occupancy changes
+    // TODO: Implement proper ThroughputTracker integration for ESP32
+    // This should track actual people leaving the queue over time
+    // Current implementation is a placeholder until sensor-based service detection is added
     if (peopleCount > 0)
     {
-      // Simple heuristic: higher occupancy might indicate slower service
-      throughputFactor = max(0.1, 0.8 - (peopleCount * 0.05));
+      // More realistic heuristic: assume consistent service rate regardless of queue length
+      // Real implementation should track when people actually leave the queue
+      throughputFactor = 0.6; // Slightly faster when queue is active
     }
 
     double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(

@@ -41,6 +41,7 @@ class _QueueScreenState extends State<QueueScreen>
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
+  String? _previousLineNumber;
 
   @override
   void initState() {
@@ -81,18 +82,28 @@ class _QueueScreenState extends State<QueueScreen>
     super.dispose();
   }
 
-  void _toggleAnimation() {
-    setState(() {
-      if (!_isAnimating) {
-        _isAnimating = true;
-        _waveController.reset();
-        _waveController.forward().then((_) {
+  void _triggerAnimationOnChange(String newValue) {
+    if (_previousLineNumber != null &&
+        _previousLineNumber != newValue &&
+        !_isAnimating) {
+      // Defer setState to after the build phase completes
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
           setState(() {
-            _isAnimating = false;
+            _isAnimating = true;
+            _waveController.reset();
+            _waveController.forward().then((_) {
+              if (mounted) {
+                setState(() {
+                  _isAnimating = false;
+                });
+              }
+            });
           });
-        });
-      }
-    });
+        }
+      });
+    }
+    _previousLineNumber = newValue;
   }
 
   @override
@@ -115,8 +126,6 @@ class _QueueScreenState extends State<QueueScreen>
                 _buildAnimatedNumber(),
                 SizedBox(height: AppParameters.size_numberToBoxesSpacing),
                 _buildHoverBoxes(),
-                SizedBox(height: AppParameters.size_boxesToButtonSpacing),
-                _buildAnimationButton(),
                 SizedBox(height: 50), // Bottom padding
               ],
             ),
@@ -148,6 +157,7 @@ class _QueueScreenState extends State<QueueScreen>
           final val = snapshot.data!.snapshot.value;
           if (val != null) {
             display = val.toString();
+            _triggerAnimationOnChange(display);
           }
         }
         return SizedBox(
@@ -197,18 +207,18 @@ class _QueueScreenState extends State<QueueScreen>
       builder: (context, snapshot) {
         String placeDisplay = '...';
         String dynamicTooltip = AppStrings.string_placeTooltip;
-        
+
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
           final raw = snapshot.data!.snapshot.value as Map;
           final recommendedLine = raw['recommendedLine'];
           final currentOccupancy = raw['currentOccupancy'];
-          
+
           if (currentOccupancy != null && recommendedLine != null) {
             int peopleCount = (currentOccupancy as num).toInt();
             placeDisplay = peopleCount.toString();
           }
         }
-        
+
         return HoverBox(
           icon: AppAssets.string_queueIcon,
           text: AppStrings.string_placeInLineText,
@@ -230,17 +240,17 @@ class _QueueScreenState extends State<QueueScreen>
       builder: (context, snapshot) {
         String waitDisplay = '...';
         String dynamicTooltip = AppStrings.string_waitTimeTooltip;
-        
+
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
           final raw = snapshot.data!.snapshot.value as Map;
           final averageWaitTime = raw['averageWaitTime'];
-          
+
           if (averageWaitTime != null) {
             double waitTimeMinutes = (averageWaitTime as num).toDouble();
             waitDisplay = waitTimeMinutes.round().toString();
           }
         }
-        
+
         return HoverBox(
           icon: AppAssets.string_clockIcon,
           text: AppStrings.string_waitTimeText,
@@ -254,26 +264,6 @@ class _QueueScreenState extends State<QueueScreen>
           clockController: _clockController,
         );
       },
-    );
-  }
-
-  Widget _buildAnimationButton() {
-    return ElevatedButton(
-      onPressed: _isAnimating ? null : _toggleAnimation,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppParameters.color_primaryBlue,
-        foregroundColor: AppParameters.color_backgroundColor,
-        padding: EdgeInsets.symmetric(
-          horizontal: AppParameters.size_buttonHorizontalPadding,
-          vertical: AppParameters.size_buttonVerticalPadding,
-        ),
-      ),
-      child: Text(
-        _isAnimating
-            ? AppStrings.string_animatingText
-            : AppStrings.string_startAnimationText,
-        style: TextStyle(fontSize: AppParameters.size_buttonFontSize),
-      ),
     );
   }
 
