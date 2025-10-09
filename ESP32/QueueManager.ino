@@ -1,18 +1,18 @@
 /*
  * ESP32 Queue Management System
- * 
+ *
  * This firmware runs on ESP32 boards to manage individual queue monitoring.
  * Each ESP32:
  * - Reads ultrasonic sensors to detect people in each line
  * - Calculates queue statistics using QueueManager
  * - Sends computed results to Firebase Realtime Database
  * - Flutter app reads this data and displays the best queue
- * 
+ *
  * Hardware Requirements:
  * - ESP32 development board
  * - HC-SR04 ultrasonic sensors (one per queue line)
  * - Stable WiFi connection
- * 
+ *
  * Libraries Required:
  * - Firebase ESP Client by Mobizt
  * - WiFi (built-in)
@@ -24,7 +24,7 @@
 #include "addons/RTDBHelper.h"
 #include "config.h"
 #include "../shared/cpp/QueueManager.h"
-#include "../shared/cpp/QueueStructures.h"
+#include "../shared/cpp/FirebaseStructureBuilder.h"
 
 // Firebase objects
 FirebaseData fbdo;
@@ -32,7 +32,7 @@ FirebaseAuth auth;
 FirebaseConfig config;
 
 // Queue manager instance
-QueueManager* queueManager;
+QueueManager *queueManager;
 
 // Timing variables
 unsigned long lastSensorUpdate = 0;
@@ -49,276 +49,368 @@ int measureDistance(int trigPin, int echoPin);
 int estimatePeopleCount(int distance, int lineNumber);
 void updateQueueManager();
 void sendDataToFirebase();
-int calculateWaitTime(int lineNumber);
-void debugPrint(const char* message);
+void debugPrint(const char *message);
 
 // ===== Setup Function =====
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   debugPrint("\n\n=== ESP32 Queue Management System ===");
-  
+
   // Initialize ultrasonic sensor pins
-  for (int i = 0; i < NUMBER_OF_LINES; i++) {
+  for (int i = 0; i < NUMBER_OF_LINES; i++)
+  {
     pinMode(ULTRASONIC_TRIGGER_PINS[i], OUTPUT);
     pinMode(ULTRASONIC_ECHO_PINS[i], INPUT);
   }
   debugPrint("Ultrasonic sensors initialized");
-  
+
   // Initialize queue manager
   queueManager = new QueueManager(MAX_QUEUE_SIZE, NUMBER_OF_LINES);
   debugPrint("QueueManager initialized");
-  
+
   // Connect to WiFi
   setupWiFi();
-  
+
   // Setup Firebase
   setupFirebase();
-  
+
+  // Clear existing Firebase data for fresh start
+  debugPrint("Clearing existing Firebase data...");
+  bool clearSuccess = true;
+
+  // Clear individual line data
+  for (int i = 1; i <= NUMBER_OF_LINES; i++)
+  {
+    String queuePath = FirebaseStructureBuilder::getLineDataPath(i).c_str();
+    if (!Firebase.RTDB.deleteNode(&fbdo, queuePath.c_str()))
+    {
+      clearSuccess = false;
+    }
+  }
+
+  // Clear aggregated data
+  String aggPath = FirebaseStructureBuilder::getAggregatedDataPath().c_str();
+  if (!Firebase.RTDB.deleteNode(&fbdo, aggPath.c_str()))
+  {
+    clearSuccess = false;
+  }
+
+  // Also clear entire queues node for fresh start
+  if (!Firebase.RTDB.deleteNode(&fbdo, "queues"))
+  {
+    clearSuccess = false;
+  }
+
+  if (clearSuccess)
+  {
+    debugPrint("✓ Firebase data cleared successfully");
+  }
+  else
+  {
+    debugPrint("⚠ Warning: Failed to clear some Firebase data");
+  }
+
   debugPrint("Setup complete! Starting main loop...\n");
 }
 
 // ===== Main Loop =====
-void loop() {
+void loop()
+{
   unsigned long currentMillis = millis();
-  
+
   // Read sensors at defined interval
-  if (currentMillis - lastSensorUpdate >= SENSOR_UPDATE_INTERVAL) {
+  if (currentMillis - lastSensorUpdate >= SENSOR_UPDATE_INTERVAL)
+  {
     lastSensorUpdate = currentMillis;
     readSensors();
   }
-  
+
   // Update Firebase at defined interval
-  if (currentMillis - lastFirebaseUpdate >= FIREBASE_UPDATE_INTERVAL) {
+  if (currentMillis - lastFirebaseUpdate >= FIREBASE_UPDATE_INTERVAL)
+  {
     lastFirebaseUpdate = currentMillis;
     sendDataToFirebase();
   }
-  
+
   // Small delay to prevent watchdog issues
   delay(10);
 }
 
 // ===== WiFi Setup =====
-void setupWiFi() {
+void setupWiFi()
+{
   debugPrint("Connecting to WiFi...");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  
+
   int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 50) {
+  while (WiFi.status() != WL_CONNECTED && attempts < 50)
+  {
     delay(500);
     Serial.print(".");
     attempts++;
   }
-  
-  if (WiFi.status() == WL_CONNECTED) {
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
     Serial.println("\nWiFi Connected!");
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
-  } else {
+  }
+  else
+  {
     debugPrint("\nWiFi connection failed! Please check credentials.");
   }
 }
 
 // ===== Firebase Setup =====
-void setupFirebase() {
+void setupFirebase()
+{
   debugPrint("Setting up Firebase...");
-  
+
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
-  
+
   // Anonymous authentication
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
-  
+
   // Assign the callback function for token generation task
   config.token_status_callback = tokenStatusCallback;
-  
+
   // Initialize Firebase
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
-  
+
   // Wait for Firebase to be ready
   int attempts = 0;
-  while (!Firebase.ready() && attempts < 20) {
+  while (!Firebase.ready() && attempts < 20)
+  {
     delay(500);
     Serial.print(".");
     attempts++;
   }
-  
-  if (Firebase.ready()) {
+
+  if (Firebase.ready())
+  {
     debugPrint("\nFirebase connected successfully!");
-  } else {
+  }
+  else
+  {
     debugPrint("\nFirebase connection failed!");
   }
 }
 
 // ===== Read Sensors =====
-void readSensors() {
-  #if DEBUG_MODE
-    Serial.println("\n--- Reading Sensors ---");
-  #endif
-  
+void readSensors()
+{
+#if DEBUG_MODE
+  Serial.println("\n--- Reading Sensors ---");
+#endif
+
   bool hasChanges = false;
-  
-  for (int lineNumber = 1; lineNumber <= NUMBER_OF_LINES; lineNumber++) {
+
+  for (int lineNumber = 1; lineNumber <= NUMBER_OF_LINES; lineNumber++)
+  {
     int arrayIndex = lineNumber - 1;
-    
+
     // Measure distance using ultrasonic sensor
     int distance = measureDistance(
-      ULTRASONIC_TRIGGER_PINS[arrayIndex],
-      ULTRASONIC_ECHO_PINS[arrayIndex]
-    );
-    
+        ULTRASONIC_TRIGGER_PINS[arrayIndex],
+        ULTRASONIC_ECHO_PINS[arrayIndex]);
+
     // Estimate number of people based on distance
     int peopleCount = estimatePeopleCount(distance, lineNumber);
-    
+
     // Check if count changed
-    if (peopleCount != previousLineCounts[arrayIndex]) {
+    if (peopleCount != previousLineCounts[arrayIndex])
+    {
       hasChanges = true;
-      
-      #if DEBUG_MODE
-        Serial.printf("Line %d: %d people (was %d) - Distance: %d cm\n",
-          lineNumber, peopleCount, previousLineCounts[arrayIndex], distance);
-      #endif
-      
+
+#if DEBUG_MODE
+      Serial.printf("Line %d: %d people (was %d) - Distance: %d cm\n",
+                    lineNumber, peopleCount, previousLineCounts[arrayIndex], distance);
+#endif
+
       // Update queue manager
       queueManager->setLineCount(lineNumber, peopleCount);
       previousLineCounts[arrayIndex] = peopleCount;
     }
   }
-  
-  if (!hasChanges) {
-    #if DEBUG_MODE
-      Serial.println("No changes detected");
-    #endif
+
+  if (!hasChanges)
+  {
+#if DEBUG_MODE
+    Serial.println("No changes detected");
+#endif
   }
 }
 
 // ===== Measure Distance with Ultrasonic Sensor =====
-int measureDistance(int trigPin, int echoPin) {
+int measureDistance(int trigPin, int echoPin)
+{
   // Clear trigger pin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-  
+
   // Send 10 microsecond pulse
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
-  
+
   // Read echo pin
   long duration = pulseIn(echoPin, HIGH, 30000); // 30ms timeout
-  
+
   // Calculate distance in cm (duration/2 because sound travels there and back)
   int distance = duration * 0.034 / 2;
-  
+
   // Return -1 if no echo received (timeout)
-  if (duration == 0) {
+  if (duration == 0)
+  {
     return -1;
   }
-  
+
   return distance;
 }
 
 // ===== Estimate People Count from Distance =====
-int estimatePeopleCount(int distance, int lineNumber) {
+int estimatePeopleCount(int distance, int lineNumber)
+{
   // If sensor error or out of range, return current count
-  if (distance < 0 || distance < MIN_DISTANCE_CM || distance > MAX_DISTANCE_CM) {
+  if (distance < 0 || distance < MIN_DISTANCE_CM || distance > MAX_DISTANCE_CM)
+  {
     return queueManager->getLineCount(lineNumber);
   }
-  
+
   // Simple estimation: each person occupies about 50cm in the queue
   // This is a basic algorithm - you can make it more sophisticated
   int estimatedPeople = 0;
-  
-  if (distance <= PERSON_DISTANCE_CM) {
+
+  if (distance <= PERSON_DISTANCE_CM)
+  {
     // Someone is very close - at least 1 person
     estimatedPeople = 1;
-    
+
     // For every additional 50cm, add another person
-    if (distance > PERSON_DISTANCE_CM) {
+    if (distance > PERSON_DISTANCE_CM)
+    {
       estimatedPeople += (distance - PERSON_DISTANCE_CM) / 50;
     }
   }
-  
+
   return estimatedPeople;
 }
 
-// ===== Calculate Wait Time for a Line =====
-int calculateWaitTime(int lineNumber) {
-  int peopleCount = queueManager->getLineCount(lineNumber);
-  // Wait time = number of people * average service time (in seconds)
-  return (peopleCount * AVERAGE_SERVICE_TIME_MS) / 1000;
-}
-
 // ===== Send Data to Firebase =====
-void sendDataToFirebase() {
-  if (!Firebase.ready()) {
+void sendDataToFirebase()
+{
+  if (!Firebase.ready())
+  {
     debugPrint("Firebase not ready, skipping update");
     return;
   }
-  
-  #if DEBUG_MODE
-    Serial.println("\n=== Updating Firebase ===");
-  #endif
-  
-  // Prepare path for this queue
-  String basePath = String("/queues/") + QUEUE_ID;
-  
-  // Create JSON object with all queue data
-  FirebaseJson json;
-  
-  // Basic info
-  json.set("name", QUEUE_NAME);
-  json.set("length", (int)queueManager->size());
-  json.set("recommendedLine", queueManager->getNextLineNumber());
-  
-  // Lines data with wait times
-  FirebaseJson linesJson;
-  for (int lineNumber = 1; lineNumber <= NUMBER_OF_LINES; lineNumber++) {
-    int peopleCount = queueManager->getLineCount(lineNumber);
-    int waitTime = calculateWaitTime(lineNumber);
-    
-    String lineKey = String(lineNumber);
-    linesJson.set(lineKey + "/people", peopleCount);
-    linesJson.set(lineKey + "/waitTime", waitTime);
-  }
-  json.set("lines", linesJson);
-  
-  // Sensor data (raw distances)
-  FirebaseJson sensorsJson;
-  for (int lineNumber = 1; lineNumber <= NUMBER_OF_LINES; lineNumber++) {
+
+#if DEBUG_MODE
+  Serial.println("\n=== Updating Firebase ===");
+#endif
+
+  // Collect data for all lines and calculate metrics
+  FirebaseStructureBuilder::LineData allLines[NUMBER_OF_LINES];
+  int totalPeople = 0;
+
+  for (int lineNumber = 1; lineNumber <= NUMBER_OF_LINES; lineNumber++)
+  {
     int arrayIndex = lineNumber - 1;
-    int distance = measureDistance(
-      ULTRASONIC_TRIGGER_PINS[arrayIndex],
-      ULTRASONIC_ECHO_PINS[arrayIndex]
-    );
-    
-    String sensorKey = "line" + String(lineNumber);
-    sensorsJson.set(sensorKey + "/distance", distance);
-    sensorsJson.set(sensorKey + "/people", queueManager->getLineCount(lineNumber));
+    int peopleCount = queueManager->getLineCount(lineNumber);
+
+    // Calculate throughput factor using shared measurement logic
+    // ESP32 should track actual service completion events, not use heuristics
+    // For now, use a more intelligent default based on queue state
+    double throughputFactor = 0.5; // Default: 0.5 people per second service rate
+
+    // TODO: Implement proper ThroughputTracker integration for ESP32
+    // This should track actual people leaving the queue over time
+    // Current implementation is a placeholder until sensor-based service detection is added
+    if (peopleCount > 0)
+    {
+      // More realistic heuristic: assume consistent service rate regardless of queue length
+      // Real implementation should track when people actually leave the queue
+      throughputFactor = 0.6; // Slightly faster when queue is active
+    }
+
+    double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
+        peopleCount, throughputFactor);
+
+    totalPeople += peopleCount;
+
+    // Create line data object
+    allLines[arrayIndex] = FirebaseStructureBuilder::LineData(
+        peopleCount, throughputFactor, averageWaitTime, lineNumber);
+
+    // Generate JSON and update Firebase for this line
+    std::string jsonStr = FirebaseStructureBuilder::generateLineDataJson(allLines[arrayIndex]);
+    std::string pathStr = FirebaseStructureBuilder::getLineDataPath(lineNumber);
+
+    // Convert std::string to Arduino String for Firebase ESP Client
+    String jsonArduino = jsonStr.c_str();
+    String pathArduino = pathStr.c_str();
+
+    // Parse JSON string into FirebaseJson object
+    FirebaseJson json;
+    json.setJsonData(jsonArduino);
+
+    if (Firebase.RTDB.updateNode(&fbdo, pathArduino.c_str(), &json))
+    {
+#if DEBUG_MODE
+      Serial.printf("✓ Line %d updated - People: %d, Wait: %.1fs\n",
+                    lineNumber, peopleCount, averageWaitTime);
+#endif
+    }
+    else
+    {
+#if DEBUG_MODE
+      Serial.printf("✗ Failed to update line %d: %s\n",
+                    lineNumber, fbdo.errorReason().c_str());
+#endif
+    }
   }
-  json.set("sensors", sensorsJson);
-  
-  // Timestamp (server-side)
-  json.set("updatedAt/.sv", "timestamp");
-  
-  // Send to Firebase
-  if (Firebase.RTDB.updateNode(&fbdo, basePath.c_str(), &json)) {
-    #if DEBUG_MODE
-      Serial.println("✓ Firebase updated successfully");
-      Serial.printf("  Total people: %d\n", queueManager->size());
-      Serial.printf("  Recommended line: %d\n", queueManager->getNextLineNumber());
-    #endif
-  } else {
-    #if DEBUG_MODE
-      Serial.print("✗ Firebase update failed: ");
-      Serial.println(fbdo.errorReason().c_str());
-    #endif
+
+  // Calculate recommended line and update aggregated data using shared function
+  FirebaseStructureBuilder::AggregatedData aggData =
+      FirebaseStructureBuilder::createAggregatedData(allLines, totalPeople, NUMBER_OF_LINES);
+
+  // Generate aggregated JSON and update Firebase
+  std::string aggJsonStr = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
+  std::string aggPathStr = FirebaseStructureBuilder::getAggregatedDataPath();
+
+  // Convert to Arduino String
+  String aggJsonArduino = aggJsonStr.c_str();
+  String aggPathArduino = aggPathStr.c_str();
+
+  // Parse JSON string into FirebaseJson object
+  FirebaseJson aggJson;
+  aggJson.setJsonData(aggJsonArduino);
+
+  if (Firebase.RTDB.updateNode(&fbdo, aggPathArduino.c_str(), &aggJson))
+  {
+#if DEBUG_MODE
+    Serial.printf("✓ Aggregated data updated - Total: %d, Recommended: %d\n",
+                  totalPeople, recommendedLine);
+#endif
+  }
+  else
+  {
+#if DEBUG_MODE
+    Serial.printf("✗ Failed to update aggregated data: %s\n",
+                  fbdo.errorReason().c_str());
+#endif
   }
 }
 
 // ===== Debug Print Helper =====
-void debugPrint(const char* message) {
-  #if DEBUG_MODE
-    Serial.println(message);
-  #endif
+void debugPrint(const char *message)
+{
+#if DEBUG_MODE
+  Serial.println(message);
+#endif
 }

@@ -8,6 +8,8 @@
 #include <iomanip>
 #include "QueueManager.h"
 #include "FirebaseClient.h"
+#include "FirebaseStructureBuilder.h"
+#include "ThroughputTracker.h"
 
 #include <fstream>
 #include <sstream>
@@ -20,7 +22,7 @@ private:
     const int maxQueueSize = 50;
     const int numberOfLines = 2;
     const double arrivalRate = 0.3;                       // Probability of arrival per second
-    const double serviceRate = 0.2;                       // Probability of service completion per second
+    const std::vector<double> serviceRates = {0.15, 0.35}; // Different service rates per line (line 1: slow, line 2: fast)
     const std::chrono::milliseconds updateInterval{1000}; // 1 second updates
 
     std::unique_ptr<QueueManager> queueManager;
@@ -33,11 +35,8 @@ private:
     std::atomic<bool> running{false};
     std::thread simulationThread;
 
-    // New metrics tracking
-    std::vector<double> throughputFactors;                                // Throughput factor for each line
-    std::vector<std::chrono::steady_clock::time_point> lastServiceTimes;  // Last service time for each line
-    std::vector<int> serviceCompletionCounts;                             // Count of services completed per line
-    std::vector<std::chrono::steady_clock::time_point> serviceStartTimes; // Track when service sessions started
+    // Throughput tracking using shared code
+    std::vector<ThroughputTracker> throughputTrackers; // One tracker per line
 
 public:
     QueueSimulator() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines)),
@@ -48,26 +47,20 @@ public:
                        arrivalDist(0.0, 1.0),
                        serviceDist(0.0, 1.0),
                        lineDist(1, numberOfLines),
-                       throughputFactors(numberOfLines, 1.0), // Initialize with default value 1.0
-                       lastServiceTimes(numberOfLines),
-                       serviceCompletionCounts(numberOfLines, 0),
-                       serviceStartTimes(numberOfLines)
+                       throughputTrackers(numberOfLines) // Initialize throughput trackers
     {
         std::cout << "Queue Simulator initialized with " << numberOfLines
                   << " lines, max size: " << maxQueueSize << std::endl;
-
-        // Initialize random throughput factors for each line (between 0.5 and 2.0)
-        std::uniform_real_distribution<double> throughputDist(0.5, 2.0);
-        auto now = std::chrono::steady_clock::now();
-
-        for (int i = 0; i < numberOfLines; ++i)
+        
+        // Show service rate differences
+        for (int i = 0; i < numberOfLines; i++)
         {
-            throughputFactors[i] = throughputDist(rng);
-            lastServiceTimes[i] = now;
-            serviceStartTimes[i] = now;
-            std::cout << "Line " << (i + 1) << " initial throughput factor: "
-                      << std::fixed << std::setprecision(2) << throughputFactors[i] << " people/second" << std::endl;
+            std::cout << "Line " << (i + 1) << " service rate: " << std::fixed << std::setprecision(2) 
+                      << serviceRates[i] << " (expected throughput: ~" 
+                      << serviceRates[i] << " people/sec)" << std::endl;
         }
+
+        std::cout << "Throughput trackers initialized for real-time measurement" << std::endl;
 
         // Initialize Firebase client
         if (!firebaseClient->initialize())
@@ -138,6 +131,16 @@ private:
                 }
             }
 
+            // Clear the currentBest aggregated data
+            if (firebaseClient->deleteData("currentBest"))
+            {
+                std::cout << "✅ Successfully cleared currentBest data" << std::endl;
+            }
+            else
+            {
+                std::cout << "ℹ️  Note: No existing currentBest data found or failed to clear" << std::endl;
+            }
+
             // Optional: Also clear the entire queues node to ensure a fresh start
             if (firebaseClient->deleteData("queues"))
             {
@@ -167,8 +170,12 @@ private:
             {
                 if (!queueManager->isFull())
                 {
+                    int selectedLine = queueManager->getNextLineNumber();
                     queueManager->enqueue();
-                    std::cout << "New arrival! Queue size: " << queueManager->size() << std::endl;
+                    std::cout << "New arrival! Selected line " << selectedLine 
+                              << " (wait time: " << std::fixed << std::setprecision(1) 
+                              << queueManager->getEstimatedWaitTime(selectedLine) << "s)"
+                              << " Total queue size: " << queueManager->size() << std::endl;
                 }
                 else
                 {
@@ -176,41 +183,29 @@ private:
                 }
             }
 
-            // Simulate service completions
+            // Simulate service completions with different rates per line
             for (int line = 1; line <= numberOfLines; ++line)
             {
-                if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < serviceRate)
+                double lineServiceRate = serviceRates[line - 1]; // Get specific rate for this line
+                if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < lineServiceRate)
                 {
                     queueManager->dequeue(line);
 
-                    // Update throughput calculation
-                    auto currentTime = std::chrono::steady_clock::now();
-                    auto timeSinceLastService = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                                    currentTime - lastServiceTimes[line - 1])
-                                                    .count();
+                    // Use shared throughput tracking
+                    throughputTrackers[line - 1].recordServiceCompletion();
 
-                    serviceCompletionCounts[line - 1]++;
-
-                    // Update throughput factor: calculate people served per second
-                    if (timeSinceLastService > 0 && serviceCompletionCounts[line - 1] > 1)
-                    {
-                        auto totalServiceTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                                    currentTime - serviceStartTimes[line - 1])
-                                                    .count();
-
-                        if (totalServiceTime > 0)
-                        {
-                            // Calculate throughput as people per second
-                            throughputFactors[line - 1] = (double)serviceCompletionCounts[line - 1] / (totalServiceTime / 1000.0);
-                        }
-                    }
-
-                    lastServiceTimes[line - 1] = currentTime;
+                    // Update QueueManager with current throughput data
+                    double currentThroughput = throughputTrackers[line - 1].getCurrentThroughput();
+                    queueManager->updateLineThroughput(line, currentThroughput);
 
                     std::cout << "Service completed on line " << line
+                              << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"
                               << ", remaining: " << queueManager->getLineCount(line)
                               << ", throughput: " << std::fixed << std::setprecision(3)
-                              << throughputFactors[line - 1] << " people/sec" << std::endl;
+                              << currentThroughput << " people/sec"
+                              << " (based on " << throughputTrackers[line - 1].getServiceCount() << " services)"
+                              << ", est. wait: " << std::fixed << std::setprecision(1) 
+                              << queueManager->getEstimatedWaitTime(line) << "s" << std::endl;
                 }
             }
 
@@ -226,42 +221,34 @@ private:
     {
         try
         {
-            // Write data for each queue line separately
+            // Collect data for all lines
+            std::vector<FirebaseStructureBuilder::LineData> allLinesData;
             int totalPeople = 0;
-            int recommendedLineLocal = -1;
-            int minPeople = INT32_MAX;
-            auto nowSys = std::chrono::system_clock::now();
-            auto epochMs = std::chrono::duration_cast<std::chrono::milliseconds>(nowSys.time_since_epoch()).count();
+
             for (int line = 1; line <= numberOfLines; ++line)
             {
                 int currentOccupancy = queueManager->getLineCount(line);
-                double throughputFactor = throughputFactors[line - 1];
-                double averageWaitTime = (throughputFactor > 0.0) ? currentOccupancy / throughputFactor : 0.0;
+                double throughputFactor = throughputTrackers[line - 1].getCurrentThroughput();
+                double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
+                    currentOccupancy, throughputFactor);
+
                 totalPeople += currentOccupancy;
-                if (currentOccupancy < minPeople)
-                {
-                    minPeople = currentOccupancy;
-                    recommendedLineLocal = line;
-                }
 
-                // Create JSON data for this specific queue line
-                std::ostringstream json;
-                json << "{\n";
-                json << "    \"currentOccupancy\": " << currentOccupancy << ",\n";
-                json << "    \"throughputFactor\": " << std::fixed << std::setprecision(4) << throughputFactor << ",\n";
-                json << "    \"averageWaitTime\": " << std::fixed << std::setprecision(2) << averageWaitTime << ",\n";
-                json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n"; // human readable
-                json << "    \"lineNumber\": " << line << "\n";
-                json << "}\n";
+                // Create line data object
+                FirebaseStructureBuilder::LineData lineData(
+                    currentOccupancy, throughputFactor, averageWaitTime, line);
+                allLinesData.push_back(lineData);
 
-                // Write to Firebase path for this specific line
-                std::string queuePath = "queues/line" + std::to_string(line);
+                // Generate JSON and write to Firebase for this specific line
+                std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
+                std::string queuePath = FirebaseStructureBuilder::getLineDataPath(line);
 
-                if (firebaseClient->updateData(queuePath, json.str()))
+                if (firebaseClient->updateData(queuePath, json))
                 {
                     std::cout << "✅ Line " << line << " updated - Occupancy: " << currentOccupancy
                               << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
-                              << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s" << std::endl;
+                              << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s"
+                              << " [" << (throughputTrackers[line - 1].hasReliableData() ? "measured" : "default") << "]" << std::endl;
                 }
                 else
                 {
@@ -269,21 +256,21 @@ private:
                 }
             }
 
-            // Also write aggregated queue object expected by Flutter UI
-            // Path: currentBest (queueId = "currentBest")
-            if (numberOfLines > 0)
+            // Calculate recommended line and write aggregated data
+            if (!allLinesData.empty())
             {
-                std::ostringstream agg;
-                agg << "{\n";
-                agg << "  \"totalPeople\": " << totalPeople << ",\n";
-                agg << "  \"numberOfLines\": " << numberOfLines << ",\n";
-                agg << "  \"recommendedLine\": " << (recommendedLineLocal == -1 ? 0 : recommendedLineLocal) << "\n";
-                agg << "}\n";
+                FirebaseStructureBuilder::AggregatedData aggData =
+                    FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
 
-                if (firebaseClient->updateData("currentBest", agg.str()))
+                std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
+                std::string aggPath = FirebaseStructureBuilder::getAggregatedDataPath();
+
+                if (firebaseClient->updateData(aggPath, aggJson))
                 {
                     std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
-                              << " recommendedLine=" << recommendedLineLocal << std::endl;
+                              << " recommendedLine=" << aggData.recommendedLine
+                              << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
+                              << " placeInLine=" << aggData.currentOccupancy << std::endl;
                 }
                 else
                 {
@@ -295,17 +282,6 @@ private:
         {
             std::cerr << "Error writing to Firebase: " << e.what() << std::endl;
         }
-    }
-
-    std::string getCurrentTimestamp()
-    {
-        auto now = std::chrono::system_clock::now();
-        auto time_t = std::chrono::system_clock::to_time_t(now);
-        auto tm = *std::localtime(&time_t);
-
-        std::ostringstream oss;
-        oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-        return oss.str();
     }
 };
 
