@@ -4,3 +4,5 @@ ESP32/SECRETS.h
 shared/cpp/queue_sim
 
 shared/cpp/queue_sim_shortest
+
+shared/cpp/queue_sim.exe

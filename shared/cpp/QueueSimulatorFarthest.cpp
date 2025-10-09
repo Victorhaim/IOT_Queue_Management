@@ -119,38 +119,38 @@ private:
 
         try
         {
-            // Clear all queue lines
+            // Clear all queue lines with "farthest" prefix
             for (int i = 1; i <= numberOfLines; ++i)
             {
-                std::string queuePath = "queues/line" + std::to_string(i);
+                std::string queuePath = "queues_farthest/line" + std::to_string(i);
                 if (firebaseClient->deleteData(queuePath))
                 {
-                    std::cout << "✅ Successfully cleared existing data for line " << i << std::endl;
+                    std::cout << "✅ Successfully cleared existing data for farthest line " << i << std::endl;
                 }
                 else
                 {
-                    std::cout << "ℹ️  Note: No existing data found for line " << i << " or failed to clear" << std::endl;
+                    std::cout << "ℹ️  Note: No existing data found for farthest line " << i << " or failed to clear" << std::endl;
                 }
             }
 
-            // Clear the currentBest aggregated data
-            if (firebaseClient->deleteData("currentBest"))
+            // Clear the currentBest aggregated data for farthest strategy
+            if (firebaseClient->deleteData("currentBest_farthest"))
             {
-                std::cout << "✅ Successfully cleared currentBest data" << std::endl;
+                std::cout << "✅ Successfully cleared currentBest_farthest data" << std::endl;
             }
             else
             {
-                std::cout << "ℹ️  Note: No existing currentBest data found or failed to clear" << std::endl;
+                std::cout << "ℹ️  Note: No existing currentBest_farthest data found or failed to clear" << std::endl;
             }
 
-            // Optional: Also clear the entire queues node to ensure a fresh start
-            if (firebaseClient->deleteData("queues"))
+            // Optional: Also clear the entire queues_farthest node to ensure a fresh start
+            if (firebaseClient->deleteData("queues_farthest"))
             {
-                std::cout << "✅ Successfully cleared all queue data" << std::endl;
+                std::cout << "✅ Successfully cleared all farthest queue data" << std::endl;
             }
             else
             {
-                std::cout << "ℹ️  Note: No existing queue data found or failed to clear all queues" << std::endl;
+                std::cout << "ℹ️  Note: No existing farthest queue data found or failed to clear all queues" << std::endl;
             }
         }
         catch (const std::exception &e)
@@ -242,20 +242,20 @@ private:
                     currentOccupancy, throughputFactor, averageWaitTime, line);
                 allLinesData.push_back(lineData);
 
-                // Generate JSON and write to Firebase for this specific line
+                // Generate JSON and write to Firebase for this specific line (farthest strategy)
                 std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
-                std::string queuePath = FirebaseStructureBuilder::getLineDataPath(line);
+                std::string queuePath = "queues_farthest/line" + std::to_string(line);
 
                 if (firebaseClient->updateData(queuePath, json))
                 {
-                    std::cout << "✅ Line " << line << " updated - Occupancy: " << currentOccupancy
+                    std::cout << "✅ Farthest Line " << line << " updated - Occupancy: " << currentOccupancy
                               << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
                               << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s"
                               << " [" << (throughputTrackers[line - 1].hasReliableData() ? "measured" : "default") << "]" << std::endl;
                 }
                 else
                 {
-                    std::cerr << "❌ Failed to update Firebase for line " << line << std::endl;
+                    std::cerr << "❌ Failed to update Firebase for farthest line " << line << std::endl;
                 }
             }
 
@@ -266,18 +266,18 @@ private:
                     FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
 
                 std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
-                std::string aggPath = FirebaseStructureBuilder::getAggregatedDataPath();
+                std::string aggPath = "currentBest_farthest";
 
                 if (firebaseClient->updateData(aggPath, aggJson))
                 {
-                    std::cout << "✅ Aggregated queue object updated (currentBest) totalPeople=" << totalPeople
+                    std::cout << "✅ Aggregated farthest queue object updated (currentBest_farthest) totalPeople=" << totalPeople
                               << " recommendedLine=" << aggData.recommendedLine
                               << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
                               << " placeInLine=" << aggData.currentOccupancy << std::endl;
                 }
                 else
                 {
-                    std::cerr << "❌ Failed to update aggregated queue object" << std::endl;
+                    std::cerr << "❌ Failed to update aggregated farthest queue object" << std::endl;
                 }
             }
         }
