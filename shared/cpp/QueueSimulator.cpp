@@ -22,7 +22,7 @@ private:
     const int maxQueueSize = 50;
     const int numberOfLines = 2;
     const double arrivalRate = 0.3;                       // Probability of arrival per second
-    const double serviceRate = 0.2;                       // Probability of service completion per second
+    const std::vector<double> serviceRates = {0.15, 0.35}; // Different service rates per line (line 1: slow, line 2: fast)
     const std::chrono::milliseconds updateInterval{1000}; // 1 second updates
 
     std::unique_ptr<QueueManager> queueManager;
@@ -51,6 +51,14 @@ public:
     {
         std::cout << "Queue Simulator initialized with " << numberOfLines
                   << " lines, max size: " << maxQueueSize << std::endl;
+        
+        // Show service rate differences
+        for (int i = 0; i < numberOfLines; i++)
+        {
+            std::cout << "Line " << (i + 1) << " service rate: " << std::fixed << std::setprecision(2) 
+                      << serviceRates[i] << " (expected throughput: ~" 
+                      << serviceRates[i] << " people/sec)" << std::endl;
+        }
 
         std::cout << "Throughput trackers initialized for real-time measurement" << std::endl;
 
@@ -162,8 +170,12 @@ private:
             {
                 if (!queueManager->isFull())
                 {
+                    int selectedLine = queueManager->getNextLineNumber();
                     queueManager->enqueue();
-                    std::cout << "New arrival! Queue size: " << queueManager->size() << std::endl;
+                    std::cout << "New arrival! Selected line " << selectedLine 
+                              << " (wait time: " << std::fixed << std::setprecision(1) 
+                              << queueManager->getEstimatedWaitTime(selectedLine) << "s)"
+                              << " Total queue size: " << queueManager->size() << std::endl;
                 }
                 else
                 {
@@ -171,21 +183,29 @@ private:
                 }
             }
 
-            // Simulate service completions
+            // Simulate service completions with different rates per line
             for (int line = 1; line <= numberOfLines; ++line)
             {
-                if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < serviceRate)
+                double lineServiceRate = serviceRates[line - 1]; // Get specific rate for this line
+                if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < lineServiceRate)
                 {
                     queueManager->dequeue(line);
 
                     // Use shared throughput tracking
                     throughputTrackers[line - 1].recordServiceCompletion();
 
+                    // Update QueueManager with current throughput data
+                    double currentThroughput = throughputTrackers[line - 1].getCurrentThroughput();
+                    queueManager->updateLineThroughput(line, currentThroughput);
+
                     std::cout << "Service completed on line " << line
+                              << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"
                               << ", remaining: " << queueManager->getLineCount(line)
                               << ", throughput: " << std::fixed << std::setprecision(3)
-                              << throughputTrackers[line - 1].getCurrentThroughput() << " people/sec"
-                              << " (based on " << throughputTrackers[line - 1].getServiceCount() << " services)" << std::endl;
+                              << currentThroughput << " people/sec"
+                              << " (based on " << throughputTrackers[line - 1].getServiceCount() << " services)"
+                              << ", est. wait: " << std::fixed << std::setprecision(1) 
+                              << queueManager->getEstimatedWaitTime(line) << "s" << std::endl;
                 }
             }
 

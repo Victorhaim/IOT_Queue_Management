@@ -4,7 +4,7 @@
 // Implementation updated to use std::vector for line storage instead of fixed-size C array.
 
 QueueManager::QueueManager(int maxSize, int numberOfLines)
-    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines()
+    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs()
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -12,6 +12,10 @@ QueueManager::QueueManager(int maxSize, int numberOfLines)
         m_numberOfLines = MAX_LINES;    // enforce historical cap
     m_lines.reserve(m_numberOfLines);   // reserve capacity to avoid reallocations
     m_lines.assign(m_numberOfLines, 0); // initialize with zeros
+    
+    // Initialize throughput tracking for each line
+    m_lineThroughputs.reserve(m_numberOfLines);
+    m_lineThroughputs.assign(m_numberOfLines, DEFAULT_THROUGHPUT);
 }
 
 bool QueueManager::enqueue()
@@ -94,14 +98,17 @@ int QueueManager::getNextLineNumber() const
         return -1;
     }
 
-    int minPeople = m_lines[0];
+    // Smart line selection: find line with shortest estimated wait time
+    double minWaitTime = getEstimatedWaitTime(1);
     int bestLine = 1; // return value stays 1-based
-    for (int i = 1; i < m_numberOfLines; i++)
+    
+    for (int i = 2; i <= m_numberOfLines; i++)
     {
-        if (m_lines[i] < minPeople)
+        double waitTime = getEstimatedWaitTime(i);
+        if (waitTime < minWaitTime)
         {
-            minPeople = m_lines[i];
-            bestLine = i + 1; // convert to 1-based for public API
+            minWaitTime = waitTime;
+            bestLine = i;
         }
     }
     return bestLine;
@@ -156,4 +163,46 @@ void QueueManager::updateTotalPeople()
     {
         m_totalPeople += m_lines[i];
     }
+}
+
+void QueueManager::updateLineThroughput(int lineNumber, double throughputPerSecond)
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        return;
+    }
+    
+    // Ensure reasonable bounds for throughput
+    double boundedThroughput = std::max(0.1, std::min(5.0, throughputPerSecond));
+    m_lineThroughputs[lineNumber - 1] = boundedThroughput;
+}
+
+double QueueManager::getLineThroughput(int lineNumber) const
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        return DEFAULT_THROUGHPUT;
+    }
+    
+    return m_lineThroughputs[lineNumber - 1];
+}
+
+double QueueManager::getEstimatedWaitTime(int lineNumber) const
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        return 999.0; // Return high wait time for invalid lines
+    }
+    
+    int peopleInLine = m_lines[lineNumber - 1];
+    double throughput = m_lineThroughputs[lineNumber - 1];
+    
+    // Estimated wait time = number of people ahead / service rate
+    // Add small penalty for being in line vs. empty line
+    if (peopleInLine == 0)
+    {
+        return 0.0; // No wait for empty line
+    }
+    
+    return static_cast<double>(peopleInLine) / throughput;
 }
