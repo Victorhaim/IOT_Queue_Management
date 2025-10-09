@@ -18,14 +18,14 @@ QueueManager::QueueManager(int maxSize, int numberOfLines)
     m_lineThroughputs.assign(m_numberOfLines, DEFAULT_THROUGHPUT);
 }
 
-bool QueueManager::enqueue()
+bool QueueManager::enqueue(LineSelectionStrategy strategy)
 {
     if (isFull())
     {
         return false;
     }
 
-    int lineNumber = getNextLineNumber();
+    int lineNumber = getNextLineNumber(strategy);
     if (lineNumber == -1)
     {
         return false;
@@ -91,27 +91,76 @@ bool QueueManager::isFull() const
     return m_totalPeople >= m_maxSize;
 }
 
-int QueueManager::getNextLineNumber() const
+int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 {
     if (m_numberOfLines == 0)
     {
         return -1;
     }
 
-    // Smart line selection: find line with shortest estimated wait time
-    double minWaitTime = getEstimatedWaitTime(1);
-    int bestLine = 1; // return value stays 1-based
-    
-    for (int i = 2; i <= m_numberOfLines; i++)
+    switch (strategy)
     {
-        double waitTime = getEstimatedWaitTime(i);
-        if (waitTime < minWaitTime)
+    case LineSelectionStrategy::SHORTEST_WAIT_TIME:
         {
-            minWaitTime = waitTime;
-            bestLine = i;
+            // Current implementation: find line with shortest estimated wait time
+            double minWaitTime = getEstimatedWaitTime(1);
+            int bestLine = 1; // return value stays 1-based
+            
+            for (int i = 2; i <= m_numberOfLines; i++)
+            {
+                double waitTime = getEstimatedWaitTime(i);
+                if (waitTime < minWaitTime)
+                {
+                    minWaitTime = waitTime;
+                    bestLine = i;
+                }
+            }
+            return bestLine;
         }
+        
+    case LineSelectionStrategy::FEWEST_PEOPLE:
+        {
+            // Find line with fewest people
+            int minPeople = m_lines[0];
+            int bestLine = 1; // 1-based
+            
+            for (int i = 1; i < m_numberOfLines; i++)
+            {
+                if (m_lines[i] < minPeople)
+                {
+                    minPeople = m_lines[i];
+                    bestLine = i + 1; // Convert to 1-based
+                }
+            }
+            return bestLine;
+        }
+        
+    case LineSelectionStrategy::FARTHEST_FROM_ENTRANCE:
+        {
+            // Find line where last person is farthest from entrance
+            // Assume line numbers increase with distance from entrance
+            // Choose the highest numbered line that has people, or highest if all empty
+            int bestLine = m_numberOfLines; // Start with farthest line
+            
+            // If we want the line where the LAST person is farthest, 
+            // we should prefer lines with people that are farther from entrance
+            for (int i = m_numberOfLines; i >= 1; i--)
+            {
+                if (m_lines[i - 1] > 0) // This line has people
+                {
+                    bestLine = i;
+                    break;
+                }
+            }
+            
+            // If no lines have people, choose the farthest line
+            return bestLine;
+        }
+        
+    default:
+        // Fallback to shortest wait time
+        return getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
     }
-    return bestLine;
 }
 
 int QueueManager::getNumberOfLines() const

@@ -15,7 +15,7 @@
 #include <sstream>
 #include <string>
 
-class QueueSimulator
+class QueueSimulatorShortest
 {
 private:
     // Configuration (must be declared before other members that use them)
@@ -39,9 +39,9 @@ private:
     std::vector<ThroughputTracker> throughputTrackers; // One tracker per line
 
 public:
-    QueueSimulator() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines)),
+    QueueSimulatorShortest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines)),
                        firebaseClient(std::make_unique<FirebaseClient>(
-                           "iot-queue-management",
+                           "iot-queue-management-shortest",
                            "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app")),
                        rng(std::chrono::steady_clock::now().time_since_epoch().count()),
                        arrivalDist(0.0, 1.0),
@@ -49,7 +49,7 @@ public:
                        lineDist(1, numberOfLines),
                        throughputTrackers(numberOfLines) // Initialize throughput trackers
     {
-        std::cout << "Queue Simulator (SHORTEST WAIT TIME STRATEGY) initialized with " << numberOfLines
+        std::cout << "Queue Simulator (FEWEST PEOPLE STRATEGY) initialized with " << numberOfLines
                   << " lines, max size: " << maxQueueSize << std::endl;
         
         // Show service rate differences
@@ -60,7 +60,7 @@ public:
                       << serviceRates[i] << " people/sec)" << std::endl;
         }
 
-        std::cout << "Strategy: Choose line with SHORTEST WAIT TIME (considers both queue length and throughput)" << std::endl;
+        std::cout << "Strategy: Always choose line with FEWEST PEOPLE" << std::endl;
         std::cout << "Throughput trackers initialized for real-time measurement" << std::endl;
 
         // Initialize Firebase client
@@ -74,7 +74,7 @@ public:
         }
     }
 
-    ~QueueSimulator()
+    ~QueueSimulatorShortest()
     {
         stop();
     }
@@ -88,7 +88,7 @@ public:
         }
 
         running.store(true);
-        std::cout << "Starting queue simulation (SHORTEST WAIT TIME strategy)..." << std::endl;
+        std::cout << "Starting queue simulation (FEWEST PEOPLE strategy)..." << std::endl;
 
         // Clear existing cloud data before starting simulation
         clearCloudData();
@@ -160,6 +160,7 @@ private:
 
         std::cout << "🚀 Starting fresh simulation..." << std::endl;
     }
+    
     void simulate()
     {
         std::cout << "Simulation loop started" << std::endl;
@@ -171,12 +172,11 @@ private:
             {
                 if (!queueManager->isFull())
                 {
-                    // Use SHORTEST_WAIT_TIME strategy (default/original strategy)
-                    int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
-                    queueManager->enqueue(LineSelectionStrategy::SHORTEST_WAIT_TIME);
-                    std::cout << "New arrival! Selected line " << selectedLine << " (SHORTEST WAIT TIME strategy)"
-                              << " (wait time: " << std::fixed << std::setprecision(1) 
-                              << queueManager->getEstimatedWaitTime(selectedLine) << "s)"
+                    // Use FEWEST_PEOPLE strategy
+                    int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::FEWEST_PEOPLE);
+                    queueManager->enqueue(LineSelectionStrategy::FEWEST_PEOPLE);
+                    std::cout << "New arrival! Selected line " << selectedLine << " (FEWEST PEOPLE strategy)"
+                              << " (people in line: " << queueManager->getLineCount(selectedLine) << ")"
                               << " Total queue size: " << queueManager->size() << std::endl;
                 }
                 else
@@ -288,7 +288,7 @@ private:
 };
 
 // Global simulator instance for signal handling
-std::unique_ptr<QueueSimulator> g_simulator;
+std::unique_ptr<QueueSimulatorShortest> g_simulator;
 
 void signalHandler(int signal)
 {
@@ -302,9 +302,9 @@ void signalHandler(int signal)
 
 int main()
 {
-    std::cout << "=== Queue Management System - C++ Simulator (SHORTEST WAIT TIME) ===" << std::endl;
-    std::cout << "This simulator will generate realistic queue data using SHORTEST WAIT TIME strategy" << std::endl;
-    std::cout << "Strategy: Choose line with shortest estimated wait time (considers queue length + throughput)" << std::endl;
+    std::cout << "=== Queue Management System - C++ Simulator (FEWEST PEOPLE) ===" << std::endl;
+    std::cout << "This simulator will generate realistic queue data using FEWEST PEOPLE strategy" << std::endl;
+    std::cout << "Strategy: Always choose the line with the fewest people" << std::endl;
     std::cout << "Press Ctrl+C to stop the simulation" << std::endl;
     std::cout << "=================================================" << std::endl;
 
@@ -315,7 +315,7 @@ int main()
     try
     {
         // Create and start simulator
-        g_simulator = std::make_unique<QueueSimulator>();
+        g_simulator = std::make_unique<QueueSimulatorShortest>();
         g_simulator->start();
 
         std::cout << "Simulation running... Press Ctrl+C to stop" << std::endl;
