@@ -3,6 +3,14 @@
 #include <algorithm>
 #include <vector>
 
+/// Line selection strategies for queue management
+enum class LineSelectionStrategy
+{
+    SHORTEST_WAIT_TIME,  // Current implementation: consider both queue length and throughput
+    FEWEST_PEOPLE,       // Simply choose line with fewest people
+    FARTHEST_FROM_ENTRANCE // Choose line where last person is farthest from entrance
+};
+
 /// Shared QueueManager implementation for ESP32 and simulation
 /// Manages queue lines using smart line selection based on wait times
 /// Considers both queue length and service throughput for optimal routing
@@ -13,7 +21,7 @@ public:
     ~QueueManager() = default;
 
     // Core queue operations
-    bool enqueue();
+    bool enqueue(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
     bool dequeue(int lineNumber);
     bool enqueueOnLine(int lineNumber);
 
@@ -21,7 +29,7 @@ public:
     int size() const;
     bool isEmpty() const;
     bool isFull() const;
-    int getNextLineNumber() const;
+    int getNextLineNumber(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME) const;
     int getNumberOfLines() const;
     int getLineCount(int lineNumber) const;
 
