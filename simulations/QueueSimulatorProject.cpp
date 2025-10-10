@@ -19,9 +19,9 @@ private:
     // Configuration (must be declared before other members that use them)
     const int maxQueueSize = 50;
     const int numberOfLines = 2;
-    const double arrivalRate = 0.3;                        // Probability of arrival per second
-    const std::vector<double> serviceRates = {0.15, 0.35}; // Different service rates per line (line 1: slow, line 2: fast)
-    const std::chrono::milliseconds updateInterval{1000};  // 1 second updates
+    const double arrivalRate = 0.18;                       // Probability of arrival per second (~11 people/minute)
+    const std::vector<double> serviceRates = {0.08, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
+    const std::chrono::milliseconds updateInterval{2000};  // 2 second updates
 
     std::unique_ptr<QueueManager> queueManager;
     std::mt19937 rng;
