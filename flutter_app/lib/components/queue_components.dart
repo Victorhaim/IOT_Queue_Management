@@ -43,6 +43,15 @@ class _QueueScreenState extends State<QueueScreen>
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
   String? _previousLineNumber;
+  String _selectedStrategy = 'project'; // Default strategy
+
+  // Available simulation strategies
+  final List<Map<String, String>> _strategies = [
+    {'value': 'shortest', 'display': 'Fewest People'},
+    {'value': 'farthest', 'display': 'Farthest from Entrance'},
+    {'value': 'project', 'display': 'Shortest Wait Time'},
+    {'value': 'ESP32', 'display': 'ESP32 Hardware'},
+  ];
 
   @override
   void initState() {
@@ -121,7 +130,9 @@ class _QueueScreenState extends State<QueueScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 50), // Top padding
+                SizedBox(height: 30), // Top padding
+                _buildStrategySelector(),
+                SizedBox(height: 20),
                 _buildTitle(),
                 SizedBox(height: AppParameters.size_titleToNumberSpacing),
                 _buildAnimatedNumber(),
@@ -148,8 +159,43 @@ class _QueueScreenState extends State<QueueScreen>
     );
   }
 
+  Widget _buildStrategySelector() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppParameters.color_primaryBlue),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedStrategy,
+          items: _strategies.map((strategy) {
+            return DropdownMenuItem<String>(
+              value: strategy['value'],
+              child: Text(
+                'Strategy: ${strategy['display']}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppParameters.color_primaryBlue,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedStrategy = newValue;
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildAnimatedNumber() {
-    final ref = FirebaseDatabase.instance.ref('currentBest/recommendedLine');
+    final ref = FirebaseDatabase.instance.ref('simulation_$_selectedStrategy/currentBest/recommendedLine');
     return StreamBuilder<DatabaseEvent>(
       stream: ref.onValue,
       builder: (context, snapshot) {
@@ -202,7 +248,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicPlaceBox() {
-    final queueRef = FirebaseDatabase.instance.ref('currentBest');
+    final queueRef = FirebaseDatabase.instance.ref('simulation_$_selectedStrategy/currentBest');
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
@@ -235,7 +281,7 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicWaitBox() {
-    final queueRef = FirebaseDatabase.instance.ref('currentBest');
+    final queueRef = FirebaseDatabase.instance.ref('simulation_$_selectedStrategy/currentBest');
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
