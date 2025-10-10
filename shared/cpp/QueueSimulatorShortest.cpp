@@ -26,7 +26,7 @@ private:
     const std::chrono::milliseconds updateInterval{1000}; // 1 second updates
 
     std::unique_ptr<QueueManager> queueManager;
-    std::unique_ptr<FirebaseClient> firebaseClient;
+    std::shared_ptr<FirebaseClient> firebaseClient;
     std::mt19937 rng;
     std::uniform_real_distribution<double> arrivalDist;
     std::uniform_real_distribution<double> serviceDist;
@@ -40,7 +40,7 @@ private:
 
 public:
     QueueSimulatorShortest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines)),
-                       firebaseClient(std::make_unique<FirebaseClient>(
+                       firebaseClient(std::make_shared<FirebaseClient>(
                            "iot-queue-management-shortest",
                            "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app")),
                        rng(std::chrono::steady_clock::now().time_since_epoch().count()),
@@ -71,6 +71,11 @@ public:
         else
         {
             std::cout << "Firebase client initialized successfully" << std::endl;
+            
+            // Configure QueueManager for cloud operations
+            queueManager->setFirebaseClient(firebaseClient);
+            queueManager->setStrategyPrefix("_shortest"); // Shortest strategy prefix
+            queueManager->setThroughputTrackers(&throughputTrackers);
         }
     }
 
@@ -211,78 +216,11 @@ private:
                 }
             }
 
-            // Write current state to Firebase (JSON file for now)
-            writeToFirebase();
+            // Write current state to Firebase using QueueManager
+            queueManager->writeToFirebase();
 
             // Wait for next update
             std::this_thread::sleep_for(updateInterval);
-        }
-    }
-
-    void writeToFirebase()
-    {
-        try
-        {
-            // Collect data for all lines
-            std::vector<FirebaseStructureBuilder::LineData> allLinesData;
-            int totalPeople = 0;
-
-            for (int line = 1; line <= numberOfLines; ++line)
-            {
-                int currentOccupancy = queueManager->getLineCount(line);
-                double throughputFactor = throughputTrackers[line - 1].getCurrentThroughput();
-                double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
-                    currentOccupancy, throughputFactor);
-
-                totalPeople += currentOccupancy;
-
-                // Create line data object
-                FirebaseStructureBuilder::LineData lineData(
-                    currentOccupancy, throughputFactor, averageWaitTime, line);
-                allLinesData.push_back(lineData);
-
-                // Generate JSON and write to Firebase for this specific line (shortest strategy)
-                std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
-                std::string queuePath = "queues_shortest/line" + std::to_string(line);
-
-                if (firebaseClient->updateData(queuePath, json))
-                {
-                    std::cout << "✅ Shortest Line " << line << " updated - Occupancy: " << currentOccupancy
-                              << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
-                              << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s"
-                              << " [" << (throughputTrackers[line - 1].hasReliableData() ? "measured" : "default") << "]" << std::endl;
-                }
-                else
-                {
-                    std::cerr << "❌ Failed to update Firebase for shortest line " << line << std::endl;
-                }
-            }
-
-            // Calculate recommended line and write aggregated data
-            if (!allLinesData.empty())
-            {
-                FirebaseStructureBuilder::AggregatedData aggData =
-                    FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
-
-                std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
-                std::string aggPath = "currentBest_shortest";
-
-                if (firebaseClient->updateData(aggPath, aggJson))
-                {
-                    std::cout << "✅ Aggregated shortest queue object updated (currentBest_shortest) totalPeople=" << totalPeople
-                              << " recommendedLine=" << aggData.recommendedLine
-                              << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
-                              << " placeInLine=" << aggData.currentOccupancy << std::endl;
-                }
-                else
-                {
-                    std::cerr << "❌ Failed to update aggregated shortest queue object" << std::endl;
-                }
-            }
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "Error writing to Firebase: " << e.what() << std::endl;
         }
     }
 };

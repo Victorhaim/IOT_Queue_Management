@@ -2,6 +2,9 @@
 
 #include <algorithm>
 #include <vector>
+#include <memory>
+#include "FirebaseClient.h"
+#include "ThroughputTracker.h"
 
 /// Line selection strategies for queue management
 enum class LineSelectionStrategy
@@ -38,6 +41,12 @@ public:
     double getLineThroughput(int lineNumber) const;
     double getEstimatedWaitTime(int lineNumber) const;
 
+    // Cloud integration (optional)
+    void setFirebaseClient(std::shared_ptr<FirebaseClient> client);
+    void setStrategyPrefix(const std::string& prefix);
+    bool writeToFirebase();
+    void setThroughputTrackers(std::vector<ThroughputTracker>* trackers);
+
     // State modifications
     void setLineCount(int lineNumber, int count);
     void reset();
@@ -51,6 +60,11 @@ private:
     int m_totalPeople;
     std::vector<int> m_lines; // 0-based indexing internally
     std::vector<double> m_lineThroughputs; // Throughput per line (people/second)
+
+    // Optional Firebase integration
+    std::shared_ptr<FirebaseClient> m_firebaseClient;
+    std::string m_strategyPrefix; // e.g., "", "_shortest", "_farthest"
+    std::vector<ThroughputTracker>* m_throughputTrackers; // External tracker reference
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;

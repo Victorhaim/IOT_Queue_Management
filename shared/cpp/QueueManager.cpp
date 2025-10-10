@@ -1,10 +1,16 @@
 #include "QueueManager.h"
+#include "FirebaseClient.h"
+#include "FirebaseStructureBuilder.h"
+#include "ThroughputTracker.h"
 #include <cstring>
+#include <iostream>
+#include <iomanip>
 
 // Implementation updated to use std::vector for line storage instead of fixed-size C array.
 
 QueueManager::QueueManager(int maxSize, int numberOfLines)
-    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs()
+    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
+      m_firebaseClient(nullptr), m_strategyPrefix(""), m_throughputTrackers(nullptr)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -254,4 +260,117 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
     }
     
     return static_cast<double>(peopleInLine) / throughput;
+}
+
+// Cloud integration methods
+void QueueManager::setFirebaseClient(std::shared_ptr<FirebaseClient> client)
+{
+    m_firebaseClient = client;
+}
+
+void QueueManager::setStrategyPrefix(const std::string& prefix)
+{
+    m_strategyPrefix = prefix;
+}
+
+void QueueManager::setThroughputTrackers(std::vector<ThroughputTracker>* trackers)
+{
+    m_throughputTrackers = trackers;
+}
+
+bool QueueManager::writeToFirebase()
+{
+    if (!m_firebaseClient) 
+    {
+        // No Firebase client configured - this is optional functionality
+        return false;
+    }
+
+    try
+    {
+        // Collect data for all lines
+        std::vector<FirebaseStructureBuilder::LineData> allLinesData;
+        int totalPeople = 0;
+
+        for (int line = 1; line <= m_numberOfLines; ++line)
+        {
+            int currentOccupancy = getLineCount(line);
+            
+            // Use throughput from trackers if available, otherwise use internal throughput
+            double throughputFactor = getLineThroughput(line);
+            if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size())) 
+            {
+                throughputFactor = (*m_throughputTrackers)[line - 1].getCurrentThroughput();
+            }
+            
+            double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
+                currentOccupancy, throughputFactor);
+
+            totalPeople += currentOccupancy;
+
+            // Create line data object
+            FirebaseStructureBuilder::LineData lineData(
+                currentOccupancy, throughputFactor, averageWaitTime, line);
+            allLinesData.push_back(lineData);
+
+            // Generate JSON and write to Firebase for this specific line
+            std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
+            std::string queuePath = "queues" + m_strategyPrefix + "/line" + std::to_string(line);
+
+            if (m_firebaseClient->updateData(queuePath, json))
+            {
+                std::cout << "✅ " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "Line " << line << " updated - Occupancy: " << currentOccupancy
+                          << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
+                          << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s";
+                
+                if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size())) 
+                {
+                    std::cout << " [" << ((*m_throughputTrackers)[line - 1].hasReliableData() ? "measured" : "default") << "]";
+                }
+                std::cout << std::endl;
+            }
+            else
+            {
+                std::cerr << "❌ Failed to update Firebase for " 
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "line " << line << std::endl;
+                return false;
+            }
+        }
+
+        // Calculate recommended line and write aggregated data
+        if (!allLinesData.empty())
+        {
+            FirebaseStructureBuilder::AggregatedData aggData =
+                FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
+
+            std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
+            std::string aggPath = "currentBest" + m_strategyPrefix;
+
+            if (m_firebaseClient->updateData(aggPath, aggJson))
+            {
+                std::cout << "✅ Aggregated " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "queue object updated (currentBest" << m_strategyPrefix << ") totalPeople=" << totalPeople
+                          << " recommendedLine=" << aggData.recommendedLine
+                          << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
+                          << " placeInLine=" << aggData.currentOccupancy << std::endl;
+                return true;
+            }
+            else
+            {
+                std::cerr << "❌ Failed to update aggregated " 
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "queue object" << std::endl;
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error writing to Firebase: " << e.what() << std::endl;
+        return false;
+    }
 }
