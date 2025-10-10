@@ -1,0 +1,5 @@
+C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/build/CMakeFiles/queue_manager_shared.dir
+C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/build/CMakeFiles/queue_manager_static.dir
+C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/build/CMakeFiles/queue_simulator.dir
+C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/build/CMakeFiles/edit_cache.dir
+C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/build/CMakeFiles/rebuild_cache.dir
