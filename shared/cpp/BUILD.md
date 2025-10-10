@@ -27,7 +27,7 @@ copy queue_manager_shared.dll ..\..\flutter_app\lib\native\windows\
 cd shared/cpp
 # Build universal (if you need both arm64 and x86_64, add -arch arm64 -arch x86_64)
 g++ -std=c++17 -O2 -pthread \
-    QueueSimulator.cpp QueueManager.cpp \
+    ../../simulations/QueueSimulator.cpp QueueManager.cpp \
     FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp \
     ThroughputTracker.cpp \
     -lcurl -o queue_sim
@@ -76,7 +76,7 @@ sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
 ```bash
 cd shared/cpp
 clang++ -std=c++17 -O2 -pthread \
-	QueueSimulator.cpp QueueManager.cpp \
+	../../simulations/QueueSimulator.cpp QueueManager.cpp \
 	FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp \
 	ThroughputTracker.cpp \
 	-lcurl -o queue_sim
@@ -87,7 +87,7 @@ clang++ -std=c++17 -O2 -pthread \
 ```bash
 cd shared/cpp
 clang++ -std=c++17 -O2 -pthread \
-	QueueSimulatorShortest.cpp QueueManager.cpp \
+	../../simulations/QueueSimulatorShortest.cpp QueueManager.cpp \
 	FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp \
 	ThroughputTracker.cpp \
 	-lcurl -o queue_sim_shortest
@@ -98,7 +98,7 @@ clang++ -std=c++17 -O2 -pthread \
 ```bash
 cd shared/cpp
 clang++ -std=c++17 -O2 -pthread \
-	QueueSimulatorFarthest.cpp QueueManager.cpp \
+	../../simulations/QueueSimulatorFarthest.cpp QueueManager.cpp \
 	FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp \
 	ThroughputTracker.cpp \
 	-lcurl -o queue_sim_farthest
@@ -109,9 +109,9 @@ clang++ -std=c++17 -O2 -pthread \
 ```bash
 cd shared/cpp
 # Build all three simulators
-clang++ -std=c++17 -O2 -pthread QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim
-clang++ -std=c++17 -O2 -pthread QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_shortest
-clang++ -std=c++17 -O2 -pthread QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_farthest
+clang++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim
+clang++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_shortest
+clang++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_farthest
 ```
 
 ### Build & Run Simulators (Windows using MSVC)
@@ -119,21 +119,21 @@ clang++ -std=c++17 -O2 -pthread QueueSimulatorFarthest.cpp QueueManager.cpp Fire
 **Original Simulator (Shortest Wait Time):**
 ```cmd
 cd shared\cpp
-cl /EHsc /O2 QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim.exe
+cl /EHsc /O2 ..\..\simulations\QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim.exe
 queue_sim.exe
 ```
 
 **Fewest People Simulator:**
 ```cmd
 cd shared\cpp
-cl /EHsc /O2 QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim_shortest.exe
+cl /EHsc /O2 ..\..\simulations\QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim_shortest.exe
 queue_sim_shortest.exe
 ```
 
 **Farthest From Entrance Simulator:**
 ```cmd
 cd shared\cpp
-cl /EHsc /O2 QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim_farthest.exe
+cl /EHsc /O2 ..\..\simulations\QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp winhttp.lib /Fe:queue_sim_farthest.exe
 queue_sim_farthest.exe
 ```
 
@@ -142,17 +142,17 @@ Optionally you can also link libcurl on Windows instead of WinHTTP by removing t
 
 **Original Simulator:**
 ```bash
-g++ -std=c++17 -O2 -pthread QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim.exe
+g++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulator.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim.exe
 ```
 
 **Fewest People Simulator:**
 ```bash
-g++ -std=c++17 -O2 -pthread QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_shortest.exe
+g++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulatorShortest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_shortest.exe
 ```
 
 **Farthest From Entrance Simulator:**
 ```bash
-g++ -std=c++17 -O2 -pthread QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_farthest.exe
+g++ -std=c++17 -O2 -pthread ../../simulations/QueueSimulatorFarthest.cpp QueueManager.cpp FirebaseClient.cpp SimpleHttpClient.cpp FirebaseStructureBuilder.cpp ThroughputTracker.cpp -lcurl -o queue_sim_farthest.exe
 ```
 
 ## Alternative: Use CMake (if installed)

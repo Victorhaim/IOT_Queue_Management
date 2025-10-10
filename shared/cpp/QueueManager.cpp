@@ -6,9 +6,7 @@
 #include <iostream>
 #include <iomanip>
 
-// Implementation updated to use std::vector for line storage instead of fixed-size C array.
-
-QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string& strategyPrefix, const std::string& appName)
+QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
       m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(nullptr)
 {
@@ -18,7 +16,7 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string& st
         m_numberOfLines = MAX_LINES;    // enforce historical cap
     m_lines.reserve(m_numberOfLines);   // reserve capacity to avoid reallocations
     m_lines.assign(m_numberOfLines, 0); // initialize with zeros
-    
+
     // Initialize throughput tracking for each line
     m_lineThroughputs.reserve(m_numberOfLines);
     m_lineThroughputs.assign(m_numberOfLines, DEFAULT_THROUGHPUT);
@@ -26,8 +24,7 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string& st
     // Initialize Firebase client with provided app name
     m_firebaseClient = std::make_shared<FirebaseClient>(
         appName,
-        "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app"
-    );
+        "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app");
 
     // Initialize Firebase client
     if (!m_firebaseClient->initialize())
@@ -59,10 +56,10 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     // External API uses 1-based line numbers; internal storage is 0-based
     m_lines[lineNumber - 1]++;
     m_totalPeople++;
-    
+
     // Automatically write to Firebase after state change
     writeToFirebase();
-    
+
     return true;
 }
 
@@ -81,10 +78,10 @@ bool QueueManager::dequeue(int lineNumber)
 
     m_lines[lineNumber - 1]--;
     m_totalPeople--;
-    
+
     // Automatically write to Firebase after state change
     writeToFirebase();
-    
+
     return true;
 }
 
@@ -102,10 +99,10 @@ bool QueueManager::enqueueOnLine(int lineNumber)
 
     m_lines[lineNumber - 1]++;
     m_totalPeople++;
-    
+
     // Automatically write to Firebase after state change
     writeToFirebase();
-    
+
     return true;
 }
 
@@ -138,62 +135,62 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
     switch (strategy)
     {
     case LineSelectionStrategy::SHORTEST_WAIT_TIME:
+    {
+        // Current implementation: find line with shortest estimated wait time
+        double minWaitTime = getEstimatedWaitTime(1);
+        int bestLine = 1; // return value stays 1-based
+
+        for (int i = 2; i <= m_numberOfLines; i++)
         {
-            // Current implementation: find line with shortest estimated wait time
-            double minWaitTime = getEstimatedWaitTime(1);
-            int bestLine = 1; // return value stays 1-based
-            
-            for (int i = 2; i <= m_numberOfLines; i++)
+            double waitTime = getEstimatedWaitTime(i);
+            if (waitTime < minWaitTime)
             {
-                double waitTime = getEstimatedWaitTime(i);
-                if (waitTime < minWaitTime)
-                {
-                    minWaitTime = waitTime;
-                    bestLine = i;
-                }
+                minWaitTime = waitTime;
+                bestLine = i;
             }
-            return bestLine;
         }
-        
+        return bestLine;
+    }
+
     case LineSelectionStrategy::FEWEST_PEOPLE:
+    {
+        // Find line with fewest people
+        int minPeople = m_lines[0];
+        int bestLine = 1; // 1-based
+
+        for (int i = 1; i < m_numberOfLines; i++)
         {
-            // Find line with fewest people
-            int minPeople = m_lines[0];
-            int bestLine = 1; // 1-based
-            
-            for (int i = 1; i < m_numberOfLines; i++)
+            if (m_lines[i] < minPeople)
             {
-                if (m_lines[i] < minPeople)
-                {
-                    minPeople = m_lines[i];
-                    bestLine = i + 1; // Convert to 1-based
-                }
+                minPeople = m_lines[i];
+                bestLine = i + 1; // Convert to 1-based
             }
-            return bestLine;
         }
-        
+        return bestLine;
+    }
+
     case LineSelectionStrategy::FARTHEST_FROM_ENTRANCE:
+    {
+        // Find line where last person is farthest from entrance
+        // Assume line numbers increase with distance from entrance
+        // Choose the highest numbered line that has people, or highest if all empty
+        int bestLine = m_numberOfLines; // Start with farthest line
+
+        // If we want the line where the LAST person is farthest,
+        // we should prefer lines with people that are farther from entrance
+        for (int i = m_numberOfLines; i >= 1; i--)
         {
-            // Find line where last person is farthest from entrance
-            // Assume line numbers increase with distance from entrance
-            // Choose the highest numbered line that has people, or highest if all empty
-            int bestLine = m_numberOfLines; // Start with farthest line
-            
-            // If we want the line where the LAST person is farthest, 
-            // we should prefer lines with people that are farther from entrance
-            for (int i = m_numberOfLines; i >= 1; i--)
+            if (m_lines[i - 1] > 0) // This line has people
             {
-                if (m_lines[i - 1] > 0) // This line has people
-                {
-                    bestLine = i;
-                    break;
-                }
+                bestLine = i;
+                break;
             }
-            
-            // If no lines have people, choose the farthest line
-            return bestLine;
         }
-        
+
+        // If no lines have people, choose the farthest line
+        return bestLine;
+    }
+
     default:
         // Fallback to shortest wait time
         return getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
@@ -257,7 +254,7 @@ void QueueManager::updateLineThroughput(int lineNumber, double throughputPerSeco
     {
         return;
     }
-    
+
     // Ensure reasonable bounds for throughput
     double boundedThroughput = std::max(0.1, std::min(5.0, throughputPerSecond));
     m_lineThroughputs[lineNumber - 1] = boundedThroughput;
@@ -269,7 +266,7 @@ double QueueManager::getLineThroughput(int lineNumber) const
     {
         return DEFAULT_THROUGHPUT;
     }
-    
+
     return m_lineThroughputs[lineNumber - 1];
 }
 
@@ -279,29 +276,29 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
     {
         return 999.0; // Return high wait time for invalid lines
     }
-    
+
     int peopleInLine = m_lines[lineNumber - 1];
     double throughput = m_lineThroughputs[lineNumber - 1];
-    
+
     // Estimated wait time = number of people ahead / service rate
     // Add small penalty for being in line vs. empty line
     if (peopleInLine == 0)
     {
         return 0.0; // No wait for empty line
     }
-    
+
     return static_cast<double>(peopleInLine) / throughput;
 }
 
 // Cloud integration methods
-void QueueManager::setThroughputTrackers(std::vector<ThroughputTracker>* trackers)
+void QueueManager::setThroughputTrackers(std::vector<ThroughputTracker> *trackers)
 {
     m_throughputTrackers = trackers;
 }
 
 void QueueManager::clearCloudData()
 {
-    if (!m_firebaseClient) 
+    if (!m_firebaseClient)
     {
         return; // No Firebase client configured
     }
@@ -316,14 +313,14 @@ void QueueManager::clearCloudData()
             std::string queuePath = "queues" + m_strategyPrefix + "/line" + std::to_string(i);
             if (m_firebaseClient->deleteData(queuePath))
             {
-                std::cout << "✅ Successfully cleared existing data for " 
-                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cout << "✅ Successfully cleared existing data for "
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "line " << i << std::endl;
             }
             else
             {
-                std::cout << "ℹ️  Note: No existing data found for " 
-                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cout << "ℹ️  Note: No existing data found for "
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "line " << i << " or failed to clear" << std::endl;
             }
         }
@@ -343,14 +340,14 @@ void QueueManager::clearCloudData()
         std::string queuesPath = "queues" + m_strategyPrefix;
         if (m_firebaseClient->deleteData(queuesPath))
         {
-            std::cout << "✅ Successfully cleared all " 
-                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+            std::cout << "✅ Successfully cleared all "
+                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                       << "queue data" << std::endl;
         }
         else
         {
-            std::cout << "ℹ️  Note: No existing " 
-                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+            std::cout << "ℹ️  Note: No existing "
+                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                       << "queue data found or failed to clear all queues" << std::endl;
         }
     }
@@ -365,7 +362,7 @@ void QueueManager::clearCloudData()
 
 bool QueueManager::writeToFirebase()
 {
-    if (!m_firebaseClient) 
+    if (!m_firebaseClient)
     {
         // No Firebase client configured - this is optional functionality
         return false;
@@ -380,14 +377,14 @@ bool QueueManager::writeToFirebase()
         for (int line = 1; line <= m_numberOfLines; ++line)
         {
             int currentOccupancy = getLineCount(line);
-            
+
             // Use throughput from trackers if available, otherwise use internal throughput
             double throughputFactor = getLineThroughput(line);
-            if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size())) 
+            if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size()))
             {
                 throughputFactor = (*m_throughputTrackers)[line - 1].getCurrentThroughput();
             }
-            
+
             double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
                 currentOccupancy, throughputFactor);
 
@@ -404,12 +401,12 @@ bool QueueManager::writeToFirebase()
 
             if (m_firebaseClient->updateData(queuePath, json))
             {
-                std::cout << "✅ " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cout << "✅ " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "Line " << line << " updated - Occupancy: " << currentOccupancy
                           << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
                           << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s";
-                
-                if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size())) 
+
+                if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size()))
                 {
                     std::cout << " [" << ((*m_throughputTrackers)[line - 1].hasReliableData() ? "measured" : "default") << "]";
                 }
@@ -417,8 +414,8 @@ bool QueueManager::writeToFirebase()
             }
             else
             {
-                std::cerr << "❌ Failed to update Firebase for " 
-                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cerr << "❌ Failed to update Firebase for "
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "line " << line << std::endl;
                 return false;
             }
@@ -435,7 +432,7 @@ bool QueueManager::writeToFirebase()
 
             if (m_firebaseClient->updateData(aggPath, aggJson))
             {
-                std::cout << "✅ Aggregated " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cout << "✅ Aggregated " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "queue object updated (currentBest" << m_strategyPrefix << ") totalPeople=" << totalPeople
                           << " recommendedLine=" << aggData.recommendedLine
                           << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
@@ -444,13 +441,13 @@ bool QueueManager::writeToFirebase()
             }
             else
             {
-                std::cerr << "❌ Failed to update aggregated " 
-                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                std::cerr << "❌ Failed to update aggregated "
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "queue object" << std::endl;
                 return false;
             }
         }
-        
+
         return true;
     }
     catch (const std::exception &e)
