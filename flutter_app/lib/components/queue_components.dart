@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
@@ -45,6 +46,12 @@ class _QueueScreenState extends State<QueueScreen>
   String? _previousLineNumber;
   String _selectedStrategy = 'project'; // Default strategy
 
+  // Countdown timer state
+  Timer? _countdownTimer;
+  double? _currentWaitTimeSeconds;
+  String _countdownDisplay = '...';
+  String _countdownSuffix = '';
+
   // Available simulation strategies
   final List<Map<String, String>> _strategies = [
     {'value': 'project', 'display': 'project'},
@@ -89,7 +96,86 @@ class _QueueScreenState extends State<QueueScreen>
     _clockController.dispose();
     _placeHoverController.dispose();
     _waitHoverController.dispose();
+    _countdownTimer?.cancel();
     super.dispose();
+  }
+
+  void _startCountdown(double waitTimeSeconds) {
+    // Cancel existing timer
+    _countdownTimer?.cancel();
+
+    // Set initial values
+    _currentWaitTimeSeconds = waitTimeSeconds;
+
+    // Update initial display
+    _updateCountdownDisplay();
+
+    // Start countdown timer that checks every second
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_currentWaitTimeSeconds == null || _currentWaitTimeSeconds! <= 0) {
+        timer.cancel();
+        _currentWaitTimeSeconds = 0;
+        _updateCountdownDisplay();
+        if (mounted) {
+          setState(() {});
+        }
+        return;
+      }
+
+      // Get current time unit
+      final currentTimeResult =
+          TimeConversionUtil.convertSecondsToAppropriateUnit(
+            _currentWaitTimeSeconds!,
+          );
+
+      // Decrement based on the appropriate unit
+      switch (currentTimeResult.unit) {
+        case TimeUnit.seconds:
+          _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          break;
+        case TimeUnit.minutes:
+          // Only decrement by minute if we're at a minute boundary (0 seconds)
+          if (_currentWaitTimeSeconds! % 60 == 0) {
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 60;
+          } else {
+            // Switch to seconds mode
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          }
+          break;
+        case TimeUnit.hours:
+          // Only decrement by hour if we're at an hour boundary (0 minutes, 0 seconds)
+          if (_currentWaitTimeSeconds! % 3600 == 0) {
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 3600;
+          } else {
+            // Switch to smaller unit mode
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          }
+          break;
+      }
+
+      if (_currentWaitTimeSeconds! < 0) {
+        _currentWaitTimeSeconds = 0;
+      }
+
+      _updateCountdownDisplay();
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _updateCountdownDisplay() {
+    if (_currentWaitTimeSeconds == null) {
+      _countdownDisplay = '...';
+      _countdownSuffix = '';
+      return;
+    }
+
+    final formattedTime = TimeConversionUtil.getFormattedTime(
+      _currentWaitTimeSeconds!,
+    );
+    _countdownDisplay = formattedTime['value']!;
+    _countdownSuffix = formattedTime['suffix']!;
   }
 
   void _triggerAnimationOnChange(String newValue) {
@@ -303,8 +389,8 @@ class _QueueScreenState extends State<QueueScreen>
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
-        String waitDisplay = '...';
-        String waitSuffix = '';
+        String waitDisplay = _countdownDisplay;
+        String waitSuffix = _countdownSuffix;
         String dynamicTooltip = AppStrings.string_waitTimeTooltip;
 
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
@@ -313,11 +399,15 @@ class _QueueScreenState extends State<QueueScreen>
 
           if (averageWaitTime != null) {
             double waitTimeSeconds = (averageWaitTime as num).toDouble();
-            final formattedTime = TimeConversionUtil.getFormattedTime(
-              waitTimeSeconds,
-            );
-            waitDisplay = formattedTime['value']!;
-            waitSuffix = formattedTime['suffix']!;
+
+            // Start countdown if this is a new wait time value
+            if (_currentWaitTimeSeconds != waitTimeSeconds) {
+              _startCountdown(waitTimeSeconds);
+            }
+
+            // Use countdown display values
+            waitDisplay = _countdownDisplay;
+            waitSuffix = _countdownSuffix;
           }
         }
 
