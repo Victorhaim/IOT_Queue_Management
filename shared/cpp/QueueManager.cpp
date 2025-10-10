@@ -38,6 +38,8 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string& st
     else
     {
         std::cout << "Firebase client initialized successfully for " << appName << std::endl;
+        // Clear existing data when QueueManager starts
+        clearCloudData();
     }
 }
 
@@ -57,6 +59,10 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     // External API uses 1-based line numbers; internal storage is 0-based
     m_lines[lineNumber - 1]++;
     m_totalPeople++;
+    
+    // Automatically write to Firebase after state change
+    writeToFirebase();
+    
     return true;
 }
 
@@ -75,6 +81,10 @@ bool QueueManager::dequeue(int lineNumber)
 
     m_lines[lineNumber - 1]--;
     m_totalPeople--;
+    
+    // Automatically write to Firebase after state change
+    writeToFirebase();
+    
     return true;
 }
 
@@ -92,6 +102,10 @@ bool QueueManager::enqueueOnLine(int lineNumber)
 
     m_lines[lineNumber - 1]++;
     m_totalPeople++;
+    
+    // Automatically write to Firebase after state change
+    writeToFirebase();
+    
     return true;
 }
 

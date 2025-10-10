@@ -32,16 +32,12 @@ private:
     std::atomic<bool> running{false};
     std::thread simulationThread;
 
-    // Throughput tracking using shared code
-    std::vector<ThroughputTracker> throughputTrackers; // One tracker per line
-
 public:
     QueueSimulatorFarthest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines, "_farthest", "iot-queue-management-farthest")), // Farthest strategy
                        rng(std::chrono::steady_clock::now().time_since_epoch().count()),
                        arrivalDist(0.0, 1.0),
                        serviceDist(0.0, 1.0),
-                       lineDist(1, numberOfLines),
-                       throughputTrackers(numberOfLines) // Initialize throughput trackers
+                       lineDist(1, numberOfLines)
     {
         std::cout << "Queue Simulator (FARTHEST FROM ENTRANCE STRATEGY) initialized with " << numberOfLines
                   << " lines, max size: " << maxQueueSize << std::endl;
@@ -56,10 +52,6 @@ public:
 
         std::cout << "Strategy: Choose line where last person is FARTHEST FROM ENTRANCE" << std::endl;
         std::cout << "Assumption: Higher line numbers = farther from entrance" << std::endl;
-        std::cout << "Throughput trackers initialized for real-time measurement" << std::endl;
-
-        // Configure QueueManager with throughput trackers
-        queueManager->setThroughputTrackers(&throughputTrackers);
     }
 
     ~QueueSimulatorFarthest()
@@ -77,9 +69,6 @@ public:
 
         running.store(true);
         std::cout << "Starting queue simulation (FARTHEST FROM ENTRANCE strategy)..." << std::endl;
-
-        // Clear existing cloud data before starting simulation
-        queueManager->clearCloudData();
 
         simulationThread = std::thread([this]()
                                        { simulate(); });
@@ -132,26 +121,13 @@ private:
                 {
                     queueManager->dequeue(line);
 
-                    // Use shared throughput tracking
-                    throughputTrackers[line - 1].recordServiceCompletion();
-
-                    // Update QueueManager with current throughput data
-                    double currentThroughput = throughputTrackers[line - 1].getCurrentThroughput();
-                    queueManager->updateLineThroughput(line, currentThroughput);
-
                     std::cout << "Service completed on line " << line
                               << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"
                               << ", remaining: " << queueManager->getLineCount(line)
-                              << ", throughput: " << std::fixed << std::setprecision(3)
-                              << currentThroughput << " people/sec"
-                              << " (based on " << throughputTrackers[line - 1].getServiceCount() << " services)"
                               << ", est. wait: " << std::fixed << std::setprecision(1) 
                               << queueManager->getEstimatedWaitTime(line) << "s" << std::endl;
                 }
             }
-
-            // Write current state to Firebase using QueueManager
-            queueManager->writeToFirebase();
 
             // Wait for next update
             std::this_thread::sleep_for(updateInterval);
