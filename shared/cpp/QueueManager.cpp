@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),

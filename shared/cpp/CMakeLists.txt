@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Add source files
 set(SOURCES
     QueueManager.cpp
+    ThroughputTracker.cpp
     FirebaseStructureBuilder.cpp
     FirebaseClient.cpp
     SimpleHttpClient.cpp
@@ -44,28 +45,26 @@ set_target_properties(queue_manager_static PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../lib"
 )
 
-# Create simulator executable
-add_executable(queue_simulator ../../simulations/QueueSimulator.cpp ${SOURCES})
-
-# Create additional simulator variants
+# Create simulator executables
 add_executable(queue_simulator_shortest ../../simulations/QueueSimulatorShortest.cpp ${SOURCES})
 add_executable(queue_simulator_farthest ../../simulations/QueueSimulatorFarthest.cpp ${SOURCES})
+add_executable(queue_simulator_project ../../simulations/QueueSimulatorProject.cpp ${SOURCES})
 
 # Link Windows HTTP library for the simulator and shared library
 if(WIN32)
-    target_link_libraries(queue_simulator PRIVATE winhttp)
     target_link_libraries(queue_simulator_shortest PRIVATE winhttp)
     target_link_libraries(queue_simulator_farthest PRIVATE winhttp)
+    target_link_libraries(queue_simulator_project PRIVATE winhttp)
     target_link_libraries(queue_manager_shared PRIVATE winhttp)
 endif()
 
 # Set simulator executable output directory
-set_target_properties(queue_simulator PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
-)
 set_target_properties(queue_simulator_shortest PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
 )
 set_target_properties(queue_simulator_farthest PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
+)
+set_target_properties(queue_simulator_project PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
 )

@@ -61,5 +61,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/queue_manager_shared.dir/DependInfo.cmake"
   "CMakeFiles/queue_manager_static.dir/DependInfo.cmake"
-  "CMakeFiles/queue_simulator.dir/DependInfo.cmake"
+  "CMakeFiles/queue_simulator_shortest.dir/DependInfo.cmake"
+  "CMakeFiles/queue_simulator_farthest.dir/DependInfo.cmake"
+  "CMakeFiles/queue_simulator_project.dir/DependInfo.cmake"
   )

@@ -9,9 +9,10 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp" "CMakeFiles/queue_manager_shared.dir/FirebaseClient.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/FirebaseClient.cpp.obj.d"
+  "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/FirebaseStructureBuilder.cpp" "CMakeFiles/queue_manager_shared.dir/FirebaseStructureBuilder.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/FirebaseStructureBuilder.cpp.obj.d"
   "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/QueueManager.cpp" "CMakeFiles/queue_manager_shared.dir/QueueManager.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/QueueManager.cpp.obj.d"
-  "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/QueueStructures.cpp" "CMakeFiles/queue_manager_shared.dir/QueueStructures.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/QueueStructures.cpp.obj.d"
   "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp" "CMakeFiles/queue_manager_shared.dir/SimpleHttpClient.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/SimpleHttpClient.cpp.obj.d"
+  "C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/cpp/ThroughputTracker.cpp" "CMakeFiles/queue_manager_shared.dir/ThroughputTracker.cpp.obj" "gcc" "CMakeFiles/queue_manager_shared.dir/ThroughputTracker.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
