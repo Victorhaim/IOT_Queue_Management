@@ -310,7 +310,7 @@ void QueueManager::clearCloudData()
         // Clear all queue lines
         for (int i = 1; i <= m_numberOfLines; ++i)
         {
-            std::string queuePath = "queues" + m_strategyPrefix + "/line" + std::to_string(i);
+            std::string queuePath = "simulation" + m_strategyPrefix + "/queues/line" + std::to_string(i);
             if (m_firebaseClient->deleteData(queuePath))
             {
                 std::cout << "✅ Successfully cleared existing data for "
@@ -326,7 +326,7 @@ void QueueManager::clearCloudData()
         }
 
         // Clear the currentBest aggregated data
-        std::string aggPath = "currentBest" + m_strategyPrefix;
+        std::string aggPath = "simulation" + m_strategyPrefix + "/currentBest";
         if (m_firebaseClient->deleteData(aggPath))
         {
             std::cout << "✅ Successfully cleared " << aggPath << " data" << std::endl;
@@ -336,19 +336,19 @@ void QueueManager::clearCloudData()
             std::cout << "ℹ️  Note: No existing " << aggPath << " data found or failed to clear" << std::endl;
         }
 
-        // Optional: Also clear the entire queues node to ensure a fresh start
-        std::string queuesPath = "queues" + m_strategyPrefix;
-        if (m_firebaseClient->deleteData(queuesPath))
+        // Optional: Also clear the entire simulation node to ensure a fresh start
+        std::string simulationPath = "simulation" + m_strategyPrefix;
+        if (m_firebaseClient->deleteData(simulationPath))
         {
             std::cout << "✅ Successfully cleared all "
                       << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
-                      << "queue data" << std::endl;
+                      << "simulation data" << std::endl;
         }
         else
         {
             std::cout << "ℹ️  Note: No existing "
                       << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
-                      << "queue data found or failed to clear all queues" << std::endl;
+                      << "simulation data found or failed to clear all simulation data" << std::endl;
         }
     }
     catch (const std::exception &e)
@@ -397,7 +397,7 @@ bool QueueManager::writeToFirebase()
 
             // Generate JSON and write to Firebase for this specific line
             std::string json = FirebaseStructureBuilder::generateLineDataJson(lineData);
-            std::string queuePath = "queues" + m_strategyPrefix + "/line" + std::to_string(line);
+            std::string queuePath = "simulation" + m_strategyPrefix + "/queues/line" + std::to_string(line);
 
             if (m_firebaseClient->updateData(queuePath, json))
             {
@@ -428,12 +428,12 @@ bool QueueManager::writeToFirebase()
                 FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
 
             std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
-            std::string aggPath = "currentBest" + m_strategyPrefix;
+            std::string aggPath = "simulation" + m_strategyPrefix + "/currentBest";
 
             if (m_firebaseClient->updateData(aggPath, aggJson))
             {
                 std::cout << "✅ Aggregated " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
-                          << "queue object updated (currentBest" << m_strategyPrefix << ") totalPeople=" << totalPeople
+                          << "queue object updated (simulation" << m_strategyPrefix << "/currentBest) totalPeople=" << totalPeople
                           << " recommendedLine=" << aggData.recommendedLine
                           << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
                           << " placeInLine=" << aggData.currentOccupancy << std::endl;
