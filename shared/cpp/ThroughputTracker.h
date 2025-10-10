@@ -1,5 +1,4 @@
-#ifndef THROUGHPUT_TRACKER_H
-#define THROUGHPUT_TRACKER_H
+#pragma once
 
 #include <chrono>
 #include <vector>
@@ -65,5 +64,3 @@ public:
      */
     bool hasReliableData() const;
 };
-
-#endif // THROUGHPUT_TRACKER_H
