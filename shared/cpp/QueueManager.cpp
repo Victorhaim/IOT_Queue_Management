@@ -8,9 +8,9 @@
 
 // Implementation updated to use std::vector for line storage instead of fixed-size C array.
 
-QueueManager::QueueManager(int maxSize, int numberOfLines)
+QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string& strategyPrefix, const std::string& appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
-      m_firebaseClient(nullptr), m_strategyPrefix(""), m_throughputTrackers(nullptr)
+      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(nullptr)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -22,6 +22,23 @@ QueueManager::QueueManager(int maxSize, int numberOfLines)
     // Initialize throughput tracking for each line
     m_lineThroughputs.reserve(m_numberOfLines);
     m_lineThroughputs.assign(m_numberOfLines, DEFAULT_THROUGHPUT);
+
+    // Initialize Firebase client with provided app name
+    m_firebaseClient = std::make_shared<FirebaseClient>(
+        appName,
+        "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app"
+    );
+
+    // Initialize Firebase client
+    if (!m_firebaseClient->initialize())
+    {
+        std::cerr << "Failed to initialize Firebase client for " << appName << "!" << std::endl;
+        m_firebaseClient = nullptr; // Disable cloud functionality
+    }
+    else
+    {
+        std::cout << "Firebase client initialized successfully for " << appName << std::endl;
+    }
 }
 
 bool QueueManager::enqueue(LineSelectionStrategy strategy)
@@ -263,19 +280,73 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
 }
 
 // Cloud integration methods
-void QueueManager::setFirebaseClient(std::shared_ptr<FirebaseClient> client)
-{
-    m_firebaseClient = client;
-}
-
-void QueueManager::setStrategyPrefix(const std::string& prefix)
-{
-    m_strategyPrefix = prefix;
-}
-
 void QueueManager::setThroughputTrackers(std::vector<ThroughputTracker>* trackers)
 {
     m_throughputTrackers = trackers;
+}
+
+void QueueManager::clearCloudData()
+{
+    if (!m_firebaseClient) 
+    {
+        return; // No Firebase client configured
+    }
+
+    std::cout << "🧹 Clearing existing cloud data..." << std::endl;
+
+    try
+    {
+        // Clear all queue lines
+        for (int i = 1; i <= m_numberOfLines; ++i)
+        {
+            std::string queuePath = "queues" + m_strategyPrefix + "/line" + std::to_string(i);
+            if (m_firebaseClient->deleteData(queuePath))
+            {
+                std::cout << "✅ Successfully cleared existing data for " 
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "line " << i << std::endl;
+            }
+            else
+            {
+                std::cout << "ℹ️  Note: No existing data found for " 
+                          << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                          << "line " << i << " or failed to clear" << std::endl;
+            }
+        }
+
+        // Clear the currentBest aggregated data
+        std::string aggPath = "currentBest" + m_strategyPrefix;
+        if (m_firebaseClient->deleteData(aggPath))
+        {
+            std::cout << "✅ Successfully cleared " << aggPath << " data" << std::endl;
+        }
+        else
+        {
+            std::cout << "ℹ️  Note: No existing " << aggPath << " data found or failed to clear" << std::endl;
+        }
+
+        // Optional: Also clear the entire queues node to ensure a fresh start
+        std::string queuesPath = "queues" + m_strategyPrefix;
+        if (m_firebaseClient->deleteData(queuesPath))
+        {
+            std::cout << "✅ Successfully cleared all " 
+                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                      << "queue data" << std::endl;
+        }
+        else
+        {
+            std::cout << "ℹ️  Note: No existing " 
+                      << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ") 
+                      << "queue data found or failed to clear all queues" << std::endl;
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "⚠️  Warning: Error clearing cloud data: " << e.what() << std::endl;
+        std::cerr << "Continuing with simulation..." << std::endl;
+    }
+
+    std::cout << "🚀 Starting fresh simulation..." << std::endl;
 }
 
 bool QueueManager::writeToFirebase()

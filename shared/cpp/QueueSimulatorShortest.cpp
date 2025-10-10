@@ -7,8 +7,6 @@
 #include <cstdlib>
 #include <iomanip>
 #include "QueueManager.h"
-#include "FirebaseClient.h"
-#include "FirebaseStructureBuilder.h"
 #include "ThroughputTracker.h"
 
 #include <fstream>
@@ -26,7 +24,6 @@ private:
     const std::chrono::milliseconds updateInterval{1000}; // 1 second updates
 
     std::unique_ptr<QueueManager> queueManager;
-    std::shared_ptr<FirebaseClient> firebaseClient;
     std::mt19937 rng;
     std::uniform_real_distribution<double> arrivalDist;
     std::uniform_real_distribution<double> serviceDist;
@@ -39,10 +36,7 @@ private:
     std::vector<ThroughputTracker> throughputTrackers; // One tracker per line
 
 public:
-    QueueSimulatorShortest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines)),
-                       firebaseClient(std::make_shared<FirebaseClient>(
-                           "iot-queue-management-shortest",
-                           "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app")),
+    QueueSimulatorShortest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines, "_shortest", "iot-queue-management-shortest")), // Shortest strategy
                        rng(std::chrono::steady_clock::now().time_since_epoch().count()),
                        arrivalDist(0.0, 1.0),
                        serviceDist(0.0, 1.0),
@@ -63,20 +57,8 @@ public:
         std::cout << "Strategy: Always choose line with FEWEST PEOPLE" << std::endl;
         std::cout << "Throughput trackers initialized for real-time measurement" << std::endl;
 
-        // Initialize Firebase client
-        if (!firebaseClient->initialize())
-        {
-            std::cerr << "Failed to initialize Firebase client!" << std::endl;
-        }
-        else
-        {
-            std::cout << "Firebase client initialized successfully" << std::endl;
-            
-            // Configure QueueManager for cloud operations
-            queueManager->setFirebaseClient(firebaseClient);
-            queueManager->setStrategyPrefix("_shortest"); // Shortest strategy prefix
-            queueManager->setThroughputTrackers(&throughputTrackers);
-        }
+        // Configure QueueManager with throughput trackers
+        queueManager->setThroughputTrackers(&throughputTrackers);
     }
 
     ~QueueSimulatorShortest()
@@ -96,7 +78,7 @@ public:
         std::cout << "Starting queue simulation (FEWEST PEOPLE strategy)..." << std::endl;
 
         // Clear existing cloud data before starting simulation
-        clearCloudData();
+        queueManager->clearCloudData();
 
         simulationThread = std::thread([this]()
                                        { simulate(); });
@@ -117,55 +99,6 @@ public:
     }
 
 private:
-    void clearCloudData()
-    {
-        std::cout << "🧹 Clearing existing cloud data..." << std::endl;
-
-        try
-        {
-            // Clear all queue lines with "shortest" prefix
-            for (int i = 1; i <= numberOfLines; ++i)
-            {
-                std::string queuePath = "queues_shortest/line" + std::to_string(i);
-                if (firebaseClient->deleteData(queuePath))
-                {
-                    std::cout << "✅ Successfully cleared existing data for shortest line " << i << std::endl;
-                }
-                else
-                {
-                    std::cout << "ℹ️  Note: No existing data found for shortest line " << i << " or failed to clear" << std::endl;
-                }
-            }
-
-            // Clear the currentBest aggregated data for shortest strategy
-            if (firebaseClient->deleteData("currentBest_shortest"))
-            {
-                std::cout << "✅ Successfully cleared currentBest_shortest data" << std::endl;
-            }
-            else
-            {
-                std::cout << "ℹ️  Note: No existing currentBest_shortest data found or failed to clear" << std::endl;
-            }
-
-            // Optional: Also clear the entire queues_shortest node to ensure a fresh start
-            if (firebaseClient->deleteData("queues_shortest"))
-            {
-                std::cout << "✅ Successfully cleared all shortest queue data" << std::endl;
-            }
-            else
-            {
-                std::cout << "ℹ️  Note: No existing shortest queue data found or failed to clear all queues" << std::endl;
-            }
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "⚠️  Warning: Error clearing cloud data: " << e.what() << std::endl;
-            std::cerr << "Continuing with simulation..." << std::endl;
-        }
-
-        std::cout << "🚀 Starting fresh simulation..." << std::endl;
-    }
-    
     void simulate()
     {
         std::cout << "Simulation loop started" << std::endl;

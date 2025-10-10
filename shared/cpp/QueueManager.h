@@ -20,7 +20,7 @@ enum class LineSelectionStrategy
 class QueueManager
 {
 public:
-    QueueManager(int maxSize, int numberOfLines);
+    QueueManager(int maxSize, int numberOfLines, const std::string& strategyPrefix = "", const std::string& appName = "iot-queue-management");
     ~QueueManager() = default;
 
     // Core queue operations
@@ -41,10 +41,9 @@ public:
     double getLineThroughput(int lineNumber) const;
     double getEstimatedWaitTime(int lineNumber) const;
 
-    // Cloud integration (optional)
-    void setFirebaseClient(std::shared_ptr<FirebaseClient> client);
-    void setStrategyPrefix(const std::string& prefix);
+    // Cloud integration
     bool writeToFirebase();
+    void clearCloudData();
     void setThroughputTrackers(std::vector<ThroughputTracker>* trackers);
 
     // State modifications
