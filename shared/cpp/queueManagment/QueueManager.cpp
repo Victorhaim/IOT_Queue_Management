@@ -282,15 +282,20 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
     }
 
     int peopleInLine = m_lines[lineNumber - 1];
-    double throughput = m_lineThroughputs[lineNumber - 1];
+    
+    // Use throughput from tracker, fall back to default if no reliable data
+    double throughput = m_throughputTrackers[lineNumber - 1].hasReliableData() 
+        ? m_throughputTrackers[lineNumber - 1].getCurrentThroughput()
+        : DEFAULT_THROUGHPUT;
 
     // Estimated wait time = number of people ahead / service rate
-    // Add small penalty for being in line vs. empty line
     if (peopleInLine == 0)
     {
         return 0.0; // No wait for empty line
     }
 
+    // Simple formula: time = people / throughput
+    // Could be enhanced with more sophisticated queueing theory
     return static_cast<double>(peopleInLine) / throughput;
 }
 
