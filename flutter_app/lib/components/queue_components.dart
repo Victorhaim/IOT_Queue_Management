@@ -49,6 +49,7 @@ class _QueueScreenState extends State<QueueScreen>
   // Countdown timer state
   Timer? _countdownTimer;
   double? _currentWaitTimeSeconds;
+  double? _lastFirebaseValue; // Track the last Firebase value we received
   String _countdownDisplay = '...';
   String _countdownSuffix = '';
 
@@ -106,8 +107,9 @@ class _QueueScreenState extends State<QueueScreen>
 
     // Set initial values
     _currentWaitTimeSeconds = waitTimeSeconds;
+    _lastFirebaseValue = waitTimeSeconds;
 
-    // Update initial display
+    // Update initial display (no setState here!)
     _updateCountdownDisplay();
 
     // Start countdown timer that checks every second
@@ -400,15 +402,26 @@ class _QueueScreenState extends State<QueueScreen>
           if (averageWaitTime != null) {
             double waitTimeSeconds = (averageWaitTime as num).toDouble();
 
-            // Start countdown if this is a new wait time value
-            if (_currentWaitTimeSeconds != waitTimeSeconds) {
+            // Only start countdown if Firebase data actually changed
+            if (_lastFirebaseValue == null ||
+                _lastFirebaseValue != waitTimeSeconds) {
               _startCountdown(waitTimeSeconds);
             }
-
-            // Use countdown display values
-            waitDisplay = _countdownDisplay;
-            waitSuffix = _countdownSuffix;
+          } else {
+            // No wait time data, show default
+            waitDisplay = '...';
+            waitSuffix = '';
           }
+        } else {
+          // No data, show default
+          waitDisplay = '...';
+          waitSuffix = '';
+        }
+
+        // Always use current countdown values if available
+        if (_countdownDisplay != '...') {
+          waitDisplay = _countdownDisplay;
+          waitSuffix = _countdownSuffix;
         }
 
         return HoverBox(
