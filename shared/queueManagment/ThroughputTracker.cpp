@@ -29,9 +29,6 @@ void ThroughputTracker::recordServiceCompletion()
         {
             // Calculate people per second: total_services / time_in_seconds
             currentThroughput = static_cast<double>(serviceCompletionCount) / (totalSessionTime / 1000.0);
-
-            // Reasonable bounds: 0.1 to 5.0 people per second
-            currentThroughput = std::max(0.1, std::min(5.0, currentThroughput));
         }
     }
 }
