@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../parameters/app_parameters.dart';
@@ -43,6 +44,22 @@ class _QueueScreenState extends State<QueueScreen>
   bool _isPlaceHovered = false;
   bool _isWaitHovered = false;
   String? _previousLineNumber;
+  String _selectedStrategy = 'project'; // Default strategy
+
+  // Countdown timer state
+  Timer? _countdownTimer;
+  double? _currentWaitTimeSeconds;
+  double? _lastFirebaseValue; // Track the last Firebase value we received
+  String _countdownDisplay = '...';
+  String _countdownSuffix = '';
+
+  // Available simulation strategies
+  final List<Map<String, String>> _strategies = [
+    {'value': 'project', 'display': 'project'},
+    {'value': 'ESP32', 'display': 'ESP32'},
+    {'value': 'shortest', 'display': 'Fewest People'},
+    {'value': 'farthest', 'display': 'Farthest from Entrance'},
+  ];
 
   @override
   void initState() {
@@ -80,7 +97,87 @@ class _QueueScreenState extends State<QueueScreen>
     _clockController.dispose();
     _placeHoverController.dispose();
     _waitHoverController.dispose();
+    _countdownTimer?.cancel();
     super.dispose();
+  }
+
+  void _startCountdown(double waitTimeSeconds) {
+    // Cancel existing timer
+    _countdownTimer?.cancel();
+
+    // Set initial values
+    _currentWaitTimeSeconds = waitTimeSeconds;
+    _lastFirebaseValue = waitTimeSeconds;
+
+    // Update initial display (no setState here!)
+    _updateCountdownDisplay();
+
+    // Start countdown timer that checks every second
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_currentWaitTimeSeconds == null || _currentWaitTimeSeconds! <= 0) {
+        timer.cancel();
+        _currentWaitTimeSeconds = 0;
+        _updateCountdownDisplay();
+        if (mounted) {
+          setState(() {});
+        }
+        return;
+      }
+
+      // Get current time unit
+      final currentTimeResult =
+          TimeConversionUtil.convertSecondsToAppropriateUnit(
+            _currentWaitTimeSeconds!,
+          );
+
+      // Decrement based on the appropriate unit
+      switch (currentTimeResult.unit) {
+        case TimeUnit.seconds:
+          _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          break;
+        case TimeUnit.minutes:
+          // Only decrement by minute if we're at a minute boundary (0 seconds)
+          if (_currentWaitTimeSeconds! % 60 == 0) {
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 60;
+          } else {
+            // Switch to seconds mode
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          }
+          break;
+        case TimeUnit.hours:
+          // Only decrement by hour if we're at an hour boundary (0 minutes, 0 seconds)
+          if (_currentWaitTimeSeconds! % 3600 == 0) {
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 3600;
+          } else {
+            // Switch to smaller unit mode
+            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
+          }
+          break;
+      }
+
+      if (_currentWaitTimeSeconds! < 0) {
+        _currentWaitTimeSeconds = 0;
+      }
+
+      _updateCountdownDisplay();
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _updateCountdownDisplay() {
+    if (_currentWaitTimeSeconds == null) {
+      _countdownDisplay = '...';
+      _countdownSuffix = '';
+      return;
+    }
+
+    final formattedTime = TimeConversionUtil.getFormattedTime(
+      _currentWaitTimeSeconds!,
+    );
+    _countdownDisplay = formattedTime['value']!;
+    _countdownSuffix = formattedTime['suffix']!;
   }
 
   void _triggerAnimationOnChange(String newValue) {
@@ -111,27 +208,36 @@ class _QueueScreenState extends State<QueueScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppParameters.color_backgroundColor,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 50), // Top padding
-                _buildTitle(),
-                SizedBox(height: AppParameters.size_titleToNumberSpacing),
-                _buildAnimatedNumber(),
-                SizedBox(height: AppParameters.size_numberToBoxesSpacing),
-                _buildHoverBoxes(),
-                SizedBox(height: 50), // Bottom padding
-              ],
+      body: Stack(
+        children: [
+          // Strategy selector positioned at top-right
+          Positioned(top: 40, right: 20, child: _buildStrategySelector()),
+          // Main content centered
+          Center(
+            child: SingleChildScrollView(
+              child: Container(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 30), // Top padding
+                    _buildTitle(),
+                    SizedBox(height: AppParameters.size_titleToNumberSpacing),
+                    _buildAnimatedNumber(),
+                    SizedBox(height: AppParameters.size_numberToBoxesSpacing),
+                    _buildHoverBoxes(),
+                    SizedBox(height: 30),
+                    _buildThroughputDisplay(),
+                    SizedBox(height: 50), // Bottom padding
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -148,8 +254,52 @@ class _QueueScreenState extends State<QueueScreen>
     );
   }
 
+  Widget _buildStrategySelector() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppParameters.color_primaryBlue, width: 1),
+        borderRadius: BorderRadius.circular(6),
+        color: Colors.white.withOpacity(0.9),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedStrategy,
+          isDense: true,
+          items: _strategies.map((strategy) {
+            return DropdownMenuItem<String>(
+              value: strategy['value'],
+              child: Text(
+                strategy['display']!,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppParameters.color_primaryBlue,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                _selectedStrategy = newValue;
+              });
+            }
+          },
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: AppParameters.color_primaryBlue,
+            size: 18,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAnimatedNumber() {
-    final ref = FirebaseDatabase.instance.ref('currentBest/recommendedLine');
+    final ref = FirebaseDatabase.instance.ref(
+      'simulation_$_selectedStrategy/currentBest/recommendedLine',
+    );
     return StreamBuilder<DatabaseEvent>(
       stream: ref.onValue,
       builder: (context, snapshot) {
@@ -202,7 +352,9 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicPlaceBox() {
-    final queueRef = FirebaseDatabase.instance.ref('currentBest');
+    final queueRef = FirebaseDatabase.instance.ref(
+      'simulation_$_selectedStrategy/currentBest',
+    );
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
@@ -235,12 +387,14 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicWaitBox() {
-    final queueRef = FirebaseDatabase.instance.ref('currentBest');
+    final queueRef = FirebaseDatabase.instance.ref(
+      'simulation_$_selectedStrategy/currentBest',
+    );
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
       builder: (context, snapshot) {
-        String waitDisplay = '...';
-        String waitSuffix = '';
+        String waitDisplay = _countdownDisplay;
+        String waitSuffix = _countdownSuffix;
         String dynamicTooltip = AppStrings.string_waitTimeTooltip;
 
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
@@ -249,12 +403,27 @@ class _QueueScreenState extends State<QueueScreen>
 
           if (averageWaitTime != null) {
             double waitTimeSeconds = (averageWaitTime as num).toDouble();
-            final formattedTime = TimeConversionUtil.getFormattedTime(
-              waitTimeSeconds,
-            );
-            waitDisplay = formattedTime['value']!;
-            waitSuffix = formattedTime['suffix']!;
+
+            // Only start countdown if Firebase data actually changed
+            if (_lastFirebaseValue == null ||
+                _lastFirebaseValue != waitTimeSeconds) {
+              _startCountdown(waitTimeSeconds);
+            }
+          } else {
+            // No wait time data, show default
+            waitDisplay = '...';
+            waitSuffix = '';
           }
+        } else {
+          // No data, show default
+          waitDisplay = '...';
+          waitSuffix = '';
+        }
+
+        // Always use current countdown values if available
+        if (_countdownDisplay != '...') {
+          waitDisplay = _countdownDisplay;
+          waitSuffix = _countdownSuffix;
         }
 
         return HoverBox(
@@ -268,6 +437,85 @@ class _QueueScreenState extends State<QueueScreen>
           onHover: _handleWaitHover,
           isClockIcon: true,
           clockController: _clockController,
+        );
+      },
+    );
+  }
+
+  Widget _buildThroughputDisplay() {
+    final throughputRef = FirebaseDatabase.instance.ref(
+      'simulation_$_selectedStrategy/queues',
+    );
+    return StreamBuilder<DatabaseEvent>(
+      stream: throughputRef.onValue,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
+          return Container();
+        }
+
+        final queuesData = snapshot.data!.snapshot.value as Map;
+
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Text(
+                'Current Throughput (people/sec)',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppParameters.color_primaryBlue,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: queuesData.entries
+                    .where((entry) => entry.key.toString().startsWith('line'))
+                    .map<Widget>((entry) {
+                      final lineKey = entry.key.toString();
+                      final lineNumber = lineKey.replaceAll('line', '');
+                      final lineData = entry.value as Map;
+                      final throughput = lineData['throughputFactor'] ?? 0.0;
+
+                      return Column(
+                        children: [
+                          Text(
+                            'Line $lineNumber',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppParameters.color_primaryBlue,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '${(throughput as num).toStringAsFixed(3)}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                        ],
+                      );
+                    })
+                    .toList(),
+              ),
+            ],
+          ),
         );
       },
     );
