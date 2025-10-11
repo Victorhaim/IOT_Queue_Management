@@ -6,8 +6,8 @@
 #include <csignal>
 #include <cstdlib>
 #include <iomanip>
-#include "../shared/queueManagment/QueueManager.h"
-#include "../shared/queueManagment/ThroughputTracker.h"
+#include "../shared/cpp/queueManagment/QueueManager.h"
+#include "../shared/cpp/queueManagment/ThroughputTracker.h"
 
 #include <fstream>
 #include <sstream>
