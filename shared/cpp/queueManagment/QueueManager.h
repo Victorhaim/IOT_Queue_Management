@@ -117,9 +117,8 @@ private:
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;
-    std::string m_strategyPrefix;                                // e.g., "", "_shortest", "_farthest"
-    std::vector<ThroughputTracker> *m_throughputTrackers;        // External tracker reference
-    std::vector<ThroughputTracker> m_internalThroughputTrackers; // Internal tracker instances
+    std::string m_strategyPrefix;                     // e.g., "", "_shortest", "_farthest"
+    std::vector<ThroughputTracker> m_throughputTrackers; // Throughput tracking for each line
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
@@ -129,7 +128,6 @@ private:
     double getLineThroughput(int lineNumber) const;
     bool writeToFirebase();
     void clearCloudData();
-    void setThroughputTrackers(std::vector<ThroughputTracker> *trackers);
     void setLineCount(int lineNumber, int count);
     void reset();
 };
