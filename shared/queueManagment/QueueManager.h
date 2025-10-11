@@ -16,17 +16,17 @@ enum class LineSelectionStrategy
 
 /**
  * @brief Shared QueueManager implementation for ESP32 and simulation environments
- * 
+ *
  * Manages multiple queue lines using intelligent line selection algorithms based on wait times.
  * Considers both queue length and service throughput for optimal customer routing.
  * Includes optional Firebase cloud integration for real-time data sharing.
- * 
+ *
  * Features:
  * - Multiple line selection strategies (shortest wait, fewest people, farthest from entrance)
  * - Real-time throughput tracking and wait time estimation
  * - Firebase cloud integration with automatic data synchronization
  * - Thread-safe design suitable for embedded and simulation environments
- * 
+ *
  * @note Uses 1-based line numbering for external API, 0-based internally
  * @note Firebase integration is optional and fails gracefully if unavailable
  */
@@ -40,7 +40,7 @@ public:
      * @param strategyPrefix Firebase path prefix for data organization (e.g., "_shortest", "_farthest")
      * @param appName Firebase application name for cloud integration
      */
-    QueueManager(int maxSize, int numberOfLines, const std::string& strategyPrefix = "", const std::string& appName = "iot-queue-management");
+    QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix = "", const std::string &appName = "iot-queue-management");
     ~QueueManager() = default;
 
     // Core queue operations
@@ -50,14 +50,14 @@ public:
      * @return true if person was successfully added, false if queue is full
      */
     bool enqueue(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
-    
+
     /**
      * @brief Removes a person from the specified line (service completion)
      * @param lineNumber Line number to remove person from (1-based indexing)
      * @return true if person was successfully removed, false if line is empty or invalid
      */
     bool dequeue(int lineNumber);
-    
+
     /**
      * @brief Adds a person directly to a specific line, bypassing strategy selection
      * @param lineNumber Target line number (1-based indexing)
@@ -71,33 +71,33 @@ public:
      * @return Total people count in the entire queue system
      */
     int size() const;
-    
+
     /**
      * @brief Checks if all lines are empty
      * @return true if no people are in any line, false otherwise
      */
     bool isEmpty() const;
-    
+
     /**
      * @brief Checks if the queue system has reached maximum capacity
      * @return true if at maximum capacity, false if more people can be added
      */
     bool isFull() const;
-    
+
     /**
      * @brief Determines the optimal line number based on the given strategy
      * @param strategy Line selection algorithm to use
      * @return Recommended line number (1-based), or -1 if no lines available
      */
     int getNextLineNumber(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME) const;
-    
+
     /**
      * @brief Gets the number of people in a specific line
      * @param lineNumber Line to query (1-based indexing)
      * @return Number of people in the line, or -1 if line number is invalid
      */
     int getLineCount(int lineNumber) const;
-    
+
     /**
      * @brief Calculates estimated wait time for a specific line
      * @param lineNumber Line to analyze (1-based indexing)
@@ -106,19 +106,20 @@ public:
     double getEstimatedWaitTime(int lineNumber) const;
 
 private:
-    static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
+    static const int MAX_LINES = 10;                  // Historical cap; still enforced to avoid runaway usage
     static constexpr double DEFAULT_THROUGHPUT = 0.5; // Default people/second when no data available
 
     int m_maxSize;
     int m_numberOfLines;
     int m_totalPeople;
-    std::vector<int> m_lines; // 0-based indexing internally
+    std::vector<int> m_lines;              // 0-based indexing internally
     std::vector<double> m_lineThroughputs; // Throughput per line (people/second)
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;
-    std::string m_strategyPrefix; // e.g., "", "_shortest", "_farthest"
-    std::vector<ThroughputTracker>* m_throughputTrackers; // External tracker reference
+    std::string m_strategyPrefix;                                // e.g., "", "_shortest", "_farthest"
+    std::vector<ThroughputTracker> *m_throughputTrackers;        // External tracker reference
+    std::vector<ThroughputTracker> m_internalThroughputTrackers; // Internal tracker instances
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
@@ -128,7 +129,7 @@ private:
     double getLineThroughput(int lineNumber) const;
     bool writeToFirebase();
     void clearCloudData();
-    void setThroughputTrackers(std::vector<ThroughputTracker>* trackers);
+    void setThroughputTrackers(std::vector<ThroughputTracker> *trackers);
     void setLineCount(int lineNumber, int count);
     void reset();
 };

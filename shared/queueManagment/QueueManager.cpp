@@ -9,7 +9,8 @@
 
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
-      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(nullptr)
+      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(nullptr),
+      m_internalThroughputTrackers(numberOfLines)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -79,6 +80,9 @@ bool QueueManager::dequeue(int lineNumber)
 
     m_lines[lineNumber - 1]--;
     m_totalPeople--;
+
+    // Record service completion for throughput tracking
+    m_internalThroughputTrackers[lineNumber - 1].recordServiceCompletion();
 
     // Automatically write to Firebase after state change
     writeToFirebase();
@@ -379,8 +383,8 @@ bool QueueManager::writeToFirebase()
         {
             int currentOccupancy = getLineCount(line);
 
-            // Use throughput from trackers if available, otherwise use internal throughput
-            double throughputFactor = getLineThroughput(line);
+            // Use throughput from internal trackers first, then external trackers, then default
+            double throughputFactor = m_internalThroughputTrackers[line - 1].getCurrentThroughput();
             if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size()))
             {
                 throughputFactor = (*m_throughputTrackers)[line - 1].getCurrentThroughput();
@@ -407,9 +411,14 @@ bool QueueManager::writeToFirebase()
                           << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
                           << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s";
 
+                // Show which tracker is being used
                 if (m_throughputTrackers && (line - 1) < static_cast<int>(m_throughputTrackers->size()))
                 {
-                    std::cout << " [" << ((*m_throughputTrackers)[line - 1].hasReliableData() ? "measured" : "default") << "]";
+                    std::cout << " [external-" << ((*m_throughputTrackers)[line - 1].hasReliableData() ? "measured" : "default") << "]";
+                }
+                else
+                {
+                    std::cout << " [internal-" << (m_internalThroughputTrackers[line - 1].hasReliableData() ? "measured" : "default") << "]";
                 }
                 std::cout << std::endl;
             }
