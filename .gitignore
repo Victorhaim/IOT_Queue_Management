@@ -8,3 +8,9 @@ shared/cpp/queue_sim_shortest
 shared/cpp/queue_sim.exe
 
 shared/cpp/queue_sim_farthest
+
+shared/bin/queue_simulator_farthest
+
+shared/bin/queue_simulator_project
+
+shared/bin/queue_simulator_shortest
