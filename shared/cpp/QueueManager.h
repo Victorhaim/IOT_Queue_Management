@@ -4,8 +4,8 @@
 #include <vector>
 #include <memory>
 #include <list>
-#include "../firebase/FirebaseClient.h"
-#include "../firebase/FirebasePeopleStructureBuilder.h"
+#include "FirebaseClient.h"
+#include "FirebasePeopleStructureBuilder.h"
 #include "ThroughputTracker.h"
 #include "Person.h"
 
