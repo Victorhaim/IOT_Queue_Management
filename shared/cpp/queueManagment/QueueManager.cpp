@@ -1,7 +1,9 @@
 #include "QueueManager.h"
 #include "../firebase/FirebaseClient.h"
 #include "../firebase/FirebaseStructureBuilder.h"
+#include "../firebase/FirebasePeopleStructureBuilder.h"
 #include "ThroughputTracker.h"
+#include "Person.h"
 #include <cstring>
 #include <iostream>
 #include <iomanip>
@@ -9,14 +11,15 @@
 
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
-      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(numberOfLines)
+      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(numberOfLines),
+      m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
     if (m_numberOfLines > MAX_LINES)
         m_numberOfLines = MAX_LINES;    // enforce historical cap
     m_lines.reserve(m_numberOfLines);   // reserve capacity to avoid reallocations
-    m_lines.assign(m_numberOfLines, 0); // initialize with zeros
+    m_lines.assign(m_numberOfLines, std::list<Person>()); // initialize with empty lists
 
     // Initialize throughput tracking for each line
     m_lineThroughputs.reserve(m_numberOfLines);
@@ -54,9 +57,26 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
         return false;
     }
 
-    // External API uses 1-based line numbers; internal storage is 0-based
-    m_lines[lineNumber - 1]++;
+    // Calculate expected wait time for this person
+    double expectedWaitTime = getEstimatedWaitTimeForNewPerson(lineNumber);
+    
+    // Create a new person and add to the line
+    Person newPerson(expectedWaitTime, lineNumber);
+    auto& line = m_lines[lineNumber - 1];
+    line.push_back(newPerson);
     m_totalPeople++;
+
+    // Update running statistics
+    m_totalPeopleEver++;
+    m_totalExpectedWaitTime += expectedWaitTime;
+
+    // If this person is first in line, set their exit timestamp immediately
+    if (line.size() == 1) {
+        line.front().recordExit();
+        // Update completion statistics
+        m_completedPeopleEver++;
+        m_totalActualWaitTime += line.front().getActualWaitTime();
+    }
 
     // Automatically write to Firebase after state change
     writeToFirebase();
@@ -72,13 +92,26 @@ bool QueueManager::dequeue(int lineNumber)
     }
 
     // Check if line has people
-    if (m_lines[lineNumber - 1] == 0)
+    if (m_lines[lineNumber - 1].empty())
     {
         return false;
     }
 
-    m_lines[lineNumber - 1]--;
-    m_totalPeople--;
+    // Remove the first person from the line (they have already had their exit timestamp set when they became first in line)
+    auto& line = m_lines[lineNumber - 1];
+    if (!line.empty()) {
+        line.pop_front();
+        m_totalPeople--;
+
+        // If there is a new first person, set their exit timestamp now
+        if (!line.empty() && !line.front().hasExited()) {
+            line.front().recordExit();
+            
+            // Update completion statistics
+            m_completedPeopleEver++;
+            m_totalActualWaitTime += line.front().getActualWaitTime();
+        }
+    }
 
     // Record service completion for throughput tracking
     m_throughputTrackers[lineNumber - 1].recordServiceCompletion();
@@ -101,8 +134,26 @@ bool QueueManager::enqueueOnLine(int lineNumber)
         return false;
     }
 
-    m_lines[lineNumber - 1]++;
+    // Calculate expected wait time for this person
+    double expectedWaitTime = getEstimatedWaitTimeForNewPerson(lineNumber);
+    
+    // Create a new person and add to the specified line
+    Person newPerson(expectedWaitTime, lineNumber);
+    auto& line = m_lines[lineNumber - 1];
+    line.push_back(newPerson);
     m_totalPeople++;
+
+    // Update running statistics
+    m_totalPeopleEver++;
+    m_totalExpectedWaitTime += expectedWaitTime;
+
+    // If this person is first in line, set their exit timestamp immediately
+    if (line.size() == 1) {
+        line.front().recordExit();
+        // Update completion statistics
+        m_completedPeopleEver++;
+        m_totalActualWaitTime += line.front().getActualWaitTime();
+    }
 
     // Automatically write to Firebase after state change
     writeToFirebase();
@@ -140,13 +191,13 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
     {
     case LineSelectionStrategy::SHORTEST_WAIT_TIME:
     {
-        // Current implementation: find line with shortest estimated wait time
-        double minWaitTime = getEstimatedWaitTime(1);
+        // Find line with shortest estimated wait time for a new person
+        double minWaitTime = getEstimatedWaitTimeForNewPerson(1);
         int bestLine = 1; // return value stays 1-based
 
         for (int i = 2; i <= m_numberOfLines; i++)
         {
-            double waitTime = getEstimatedWaitTime(i);
+            double waitTime = getEstimatedWaitTimeForNewPerson(i);
             if (waitTime < minWaitTime)
             {
                 minWaitTime = waitTime;
@@ -159,14 +210,14 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
     case LineSelectionStrategy::FEWEST_PEOPLE:
     {
         // Find line with fewest people
-        int minPeople = m_lines[0];
+        int minPeople = m_lines[0].size();
         int bestLine = 1; // 1-based
 
         for (int i = 1; i < m_numberOfLines; i++)
         {
-            if (m_lines[i] < minPeople)
+            if (m_lines[i].size() < minPeople)
             {
-                minPeople = m_lines[i];
+                minPeople = m_lines[i].size();
                 bestLine = i + 1; // Convert to 1-based
             }
         }
@@ -184,7 +235,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         // we should prefer lines with people that are farther from entrance
         for (int i = m_numberOfLines; i >= 1; i--)
         {
-            if (m_lines[i - 1] > 0) // This line has people
+            if (m_lines[i - 1].size() > 0) // This line has people
             {
                 bestLine = i;
                 break;
@@ -213,7 +264,7 @@ int QueueManager::getLineCount(int lineNumber) const
         return -1;
     }
 
-    return m_lines[lineNumber - 1];
+    return static_cast<int>(m_lines[lineNumber - 1].size());
 }
 
 void QueueManager::setLineCount(int lineNumber, int count)
@@ -223,17 +274,27 @@ void QueueManager::setLineCount(int lineNumber, int count)
         return;
     }
 
-    // Update total people count
-    m_totalPeople -= m_lines[lineNumber - 1];
-    m_lines[lineNumber - 1] = (count < 0) ? 0 : count;
-    m_totalPeople += m_lines[lineNumber - 1];
+    // Clear the line and recreate with empty Person objects for the count
+    m_totalPeople -= static_cast<int>(m_lines[lineNumber - 1].size());
+    m_lines[lineNumber - 1].clear();
+    
+    // Add dummy persons if count > 0 (for simulation purposes)
+    int validCount = (count < 0) ? 0 : count;
+    for (int i = 0; i < validCount; i++)
+    {
+        double expectedWaitTime = getEstimatedWaitTime(lineNumber);
+        Person dummyPerson(expectedWaitTime, lineNumber);
+        m_lines[lineNumber - 1].push_back(dummyPerson);
+    }
+    
+    m_totalPeople += validCount;
 }
 
 void QueueManager::reset()
 {
     for (int i = 0; i < m_numberOfLines; i++)
     {
-        m_lines[i] = 0;
+        m_lines[i].clear();
     }
     m_totalPeople = 0;
 }
@@ -248,7 +309,7 @@ void QueueManager::updateTotalPeople()
     m_totalPeople = 0;
     for (int i = 0; i < m_numberOfLines; i++)
     {
-        m_totalPeople += m_lines[i];
+        m_totalPeople += m_lines[i].size();
     }
 }
 
@@ -281,7 +342,7 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
         return 999.0; // Return high wait time for invalid lines
     }
 
-    int peopleInLine = m_lines[lineNumber - 1];
+    int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
     
     // Use throughput from tracker, fall back to default if no reliable data
     double throughput = m_throughputTrackers[lineNumber - 1].hasReliableData() 
@@ -296,6 +357,31 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
 
     // Simple formula: time = people / throughput
     // Could be enhanced with more sophisticated queueing theory
+    return static_cast<double>(peopleInLine) / throughput;
+}
+
+double QueueManager::getEstimatedWaitTimeForNewPerson(int lineNumber) const
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        return 999.0; // Return high wait time for invalid lines
+    }
+
+    int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
+    
+    // Use throughput from tracker, fall back to default if no reliable data
+    double throughput = m_throughputTrackers[lineNumber - 1].hasReliableData() 
+        ? m_throughputTrackers[lineNumber - 1].getCurrentThroughput()
+        : DEFAULT_THROUGHPUT;
+
+    // Expected wait time for new person = time until they become first in line
+    // This is the number of people currently in line * average service time
+    if (peopleInLine == 0)
+    {
+        return 0.0; // No wait - they'll be first immediately
+    }
+
+    // Time = people ahead of them / service rate
     return static_cast<double>(peopleInLine) / throughput;
 }
 
@@ -433,7 +519,6 @@ bool QueueManager::writeToFirebase()
                           << " recommendedLine=" << aggData.recommendedLine
                           << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
                           << " placeInLine=" << aggData.currentOccupancy << std::endl;
-                return true;
             }
             else
             {
@@ -444,6 +529,51 @@ bool QueueManager::writeToFirebase()
             }
         }
 
+        // Write individual people data to Firebase
+        std::vector<Person> allPeople = getAllPeople();
+        
+        // Write cumulative people summary (includes all people from entire simulation)
+        FirebasePeopleStructureBuilder::PeopleSummary summary = getCumulativePeopleSummary();
+        
+        std::string summaryJson = FirebasePeopleStructureBuilder::generatePeopleSummaryJson(summary);
+        std::string summaryPath = "simulation" + m_strategyPrefix + "/" + 
+            FirebasePeopleStructureBuilder::getPeopleSummaryPath();
+        
+        if (m_firebaseClient->updateData(summaryPath, summaryJson))
+        {
+            std::cout << "✅ People summary updated: " << summary.totalPeople 
+                      << " total, " << summary.activePeople << " active, " 
+                      << summary.completedPeople << " completed" << std::endl;
+        }
+        else
+        {
+            std::cerr << "❌ Failed to update people summary" << std::endl;
+        }
+
+        // Write individual people data (limit to recent people to avoid overwhelming Firebase)
+        int peopleWritten = 0;
+        const int MAX_PEOPLE_TO_WRITE = 50; // Limit to avoid Firebase quota issues
+        
+        for (const auto& person : allPeople)
+        {
+            if (peopleWritten >= MAX_PEOPLE_TO_WRITE) break;
+            
+            FirebasePeopleStructureBuilder::PersonData personData(person);
+            std::string personJson = FirebasePeopleStructureBuilder::generatePersonDataJson(personData);
+            std::string personPath = "simulation" + m_strategyPrefix + "/" + 
+                FirebasePeopleStructureBuilder::getPersonDataPath(person.getId());
+            
+            if (m_firebaseClient->updateData(personPath, personJson))
+            {
+                peopleWritten++;
+            }
+        }
+        
+        if (peopleWritten > 0)
+        {
+            std::cout << "✅ Updated " << peopleWritten << " individual people records" << std::endl;
+        }
+
         return true;
     }
     catch (const std::exception &e)
@@ -451,4 +581,50 @@ bool QueueManager::writeToFirebase()
         std::cerr << "Error writing to Firebase: " << e.what() << std::endl;
         return false;
     }
+}
+
+std::vector<Person> QueueManager::getAllPeople() const
+{
+    std::vector<Person> allPeople;
+    
+    for (const auto& line : m_lines)
+    {
+        for (const auto& person : line)
+        {
+            allPeople.push_back(person);
+        }
+    }
+    
+    return allPeople;
+}
+
+std::vector<Person> QueueManager::getPeopleInLine(int lineNumber) const
+{
+    std::vector<Person> people;
+    
+    if (!isValidLineNumber(lineNumber))
+    {
+        return people; // Return empty vector for invalid line
+    }
+    
+    const auto& line = m_lines[lineNumber - 1];
+    for (const auto& person : line)
+    {
+        people.push_back(person);
+    }
+    
+    return people;
+}
+
+FirebasePeopleStructureBuilder::PeopleSummary QueueManager::getCumulativePeopleSummary() const
+{
+    int activePeople = m_totalPeople; // Current people in queue
+    int completedPeople = m_completedPeopleEver;
+    int totalPeople = m_totalPeopleEver;
+    
+    double averageExpectedWait = totalPeople > 0 ? m_totalExpectedWaitTime / totalPeople : 0.0;
+    double averageActualWait = completedPeople > 0 ? m_totalActualWaitTime / completedPeople : 0.0;
+    
+    return FirebasePeopleStructureBuilder::PeopleSummary(
+        totalPeople, activePeople, completedPeople, averageExpectedWait, averageActualWait);
 }

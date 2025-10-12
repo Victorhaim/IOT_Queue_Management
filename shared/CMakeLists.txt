@@ -9,7 +9,9 @@ add_executable(queue_simulator_shortest
     ../simulations/QueueSimulatorShortest.cpp 
     cpp/queueManagment/QueueManager.cpp
     cpp/queueManagment/ThroughputTracker.cpp
+    cpp/queueManagment/Person.cpp
     cpp/firebase/FirebaseStructureBuilder.cpp
+    cpp/firebase/FirebasePeopleStructureBuilder.cpp
     cpp/firebase/FirebaseClient.cpp
     cpp/http/SimpleHttpClient.cpp
 )
@@ -18,7 +20,9 @@ add_executable(queue_simulator_farthest
     ../simulations/QueueSimulatorFarthest.cpp 
     cpp/queueManagment/QueueManager.cpp
     cpp/queueManagment/ThroughputTracker.cpp
+    cpp/queueManagment/Person.cpp
     cpp/firebase/FirebaseStructureBuilder.cpp
+    cpp/firebase/FirebasePeopleStructureBuilder.cpp
     cpp/firebase/FirebaseClient.cpp
     cpp/http/SimpleHttpClient.cpp
 )
@@ -27,7 +31,9 @@ add_executable(queue_simulator_project
     ../simulations/QueueSimulatorProject.cpp 
     cpp/queueManagment/QueueManager.cpp
     cpp/queueManagment/ThroughputTracker.cpp
+    cpp/queueManagment/Person.cpp
     cpp/firebase/FirebaseStructureBuilder.cpp
+    cpp/firebase/FirebasePeopleStructureBuilder.cpp
     cpp/firebase/FirebaseClient.cpp
     cpp/http/SimpleHttpClient.cpp
 )

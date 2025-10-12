@@ -17,10 +17,10 @@ class QueueSimulator
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 50;
-    const int numberOfLines = 2;
-    const double arrivalRate = 0.18;                       // Probability of arrival per second (~11 people/minute)
-    const std::vector<double> serviceRates = {0.08, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
+    const int maxQueueSize = 100;
+    const int numberOfLines = 3;
+    const double arrivalRate = 0.5;                       // Increased arrival rate (~30 people/minute)
+    const std::vector<double> serviceRates = {0.08, 0.18, 0.12}; // Service rates for 3 lines
     const std::chrono::milliseconds updateInterval{2000};  // 2 second updates
 
     std::unique_ptr<QueueManager> queueManager;
@@ -153,6 +153,7 @@ int main()
     std::cout << "=== Queue Management System - C++ Simulator (SHORTEST WAIT TIME) ===" << std::endl;
     std::cout << "This simulator will generate realistic queue data using SHORTEST WAIT TIME strategy" << std::endl;
     std::cout << "Strategy: Choose line with shortest estimated wait time (considers queue length + throughput)" << std::endl;
+    std::cout << "Configuration: 3 lines, faster arrival rate (~30 people/minute)" << std::endl;
     std::cout << "Press Ctrl+C to stop the simulation" << std::endl;
     std::cout << "=================================================" << std::endl;
 

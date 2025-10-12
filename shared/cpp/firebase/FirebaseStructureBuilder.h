@@ -1,5 +1,4 @@
-#ifndef FIREBASE_STRUCTURE_BUILDER_H
-#define FIREBASE_STRUCTURE_BUILDER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -93,5 +92,3 @@ public:
      */
     static std::string getCurrentTimestamp();
 };
-
-#endif // FIREBASE_STRUCTURE_BUILDER_H
