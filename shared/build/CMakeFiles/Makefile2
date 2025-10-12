@@ -85,12 +85,12 @@ clean: CMakeFiles/queue_simulator_project.dir/clean
 CMakeFiles/queue_simulator_shortest.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=15,16,17,18,19,20,21 "Built target queue_simulator_shortest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=19,20,21,22,23,24,25,26,27 "Built target queue_simulator_shortest"
 .PHONY : CMakeFiles/queue_simulator_shortest.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/queue_simulator_shortest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 9
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/queue_simulator_shortest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 0
 .PHONY : CMakeFiles/queue_simulator_shortest.dir/rule
@@ -111,12 +111,12 @@ CMakeFiles/queue_simulator_shortest.dir/clean:
 CMakeFiles/queue_simulator_farthest.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=1,2,3,4,5,6,7 "Built target queue_simulator_farthest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target queue_simulator_farthest"
 .PHONY : CMakeFiles/queue_simulator_farthest.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/queue_simulator_farthest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 9
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/queue_simulator_farthest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 0
 .PHONY : CMakeFiles/queue_simulator_farthest.dir/rule
@@ -137,12 +137,12 @@ CMakeFiles/queue_simulator_farthest.dir/clean:
 CMakeFiles/queue_simulator_project.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=8,9,10,11,12,13,14 "Built target queue_simulator_project"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18 "Built target queue_simulator_project"
 .PHONY : CMakeFiles/queue_simulator_project.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/queue_simulator_project.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 9
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/queue_simulator_project.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles 0
 .PHONY : CMakeFiles/queue_simulator_project.dir/rule

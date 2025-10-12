@@ -3,8 +3,11 @@
 #include <algorithm>
 #include <vector>
 #include <memory>
+#include <list>
 #include "../firebase/FirebaseClient.h"
+#include "../firebase/FirebasePeopleStructureBuilder.h"
 #include "ThroughputTracker.h"
+#include "Person.h"
 
 /// Line selection strategies for queue management
 enum class LineSelectionStrategy
@@ -99,11 +102,38 @@ public:
     int getLineCount(int lineNumber) const;
 
     /**
+     * @brief Gets all people currently in the queue system
+     * @return Vector containing all people across all lines
+     */
+    std::vector<Person> getAllPeople() const;
+
+    /**
+     * @brief Gets all people in a specific line
+     * @param lineNumber Line to query (1-based indexing)
+     * @return Vector containing all people in the specified line
+     */
+    std::vector<Person> getPeopleInLine(int lineNumber) const;
+
+    /**
+     * @brief Gets cumulative statistics for all people throughout the simulation
+     * @return PeopleSummary with cumulative statistics
+     */
+    FirebasePeopleStructureBuilder::PeopleSummary getCumulativePeopleSummary() const;
+
+    /**
      * @brief Calculates estimated wait time for a specific line
      * @param lineNumber Line to analyze (1-based indexing)
      * @return Estimated wait time in seconds, based on queue length and throughput
      */
     double getEstimatedWaitTime(int lineNumber) const;
+
+    /**
+     * @brief Calculates estimated wait time for a new person entering a specific line
+     * This calculates time until becoming first in line (not until leaving)
+     * @param lineNumber Line to analyze (1-based indexing)
+     * @return Estimated wait time in seconds until becoming first in line
+     */
+    double getEstimatedWaitTimeForNewPerson(int lineNumber) const;
 
 private:
     static const int MAX_LINES = 10;                  // Historical cap; still enforced to avoid runaway usage
@@ -112,8 +142,14 @@ private:
     int m_maxSize;
     int m_numberOfLines;
     int m_totalPeople;
-    std::vector<int> m_lines;              // 0-based indexing internally
-    std::vector<double> m_lineThroughputs; // Throughput per line (people/second)
+    std::vector<std::list<Person>> m_lines;    // Each line contains a list of Person objects
+    std::vector<double> m_lineThroughputs;     // Throughput per line (people/second)
+    
+    // Running statistics for all people throughout simulation
+    int m_totalPeopleEver;                     // Total people who have ever entered
+    int m_completedPeopleEver;                 // Total people who have completed (exited)
+    double m_totalExpectedWaitTime;            // Sum of all expected wait times
+    double m_totalActualWaitTime;              // Sum of all actual wait times for completed people
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;

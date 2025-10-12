@@ -111,10 +111,24 @@ CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/ThroughputTracker.cpp -o CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.s
 
+CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o: CMakeFiles/queue_simulator_project.dir/flags.make
+CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp
+CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o: CMakeFiles/queue_simulator_project.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o -MF CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o.d -o CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp
+
+CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp > CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.i
+
+CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp -o CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.s
+
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_project.dir/flags.make
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_project.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp
 
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i: cmake_force
@@ -125,10 +139,24 @@ CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp -o CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s
 
+CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_project.dir/flags.make
+CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp
+CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_project.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp
+
+CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp > CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
+
+CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp -o CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
+
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_project.dir/flags.make
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_project.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o -MF CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o.d -o CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp
 
 CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.i: cmake_force
@@ -142,7 +170,7 @@ CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.s: cmake_
 CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_project.dir/flags.make
 CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp
 CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_project.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o -MF CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o.d -o CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp
 
 CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.i: cmake_force
@@ -158,7 +186,9 @@ queue_simulator_project_OBJECTS = \
 "CMakeFiles/queue_simulator_project.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorProject.cpp.o" \
 "CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/QueueManager.cpp.o" \
 "CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.o" \
+"CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o" \
 "CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o" \
+"CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o" \
 "CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o" \
 "CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o"
 
@@ -168,12 +198,14 @@ queue_simulator_project_EXTERNAL_OBJECTS =
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorProject.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/QueueManager.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/build.make
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project: CMakeFiles/queue_simulator_project.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_project"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/queue_simulator_project.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
