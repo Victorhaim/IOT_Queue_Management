@@ -1,28 +1,46 @@
-// Cross-platform implementation: WinHTTP on Windows, libcurl elsewhere
+// Cross-platform implementation: ESP32 WiFi, WinHTTP on Windows, libcurl elsewhere
 #include "SimpleHttpClient.h"
 #include <iostream>
 #include <sstream>
-#include <string>
 
-#if defined(_WIN32)
+#ifdef ESP32
+#include <ArduinoJson.h>
+#endif
+
+#if defined(_WIN32) && !defined(ESP32)
     #include <windows.h>
     #include <winhttp.h>
     #pragma comment(lib, "winhttp.lib")
-#else
+#elif !defined(ESP32)
     #include <curl/curl.h>
 #endif
 
 SimpleHttpClient::SimpleHttpClient(const std::string &baseUrl) : baseUrl(baseUrl)
 {
+#ifdef ESP32
+    wifiClient = new WiFiClientSecure();
+    httpClient = new HTTPClient();
+    wifiClient->setInsecure(); // For testing - in production use proper certificates
+#endif
 }
 
 SimpleHttpClient::~SimpleHttpClient()
 {
+#ifdef ESP32
+    if (httpClient) {
+        httpClient->end();
+        delete httpClient;
+    }
+    if (wifiClient) {
+        delete wifiClient;
+    }
+#endif
 }
 
 bool SimpleHttpClient::initialize()
 {
-    return true; // No initialization needed for WinHTTP
+    debugPrint("HTTP client initialized");
+    return true;
 }
 
 bool SimpleHttpClient::sendPutRequest(const std::string &path, const std::string &jsonData)
@@ -42,11 +60,76 @@ bool SimpleHttpClient::sendDeleteRequest(const std::string &path)
 
 std::string SimpleHttpClient::sendGetRequest(const std::string &path)
 {
-    // For now, just implement PUT/PATCH for writing to Firebase
+#ifdef ESP32
+    // ESP32 implementation for GET request
+    std::string url = baseUrl;
+    if (!url.empty() && url.back() != '/') url += "/";
+    url += path + ".json";
+    
+    httpClient->begin(*wifiClient, url.c_str());
+    httpClient->addHeader("Content-Type", "application/json");
+    
+    int httpCode = httpClient->GET();
+    std::string response = "";
+    
+    if (httpCode > 0) {
+        response = httpClient->getString().c_str();
+        debugPrint("GET successful: " + std::to_string(httpCode));
+    } else {
+        debugPrint("GET failed: " + std::to_string(httpCode));
+    }
+    
+    httpClient->end();
+    return response;
+#else
+    // For now, just implement PUT/PATCH for writing to Firebase on desktop
     return "";
+#endif
+}
+
+void SimpleHttpClient::debugPrint(const std::string &message)
+{
+#ifdef ESP32
+    Serial.println(("[HTTP] " + message).c_str());
+#else
+    std::cout << "[HTTP] " << message << std::endl;
+#endif
 }
 
 bool SimpleHttpClient::sendRequest(const std::string &method, const std::string &path, const std::string &data)
+{
+#ifdef ESP32
+    // ESP32 implementation
+    std::string url = baseUrl;
+    if (!url.empty() && url.back() != '/') url += "/";
+    url += path + ".json";
+    
+    httpClient->begin(*wifiClient, url.c_str());
+    httpClient->addHeader("Content-Type", "application/json");
+    
+    int httpCode = -1;
+    
+    if (method == "PUT") {
+        httpCode = httpClient->PUT(data.c_str());
+    } else if (method == "PATCH") {
+        httpCode = httpClient->PATCH(data.c_str());
+    } else if (method == "DELETE") {
+        httpCode = httpClient->sendRequest("DELETE");
+    } else if (method == "GET") {
+        httpCode = httpClient->GET();
+    }
+    
+    bool success = (httpCode >= 200 && httpCode < 300);
+    
+    if (success) {
+        debugPrint("HTTP " + method + " successful (status: " + std::to_string(httpCode) + ")");
+    } else {
+        debugPrint("HTTP " + method + " failed (status: " + std::to_string(httpCode) + ")");
+    }
+    
+    httpClient->end();
+    return success;
+#else
 {
 #if defined(_WIN32)
     try {
@@ -115,3 +198,5 @@ bool SimpleHttpClient::sendRequest(const std::string &method, const std::string 
     std::cerr << "HTTP request failed with status: " << code << std::endl; return false;
 #endif
 }
+}
+#endif
