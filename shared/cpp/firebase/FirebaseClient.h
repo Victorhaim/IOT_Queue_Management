@@ -2,6 +2,9 @@
 
 #include <string>
 #include <memory>
+#ifdef ESP32
+#include <Arduino.h>
+#endif
 #include "../http/SimpleHttpClient.h"
 
 class FirebaseClient
@@ -22,4 +25,7 @@ public:
     std::string readData(const std::string &path);
 
     void cleanup();
+
+private:
+    void debugPrint(const std::string &message);
 };

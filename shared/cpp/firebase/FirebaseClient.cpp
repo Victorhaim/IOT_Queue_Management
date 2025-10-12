@@ -1,6 +1,8 @@
 #include "FirebaseClient.h"
 #include <iostream>
-#include <sstream>
+#ifdef ESP32
+#include <Arduino.h>
+#endif
 
 FirebaseClient::FirebaseClient(const std::string &projectId, const std::string &databaseUrl)
     : projectId(projectId), databaseUrl(databaseUrl)
@@ -17,11 +19,11 @@ bool FirebaseClient::initialize()
 {
     if (!httpClient->initialize())
     {
-        std::cerr << "Failed to initialize HTTP client" << std::endl;
+        debugPrint("Failed to initialize HTTP client");
         return false;
     }
 
-    std::cout << "Firebase client initialized for project: " << projectId << std::endl;
+    debugPrint("Firebase client initialized for project: " + projectId);
     return true;
 }
 
@@ -29,12 +31,12 @@ bool FirebaseClient::writeData(const std::string &path, const std::string &jsonD
 {
     if (httpClient->sendPutRequest(path, jsonData))
     {
-        std::cout << "Successfully wrote to Firebase: " << path << std::endl;
+        debugPrint("Successfully wrote to Firebase: " + path);
         return true;
     }
     else
     {
-        std::cerr << "Firebase write failed for path: " << path << std::endl;
+        debugPrint("Firebase write failed for path: " + path);
         return false;
     }
 }
@@ -43,12 +45,12 @@ bool FirebaseClient::updateData(const std::string &path, const std::string &json
 {
     if (httpClient->sendPatchRequest(path, jsonData))
     {
-        std::cout << "Successfully updated Firebase: " << path << std::endl;
+        debugPrint("Successfully updated Firebase: " + path);
         return true;
     }
     else
     {
-        std::cerr << "Firebase update failed for path: " << path << std::endl;
+        debugPrint("Firebase update failed for path: " + path);
         return false;
     }
 }
@@ -57,12 +59,12 @@ bool FirebaseClient::deleteData(const std::string &path)
 {
     if (httpClient->sendDeleteRequest(path))
     {
-        std::cout << "Successfully deleted from Firebase: " << path << std::endl;
+        debugPrint("Successfully deleted from Firebase: " + path);
         return true;
     }
     else
     {
-        std::cerr << "Firebase delete failed for path: " << path << std::endl;
+        debugPrint("Firebase delete failed for path: " + path);
         return false;
     }
 }
@@ -70,6 +72,15 @@ bool FirebaseClient::deleteData(const std::string &path)
 std::string FirebaseClient::readData(const std::string &path)
 {
     return httpClient->sendGetRequest(path);
+}
+
+void FirebaseClient::debugPrint(const std::string &message)
+{
+#ifdef ESP32
+    Serial.println(("[Firebase] " + message).c_str());
+#else
+    std::cout << "[Firebase] " << message << std::endl;
+#endif
 }
 
 void FirebaseClient::cleanup()

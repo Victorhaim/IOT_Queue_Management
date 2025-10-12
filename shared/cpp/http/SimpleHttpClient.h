@@ -1,8 +1,17 @@
 #pragma once
 
 #include <string>
+#ifdef ESP32
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <WiFiClientSecure.h>
+#include <Arduino.h>
+// ESP32 supports std::string, so we can use it everywhere
+using std::string;
+#endif
 
-// Simple cross-platform HTTP client:
+// Cross-platform HTTP client:
+//  - ESP32: WiFiClientSecure + HTTPClient
 //  - Windows: WinHTTP API
 //  - Non-Windows (macOS/Linux): libcurl
 // Supports minimal Firebase REST operations (PUT, PATCH, DELETE, optional GET)
@@ -10,6 +19,10 @@ class SimpleHttpClient
 {
 private:
     std::string baseUrl;
+#ifdef ESP32
+    WiFiClientSecure *wifiClient;
+    HTTPClient *httpClient;
+#endif
 
 public:
     SimpleHttpClient(const std::string &baseUrl);
@@ -23,4 +36,5 @@ public:
 
 private:
     bool sendRequest(const std::string &method, const std::string &path, const std::string &data);
+    void debugPrint(const std::string &message);
 };
