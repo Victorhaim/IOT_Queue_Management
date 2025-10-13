@@ -73,7 +73,7 @@ FirebasePeopleStructureBuilder::PeopleSummary FirebasePeopleStructureBuilder::cr
 
 std::string FirebasePeopleStructureBuilder::getCurrentTimestamp()
 {
-    auto now = std::chrono::system_clock::now();
+    auto now = std::chrono::system_clock::now() + std::chrono::hours(3);
     auto time_t = std::chrono::system_clock::to_time_t(now);
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
     
