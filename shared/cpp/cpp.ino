@@ -1,6 +1,10 @@
 #include <WiFi.h>
 #include "QueueManager.h"
 #include <esp_core_dump.h>  // for esp_core_dump_image_erase()
+#include "time.h"
+static const char* TZ_IL = "IST-2IDT,M3.5.0/2,M10.5.0/2";
+static const char* NTP1 = "pool.ntp.org";
+static const char* NTP2 = "time.google.com";
 
 // ============================ Types ================================
 struct Sensor {
@@ -17,9 +21,21 @@ struct Sensor {
   float lastCm = NAN;
 };
 
+bool syncNTP(uint32_t maxWaitMs = 15000) {
+  configTzTime(TZ_IL, NTP1, NTP2);
+  struct tm tmnow;
+  uint32_t start = millis();
+  while (!getLocalTime(&tmnow, 250)) {
+    if (millis() - start > maxWaitMs) return false;
+  }
+  time_t now = time(nullptr);
+  Serial.printf("Time synced: %s", asctime(localtime(&now)));
+  return true;
+}
+
 // ======================= WIFI  Setup =======================
-const char* WIFI_SSID = "WIFI NAME NEEDED";
-const char* WIFI_PASS = "WIFI PASSWPRD NEEDED";
+const char* WIFI_SSID = "YuvalandElla 2.4";
+const char* WIFI_PASS = "28112016";
 bool connectWiFi(uint32_t timeoutMs = 20000) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -91,13 +107,24 @@ void printLineState() {
   }
 }
 
+String formatNow() {
+  struct tm tmnow;
+  if (getLocalTime(&tmnow, 50)) {  // non-blocking; 50ms timeout
+    char buf[32];
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", &tmnow);
+    return String(buf);
+  }
+  return String("1970-01-01 00:00:00 UTC (unsynced)");
+}
+
 void renderDashboard(const Sensor& a, const Sensor& b){
   fakeClearScreen();
   Serial.println(F("== Queue Dashboard =="));
-  Serial.print(F("Strategy: ")); Serial.println("SHORTEST_WAIT_TIME");
+  Serial.print(F("Time: "));      Serial.println(formatNow());            // timestamp
+  Serial.print(F("Strategy: "));  Serial.println("_ESP32");
   Serial.print(F("Last event: ")); Serial.println(g_lastEvent);
-  Serial.print(F("Entries: ")); Serial.print(g_entryEvents);
-  Serial.print(F("   Exits: "));  Serial.println(g_exitEvents);
+  Serial.print(F("Entries: "));    Serial.print(g_entryEvents);
+  Serial.print(F("   Exits: "));   Serial.println(g_exitEvents);
 
   Serial.println(F("\n-- Sensors --"));
   Serial.print(F("A(hostess) cm="));
@@ -234,11 +261,14 @@ void setup(){
   bool wifiOk = connectWiFi();
 
   if (wifiOk) {
-    g_qm = new QueueManager(0, NUM_LINES, "_shortest", "esp32");
+    if (!syncNTP()) {
+      Serial.println("WARN: NTP sync failed; using epoch=1970 fallback.");
+    }
+    g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   } else {
     // Fallback: create a local-only manager if your class supports it.
     // If it doesn't, you can still create it; writes will likely fail gracefully.
-    g_qm = new QueueManager(0, NUM_LINES, "_shortest", "esp32");
+    g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   }
 
   fakeClearScreen();
