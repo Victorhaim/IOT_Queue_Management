@@ -217,8 +217,6 @@ class _QueueScreenState extends State<QueueScreen>
                     _buildAnimatedNumber(),
                     SizedBox(height: AppParameters.size_numberToBoxesSpacing),
                     _buildHoverBoxes(),
-                    SizedBox(height: 30),
-                    _buildThroughputDisplay(),
                     SizedBox(height: 50), // Bottom padding
                   ],
                 ),
@@ -425,85 +423,6 @@ class _QueueScreenState extends State<QueueScreen>
           onHover: _handleWaitHover,
           isClockIcon: true,
           clockController: _clockController,
-        );
-      },
-    );
-  }
-
-  Widget _buildThroughputDisplay() {
-    final throughputRef = FirebaseDatabase.instance.ref(
-      'simulation_$_selectedStrategy/queues',
-    );
-    return StreamBuilder<DatabaseEvent>(
-      stream: throughputRef.onValue,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-          return Container();
-        }
-
-        final queuesData = snapshot.data!.snapshot.value as Map;
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Current Throughput (people/sec)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppParameters.color_primaryBlue,
-                ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: queuesData.entries
-                    .where((entry) => entry.key.toString().startsWith('line'))
-                    .map<Widget>((entry) {
-                      final lineKey = entry.key.toString();
-                      final lineNumber = lineKey.replaceAll('line', '');
-                      final lineData = entry.value as Map;
-                      final throughput = lineData['throughputFactor'] ?? 0.0;
-
-                      return Column(
-                        children: [
-                          Text(
-                            'Line $lineNumber',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppParameters.color_primaryBlue,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '${(throughput as num).toStringAsFixed(3)}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green[700],
-                            ),
-                          ),
-                        ],
-                      );
-                    })
-                    .toList(),
-              ),
-            ],
-          ),
         );
       },
     );
