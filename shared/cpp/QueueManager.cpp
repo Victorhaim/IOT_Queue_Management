@@ -1,7 +1,7 @@
 #include "QueueManager.h"
-#include "../firebase/FirebaseClient.h"
-#include "../firebase/FirebaseStructureBuilder.h"
-#include "../firebase/FirebasePeopleStructureBuilder.h"
+#include "FirebaseClient.h"
+#include "FirebaseStructureBuilder.h"
+#include "FirebasePeopleStructureBuilder.h"
 #include "ThroughputTracker.h"
 #include "Person.h"
 #include <cstring>
