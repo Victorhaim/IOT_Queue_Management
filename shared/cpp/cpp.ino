@@ -1,45 +1,129 @@
-// ---- Config ----
-static const int TRIG_A = 19, ECHO_A = 18;   // Entry (A)
-static const int TRIG_B = 23, ECHO_B = 22;   // Exit  (B)
-static const float SPEED_CM_PER_US = 0.0343f;
-static const unsigned long PULSE_TO_US = 25000;      // ~4.3m timeout
-static const int  ENTER_THRESH_CM = 15, EXIT_THRESH_CM = 18;
-static const unsigned long REFRACTORY_MS = 600, CLEAR_DWELL_MS = 250;
-static const unsigned long MANUAL_PULSE_MS = 200, UI_REFRESH_MS = 500;
+#include <WiFi.h>
+#include "QueueManager.h"
+#include <esp_core_dump.h>  // for esp_core_dump_image_erase()
 
-// ---- Types ----
+// ============================ Types ================================
 struct Sensor {
-  int trig, echo;
+  int trig = -1, echo = -1;
 
   bool tripped = false;       // effective (physical OR manual)
   bool prevTripped = false;   // snapshot before update (for rising-edge)
   bool clearStable = true;    // true after CLEAR has persisted CLEAR_DWELL_MS
-  bool clearStablePre = true; // <-- NEW: snapshot of clearStable BEFORE update
+  bool clearStablePre = true; // snapshot of clearStable BEFORE update
 
   unsigned long clearSince = 0;
-  unsigned long lastHitAt = 0;
   unsigned long manualTripEnd = 0;
 
   float lastCm = NAN;
 };
 
-struct QueueManager { int q = 0; };
+// ======================= WIFI  Setup =======================
+const char* WIFI_SSID = "WIFI NAME NEEDED";
+const char* WIFI_PASS = "WIFI PASSWPRD NEEDED";
+bool connectWiFi(uint32_t timeoutMs = 20000) {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-// ---- Globals ----
-Sensor A, B;
-QueueManager QM;
-unsigned long lastUiAt = 0;
-
-// ---- Utils/UI ----
-void fakeClearScreen(){ for(int i=0;i<20;i++) Serial.println(); }
-void renderUI(const QueueManager& qm, const Sensor& a, const Sensor& b){
-  fakeClearScreen();
-  Serial.print("q="); Serial.print(qm.q);
-  Serial.print("  A="); Serial.print(a.tripped ? "TRIPPED" : "CLEAR");
-  Serial.print("  B="); Serial.print(b.tripped ? "TRIPPED" : "CLEAR");
+  uint32_t start = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - start < timeoutMs) {
+    delay(200);
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.print("WiFi OK, IP=");
+    Serial.println(WiFi.localIP());
+    return true;
+  } else {
+    Serial.println("WiFi FAILED (timeout). Running without cloud writes.");
+    return false;
+  }
 }
 
-// ---- Driver ----
+// ======================= Queue Manager Setup =======================
+static LineSelectionStrategy g_strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME;
+static const int NUM_LINES = 1;             // we manage 1 line (you can change later)
+static const int EXIT_LINE_NUMBER = 1;      // hard-coded exit line
+
+// Defer construction to setup() to avoid early crashes
+QueueManager* g_qm = nullptr;
+
+// ============================ Config ===============================
+static const int TRIG_A = 19, ECHO_A = 18;   // Entry (A)  "hostess"
+static const int TRIG_B = 23, ECHO_B = 22;   // Exit  (B)  "exit"
+static const float SPEED_CM_PER_US = 0.0343f;
+static const unsigned long PULSE_TO_US = 25000;      // ~4.3m timeout
+
+// trip logic (with hysteresis)
+static const int  ENTER_THRESH_CM = 15, EXIT_THRESH_CM = 18;
+
+// UI + dwell
+static const unsigned long CLEAR_DWELL_MS = 250;
+static const unsigned long MANUAL_PULSE_MS = 200;
+static const unsigned long UI_REFRESH_MS = 500;       // dashboard refresh ~2 Hz
+
+// ============================ Globals ==============================
+Sensor A, B;
+unsigned long lastUiAt = 0;
+
+// Counters + last event
+volatile unsigned long g_entryEvents = 0;
+volatile unsigned long g_exitEvents  = 0;
+String g_lastEvent = "";
+
+// ============================ Utils/UI =============================
+static inline const char* onoff(bool x){ return x ? "ON " : "OFF"; }
+static inline const char* yesno(bool x){ return x ? "YES" : "NO "; }
+
+void fakeClearScreen(){ for(int i=0;i<20;i++) Serial.println(); }
+
+int safeGetLineCount(int line){
+  if (!g_qm) return -1;
+  return g_qm->getLineCount(line);
+}
+
+void printLineState() {
+  for (int ln = 1; ln <= NUM_LINES; ++ln) {
+    int cnt = safeGetLineCount(ln);
+    Serial.print("  Line ");
+    Serial.print(ln);
+    Serial.print(": ");
+    if (cnt >= 0) { Serial.print(cnt); Serial.println(" waiting"); }
+    else          { Serial.println("(n/a)"); }
+  }
+}
+
+void renderDashboard(const Sensor& a, const Sensor& b){
+  fakeClearScreen();
+  Serial.println(F("== Queue Dashboard =="));
+  Serial.print(F("Strategy: ")); Serial.println("SHORTEST_WAIT_TIME");
+  Serial.print(F("Last event: ")); Serial.println(g_lastEvent);
+  Serial.print(F("Entries: ")); Serial.print(g_entryEvents);
+  Serial.print(F("   Exits: "));  Serial.println(g_exitEvents);
+
+  Serial.println(F("\n-- Sensors --"));
+  Serial.print(F("A(hostess) cm="));
+  if (isnan(a.lastCm)) Serial.print("NaN ");
+  else { Serial.print(a.lastCm, 1); Serial.print(" "); }
+  Serial.print(F("   TRIPPED=")); Serial.print(onoff(a.tripped));
+  Serial.print(F("   CLEAR_STABLE=")); Serial.println(yesno(a.clearStable));
+
+  Serial.print(F("B(exit)    cm="));
+  if (isnan(b.lastCm)) Serial.print("NaN ");
+  else { Serial.print(b.lastCm, 1); Serial.print(" "); }
+  Serial.print(F("   TRIPPED=")); Serial.print(onoff(b.tripped));
+  Serial.print(F("   CLEAR_STABLE=")); Serial.println(yesno(b.clearStable));
+
+  Serial.println(F("\n-- Thresholds --"));
+  Serial.print(F("ENTER_THRESH_CM=")); Serial.println(ENTER_THRESH_CM);
+  Serial.print(F("EXIT_THRESH_CM =")); Serial.println(EXIT_THRESH_CM);
+
+  Serial.println(F("\n-- Queues --"));
+  printLineState();
+
+  Serial.println();
+  Serial.println(F("Hints: 'A'/'B' simulate pulses • Serial @115200 baud"));
+}
+
+// ============================ Driver ===============================
 float readDistanceCm(int trigPin, int echoPin){
   digitalWrite(trigPin, LOW);  delayMicroseconds(2);
   digitalWrite(trigPin, HIGH); delayMicroseconds(10);
@@ -49,14 +133,15 @@ float readDistanceCm(int trigPin, int echoPin){
   return (dur * SPEED_CM_PER_US) / 2.0f;
 }
 
-// ---- Sensor update ----
+// ========================= Sensor update ===========================
 void updateSensor(Sensor& S){
   float cm = readDistanceCm(S.trig, S.echo);
   S.lastCm = cm;
 
   bool physTripped;
-  if (isnan(cm)) physTripped = false;
-  else {
+  if (isnan(cm)) {
+    physTripped = false;
+  } else {
     bool cur = S.tripped, nxt = cur;
     if (!cur && cm < ENTER_THRESH_CM)      nxt = true;
     else if (cur && cm > EXIT_THRESH_CM)   nxt = false;
@@ -77,77 +162,108 @@ void updateSensor(Sensor& S){
   }
 }
 
-// ---- Keyboard ----
+// ============================ Keyboard =============================
 void handleKeyboard(Sensor& a, Sensor& b){
   while (Serial.available() > 0){
     char c = (char)Serial.read();
     if (c=='A'||c=='a') a.manualTripEnd = millis() + MANUAL_PULSE_MS;
     else if (c=='B'||c=='b') b.manualTripEnd = millis() + MANUAL_PULSE_MS;
+    else if (c=='e'||c=='E') { // manual enqueue
+      if (g_qm){
+        int recommended = g_qm->getNextLineNumber(g_strategy);
+        bool ok = g_qm->enqueue(g_strategy);
+        if (ok){ g_entryEvents++; g_lastEvent = String("[ENTRY] Manual -> line ") + recommended; }
+        else   { g_lastEvent = "[ENTRY] Manual FAILED (capacity?)"; }
+      }
+    } else if (c=='d'||c=='D') { // manual dequeue line 1
+      if (g_qm){
+        bool ok = g_qm->dequeue(EXIT_LINE_NUMBER);
+        if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Manual -> line 1"; }
+        else   { g_lastEvent = "[EXIT] Manual FAILED (empty)"; }
+      }
+    }
   }
 }
 
-// ---- Edge processing (uses PRE-UPDATE snapshots) ----
-void processEdges(QueueManager& qm, Sensor& a, Sensor& b){
-  unsigned long now = millis();
+// ============== Edge processing (rising edges only) ================
+void processEdges(QueueManager& qmRef, const Sensor& hostessSensor, const Sensor& exitSensor) {
+  bool hostessRising = (!hostessSensor.prevTripped && hostessSensor.tripped && hostessSensor.clearStablePre);
+  bool exitRising    = (!exitSensor.prevTripped    && exitSensor.tripped    && exitSensor.clearStablePre);
 
-  bool riseA = (!a.prevTripped && a.tripped);
-  if (riseA){
-    bool refOK = (now - a.lastHitAt >= REFRACTORY_MS);
-    bool clearOK = a.clearStablePre;          // <-- use pre-update snapshot
-    if (refOK && clearOK){ qm.q++; a.lastHitAt = now; }
+  // --- Hostess sensor triggered -> enqueue (assign a line) ---
+  if (hostessRising) {
+    int recommended = qmRef.getNextLineNumber(g_strategy); // peek for logging
+    bool ok = qmRef.enqueue(g_strategy);                   // writes to Firebase inside
+    if (ok){ g_entryEvents++; g_lastEvent = String("[ENTRY] Hostess -> line ") + recommended; }
+    else   { g_lastEvent = "[ENTRY] Hostess FAILED (capacity?)"; }
   }
 
-  bool riseB = (!b.prevTripped && b.tripped);
-  if (riseB){
-    bool refOK = (now - b.lastHitAt >= REFRACTORY_MS);
-    bool clearOK = b.clearStablePre;          // <-- use pre-update snapshot
-    if (refOK && clearOK){ if (qm.q>0) qm.q--; b.lastHitAt = now; }
+  // --- Exit sensor triggered -> dequeue from line 1 ---
+  if (exitRising) {
+    bool ok = qmRef.dequeue(EXIT_LINE_NUMBER);             // writes to Firebase inside
+    if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Exit -> line 1"; }
+    else   { g_lastEvent = "[EXIT] Exit FAILED (empty)"; }
   }
 }
 
-// ---- Setup helpers ----
+// ========================== Setup helpers ==========================
 void initSensor(Sensor& S, int trigPin, int echoPin){
   S.trig = trigPin; S.echo = echoPin;
   pinMode(S.trig, OUTPUT);
-  pinMode(S.echo, INPUT);  // ECHO must be level-shifted to 3.3V
+  pinMode(S.echo, INPUT);  // ECHO must be 3.3V (use divider if using HC-SR04!)
   digitalWrite(S.trig, LOW);
 }
 
 void snapshotPrevStates(Sensor& S){
-  S.prevTripped   = S.tripped;     // pre-update effective state
-  S.clearStablePre = S.clearStable; // <-- NEW: pre-update clearStable
+  S.prevTripped    = S.tripped;      // pre-update effective state
+  S.clearStablePre = S.clearStable;  // pre-update clearStable
 }
 
-// ---- Arduino lifecycle ----
+// ======================== Arduino lifecycle ========================
 void setup(){
-  Serial.begin(9600);
-  delay(800);
+ delay(1500);
+  Serial.begin(115200);
+  delay(50);
+
+  esp_core_dump_image_erase();
+
   initSensor(A, TRIG_A, ECHO_A);
   initSensor(B, TRIG_B, ECHO_B);
+
+  // Connect Wi-Fi BEFORE creating QueueManager (prevents HTTP from crashing)
+  bool wifiOk = connectWiFi();
+
+  if (wifiOk) {
+    g_qm = new QueueManager(0, NUM_LINES, "_shortest", "esp32");
+  } else {
+    // Fallback: create a local-only manager if your class supports it.
+    // If it doesn't, you can still create it; writes will likely fail gracefully.
+    g_qm = new QueueManager(0, NUM_LINES, "_shortest", "esp32");
+  }
+
   fakeClearScreen();
-  Serial.println("Queue Manager ready. A=Entry (19/18), B=Exit (23/22). Press 'A'/'B' to simulate.");
+  Serial.println(F("Queue Manager ready. A=Entry (19/18), B=Exit (23/22). 'A'/'B' simulate pulses."));
   lastUiAt = millis();
 }
 
-void loop(){
+void loop() {
   handleKeyboard(A, B);
 
-  // PRE-UPDATE snapshots (critical for correct edge/clear logic)
   snapshotPrevStates(A);
   snapshotPrevStates(B);
 
-  // Update sensors (may flip tripped & clearStable)
   updateSensor(A);
   updateSensor(B);
 
-  // Update queue on edges using pre-update snapshots
-  processEdges(QM, A, B);
-
-  // UI every 0.5s
-  if (millis() - lastUiAt >= UI_REFRESH_MS){
-    lastUiAt = millis();
-    renderUI(QM, A, B);
+  if (g_qm) {                // <-- guard
+    processEdges(*g_qm, A, B);
   }
 
-  delay(80);
+  unsigned long now = millis();
+  if (now - lastUiAt >= UI_REFRESH_MS) {
+    renderDashboard(A, B);
+    lastUiAt = now;
+  }
+
+  delay(30);
 }
