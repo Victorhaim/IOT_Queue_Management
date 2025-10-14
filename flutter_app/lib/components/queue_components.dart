@@ -112,11 +112,27 @@ class _QueueScreenState extends State<QueueScreen>
     // Update initial display (no setState here!)
     _updateCountdownDisplay();
 
-    // Start countdown timer that checks every second
-    _countdownTimer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (_currentWaitTimeSeconds == null || _currentWaitTimeSeconds! <= 0) {
+    // Start countdown timer that checks every minute (60 seconds)
+    _countdownTimer = Timer.periodic(Duration(seconds: 60), (timer) {
+      if (_currentWaitTimeSeconds == null) {
         timer.cancel();
-        _currentWaitTimeSeconds = 0;
+        return;
+      }
+
+      // Convert to minutes for countdown logic
+      double currentMinutes = _currentWaitTimeSeconds! / 60;
+
+      // If we're already at or below 1 minute, stop the countdown
+      // Only show 0 min if the original Firebase value was exactly 0
+      if (currentMinutes <= 1) {
+        timer.cancel();
+        // Keep the current display as is - don't force to 0 unless original was 0
+        if (_lastFirebaseValue == 0) {
+          _currentWaitTimeSeconds = 0;
+        } else {
+          // Keep at minimum 1 minute equivalent in seconds
+          _currentWaitTimeSeconds = 60;
+        }
         _updateCountdownDisplay();
         if (mounted) {
           setState(() {});
@@ -124,36 +140,8 @@ class _QueueScreenState extends State<QueueScreen>
         return;
       }
 
-      // Get current time unit
-      final currentTimeResult =
-          TimeConversionUtil.convertSecondsToAppropriateUnit(
-            _currentWaitTimeSeconds!,
-          );
-
-      // Decrement based on the appropriate unit
-      switch (currentTimeResult.unit) {
-        case TimeUnit.seconds:
-          _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
-          break;
-        case TimeUnit.minutes:
-          // Only decrement by minute if we're at a minute boundary (0 seconds)
-          if (_currentWaitTimeSeconds! % 60 == 0) {
-            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 60;
-          } else {
-            // Switch to seconds mode
-            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
-          }
-          break;
-        case TimeUnit.hours:
-          // Only decrement by hour if we're at an hour boundary (0 minutes, 0 seconds)
-          if (_currentWaitTimeSeconds! % 3600 == 0) {
-            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 3600;
-          } else {
-            // Switch to smaller unit mode
-            _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 1;
-          }
-          break;
-      }
+      // Decrement by 1 minute (60 seconds)
+      _currentWaitTimeSeconds = _currentWaitTimeSeconds! - 60;
 
       if (_currentWaitTimeSeconds! < 0) {
         _currentWaitTimeSeconds = 0;
@@ -229,8 +217,6 @@ class _QueueScreenState extends State<QueueScreen>
                     _buildAnimatedNumber(),
                     SizedBox(height: AppParameters.size_numberToBoxesSpacing),
                     _buildHoverBoxes(),
-                    SizedBox(height: 30),
-                    _buildThroughputDisplay(),
                     SizedBox(height: 50), // Bottom padding
                   ],
                 ),
@@ -437,85 +423,6 @@ class _QueueScreenState extends State<QueueScreen>
           onHover: _handleWaitHover,
           isClockIcon: true,
           clockController: _clockController,
-        );
-      },
-    );
-  }
-
-  Widget _buildThroughputDisplay() {
-    final throughputRef = FirebaseDatabase.instance.ref(
-      'simulation_$_selectedStrategy/queues',
-    );
-    return StreamBuilder<DatabaseEvent>(
-      stream: throughputRef.onValue,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
-          return Container();
-        }
-
-        final queuesData = snapshot.data!.snapshot.value as Map;
-
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Text(
-                'Current Throughput (people/sec)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppParameters.color_primaryBlue,
-                ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: queuesData.entries
-                    .where((entry) => entry.key.toString().startsWith('line'))
-                    .map<Widget>((entry) {
-                      final lineKey = entry.key.toString();
-                      final lineNumber = lineKey.replaceAll('line', '');
-                      final lineData = entry.value as Map;
-                      final throughput = lineData['throughputFactor'] ?? 0.0;
-
-                      return Column(
-                        children: [
-                          Text(
-                            'Line $lineNumber',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppParameters.color_primaryBlue,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '${(throughput as num).toStringAsFixed(3)}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green[700],
-                            ),
-                          ),
-                        ],
-                      );
-                    })
-                    .toList(),
-              ),
-            ],
-          ),
         );
       },
     );

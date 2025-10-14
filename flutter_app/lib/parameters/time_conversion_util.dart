@@ -3,25 +3,33 @@ class TimeConversionUtil {
   /// Converts seconds to the most appropriate time unit and returns both the converted value and unit
   ///
   /// Rules:
-  /// - If less than 60 seconds: display in seconds
-  /// - If less than 3600 seconds (60 minutes): display in minutes
+  /// - If seconds is 0: display "0 min"
+  /// - If seconds > 0 but < 60: display "1 min" (minimum)
+  /// - If less than 3600 seconds (60 minutes): display in minutes (rounded)
   /// - Otherwise: display in hours
   ///
   /// Returns a [TimeConversionResult] with the converted value and appropriate suffix
   static TimeConversionResult convertSecondsToAppropriateUnit(double seconds) {
-    if (seconds < 60) {
-      // Display in seconds
+    if (seconds == 0) {
+      // Only show 0 min when exactly 0 seconds
       return TimeConversionResult(
-        value: seconds.round(),
-        suffix: seconds.round() == 1 ? ' sec' : ' sec',
-        unit: TimeUnit.seconds,
+        value: 0,
+        suffix: ' min',
+        unit: TimeUnit.minutes,
+      );
+    } else if (seconds < 60) {
+      // Show at least 1 min for any non-zero value under 60 seconds
+      return TimeConversionResult(
+        value: 1,
+        suffix: ' min',
+        unit: TimeUnit.minutes,
       );
     } else if (seconds < 3600) {
       // Display in minutes
       double minutes = seconds / 60;
       return TimeConversionResult(
         value: minutes.round(),
-        suffix: minutes.round() == 1 ? ' min' : ' min',
+        suffix: ' min',
         unit: TimeUnit.minutes,
       );
     } else {
@@ -29,7 +37,7 @@ class TimeConversionUtil {
       double hours = seconds / 3600;
       return TimeConversionResult(
         value: hours.round(),
-        suffix: hours.round() == 1 ? ' hr' : ' hr',
+        suffix: ' hr',
         unit: TimeUnit.hours,
       );
     }

@@ -36,40 +36,6 @@ std::string FirebaseStructureBuilder::getAggregatedDataPath()
     return "currentBest";
 }
 
-int FirebaseStructureBuilder::calculateRecommendedLine(const LineData *allLines, int numberOfLines)
-{
-    if (numberOfLines <= 0)
-    {
-        return 0;
-    }
-
-    int recommendedLine = 1;
-    double bestScore = allLines[0].averageWaitTime; // Lower wait time is better
-
-    for (int i = 0; i < numberOfLines; i++)
-    {
-        // Use average wait time as the primary metric for recommendation
-        double currentScore = allLines[i].averageWaitTime;
-
-        // If wait times are very close, prefer line with fewer people
-        if (std::abs(currentScore - bestScore) < 0.5)
-        {
-            if (allLines[i].currentOccupancy < allLines[recommendedLine - 1].currentOccupancy)
-            {
-                recommendedLine = allLines[i].lineNumber;
-                bestScore = currentScore;
-            }
-        }
-        else if (currentScore < bestScore)
-        {
-            recommendedLine = allLines[i].lineNumber;
-            bestScore = currentScore;
-        }
-    }
-
-    return recommendedLine;
-}
-
 double FirebaseStructureBuilder::calculateAverageWaitTime(int occupancy, double throughputFactor)
 {
     return (throughputFactor > 0.0) ? occupancy / throughputFactor : 0.0;
@@ -86,14 +52,12 @@ std::string FirebaseStructureBuilder::getCurrentTimestamp()
     return oss.str();
 }
 
-FirebaseStructureBuilder::AggregatedData FirebaseStructureBuilder::createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines)
+FirebaseStructureBuilder::AggregatedData FirebaseStructureBuilder::createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines, int recommendedLine)
 {
     if (numberOfLines <= 0)
     {
         return AggregatedData(totalPeople, numberOfLines, 0, 0.0, 0);
     }
-
-    int recommendedLine = calculateRecommendedLine(allLines, numberOfLines);
 
     // Find the recommended line data to duplicate wait time and occupancy
     double recommendedWaitTime = 0.0;
