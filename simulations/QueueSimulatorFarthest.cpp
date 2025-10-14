@@ -17,7 +17,7 @@ class QueueSimulatorFarthest
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 50;
+    const int maxQueueSize = 7;  // Per-line limit
     const int numberOfLines = 2;
     const double arrivalRate = 0.18;                       // Probability of arrival per second (~11 people/minute)
     const std::vector<double> serviceRates = {0.08, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
@@ -32,6 +32,42 @@ private:
     std::atomic<bool> running{false};
     std::thread simulationThread;
 
+    // Strategy implementation
+    int getFarthestFromEntranceLine() const
+    {
+        // Find line where last person is farthest from entrance that isn't at capacity
+        // Assume line numbers increase with distance from entrance
+        // Choose the highest numbered line that has people and isn't full, or highest available if all empty
+        int bestLine = -1;
+
+        // First try to find the farthest line with people that isn't at capacity
+        for (int i = numberOfLines; i >= 1; i--)
+        {
+            if (queueManager->isLineAtCapacity(i)) continue; // Skip lines at capacity
+            
+            if (queueManager->getLineCount(i) > 0) // This line has people
+            {
+                bestLine = i;
+                break;
+            }
+        }
+
+        // If no lines with people are available, choose the farthest empty line that isn't at capacity
+        if (bestLine == -1)
+        {
+            for (int i = numberOfLines; i >= 1; i--)
+            {
+                if (!queueManager->isLineAtCapacity(i))
+                {
+                    bestLine = i;
+                    break;
+                }
+            }
+        }
+
+        return bestLine;
+    }
+
 public:
     QueueSimulatorFarthest() : queueManager(std::make_unique<QueueManager>(maxQueueSize, numberOfLines, "_farthest", "iot-queue-management-farthest")), // Farthest strategy
                                rng(std::chrono::steady_clock::now().time_since_epoch().count()),
@@ -40,7 +76,7 @@ public:
                                lineDist(1, numberOfLines)
     {
         std::cout << "Queue Simulator (FARTHEST FROM ENTRANCE STRATEGY) initialized with " << numberOfLines
-                  << " lines, max size: " << maxQueueSize << std::endl;
+                  << " lines, max size per line: " << maxQueueSize << std::endl;
 
         // Show service rate differences
         for (int i = 0; i < numberOfLines; i++)
@@ -98,18 +134,17 @@ private:
             // Simulate arrivals
             if (arrivalDist(rng) < arrivalRate)
             {
-                if (!queueManager->isFull())
+                // Use FARTHEST_FROM_ENTRANCE strategy
+                int selectedLine = getFarthestFromEntranceLine();
+                if (selectedLine != -1 && queueManager->enqueue(selectedLine))
                 {
-                    // Use FARTHEST_FROM_ENTRANCE strategy
-                    int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::FARTHEST_FROM_ENTRANCE);
-                    queueManager->enqueue(LineSelectionStrategy::FARTHEST_FROM_ENTRANCE);
                     std::cout << "New arrival! Selected line " << selectedLine << " (FARTHEST FROM ENTRANCE strategy)"
                               << " (people in line: " << queueManager->getLineCount(selectedLine) << ")"
                               << " Total queue size: " << queueManager->size() << std::endl;
                 }
                 else
                 {
-                    std::cout << "Queue full - customer turned away" << std::endl;
+                    std::cout << "All lines full - customer turned away" << std::endl;
                 }
             }
 

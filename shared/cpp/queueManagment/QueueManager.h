@@ -38,7 +38,7 @@ class QueueManager
 public:
     /**
      * @brief Constructs a QueueManager with optional Firebase integration
-     * @param maxSize Maximum total people across all lines (0 = unlimited)
+     * @param maxSize Maximum people per individual line (0 = unlimited)
      * @param numberOfLines Number of queue lines to manage (1-10)
      * @param strategyPrefix Firebase path prefix for data organization (e.g., "_shortest", "_farthest")
      * @param appName Firebase application name for cloud integration
@@ -80,12 +80,6 @@ public:
      * @return true if no people are in any line, false otherwise
      */
     bool isEmpty() const;
-
-    /**
-     * @brief Checks if the queue system has reached maximum capacity
-     * @return true if at maximum capacity, false if more people can be added
-     */
-    bool isFull() const;
 
     /**
      * @brief Determines the optimal line number based on the given strategy
@@ -142,18 +136,18 @@ private:
     int m_maxSize;
     int m_numberOfLines;
     int m_totalPeople;
-    std::vector<std::list<Person>> m_lines;    // Each line contains a list of Person objects
-    std::vector<double> m_lineThroughputs;     // Throughput per line (people/second)
-    
+    std::vector<std::list<Person>> m_lines; // Each line contains a list of Person objects
+    std::vector<double> m_lineThroughputs;  // Throughput per line (people/second)
+
     // Running statistics for all people throughout simulation
-    int m_totalPeopleEver;                     // Total people who have ever entered
-    int m_completedPeopleEver;                 // Total people who have completed (exited)
-    double m_totalExpectedWaitTime;            // Sum of all expected wait times
-    double m_totalActualWaitTime;              // Sum of all actual wait times for completed people
+    int m_totalPeopleEver;          // Total people who have ever entered
+    int m_completedPeopleEver;      // Total people who have completed (exited)
+    double m_totalExpectedWaitTime; // Sum of all expected wait times
+    double m_totalActualWaitTime;   // Sum of all actual wait times for completed people
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;
-    std::string m_strategyPrefix;                     // e.g., "", "_shortest", "_farthest"
+    std::string m_strategyPrefix;                        // e.g., "", "_shortest", "_farthest"
     std::vector<ThroughputTracker> m_throughputTrackers; // Throughput tracking for each line
 
     // Helper methods

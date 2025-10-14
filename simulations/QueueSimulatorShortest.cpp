@@ -17,7 +17,7 @@ class QueueSimulatorShortest
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 50;
+    const int maxQueueSize = 7; // Per-line limit
     const int numberOfLines = 2;
     const double arrivalRate = 0.18;                       // Probability of arrival per second (~11 people/minute)
     const std::vector<double> serviceRates = {0.08, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
@@ -40,7 +40,7 @@ public:
                                lineDist(1, numberOfLines)
     {
         std::cout << "Queue Simulator (FEWEST PEOPLE STRATEGY) initialized with " << numberOfLines
-                  << " lines, max size: " << maxQueueSize << std::endl;
+                  << " lines, max size per line: " << maxQueueSize << std::endl;
 
         // Show service rate differences
         for (int i = 0; i < numberOfLines; i++)
@@ -97,18 +97,17 @@ private:
             // Simulate arrivals
             if (arrivalDist(rng) < arrivalRate)
             {
-                if (!queueManager->isFull())
+                // Use FEWEST_PEOPLE strategy
+                if (queueManager->enqueue(LineSelectionStrategy::FEWEST_PEOPLE))
                 {
-                    // Use FEWEST_PEOPLE strategy
                     int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::FEWEST_PEOPLE);
-                    queueManager->enqueue(LineSelectionStrategy::FEWEST_PEOPLE);
                     std::cout << "New arrival! Selected line " << selectedLine << " (FEWEST PEOPLE strategy)"
                               << " (people in line: " << queueManager->getLineCount(selectedLine) << ")"
                               << " Total queue size: " << queueManager->size() << std::endl;
                 }
                 else
                 {
-                    std::cout << "Queue full - customer turned away" << std::endl;
+                    std::cout << "All lines full - customer turned away" << std::endl;
                 }
             }
 

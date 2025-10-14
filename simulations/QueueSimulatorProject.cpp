@@ -17,11 +17,11 @@ class QueueSimulator
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 100;
-    const int numberOfLines = 3;
+    const int maxQueueSize = 7; // Per-line limit
+    const int numberOfLines = 1;
     const double arrivalRate = 0.5;                       // Increased arrival rate (~30 people/minute)
-    const std::vector<double> serviceRates = {0.08, 0.18, 0.12}; // Service rates for 3 lines
-    const std::chrono::milliseconds updateInterval{2000};  // 2 second updates
+    const std::vector<double> serviceRates = {0.08};      // Service rates for 3 lines
+    const std::chrono::milliseconds updateInterval{2000}; // 2 second updates
 
     std::unique_ptr<QueueManager> queueManager;
     std::mt19937 rng;
@@ -40,7 +40,7 @@ public:
                        lineDist(1, numberOfLines)
     {
         std::cout << "Queue Simulator (SHORTEST WAIT TIME STRATEGY) initialized with " << numberOfLines
-                  << " lines, max size: " << maxQueueSize << std::endl;
+                  << " lines, max size per line: " << maxQueueSize << std::endl;
 
         // Show service rate differences
         for (int i = 0; i < numberOfLines; i++)
@@ -97,11 +97,10 @@ private:
             // Simulate arrivals
             if (arrivalDist(rng) < arrivalRate)
             {
-                if (!queueManager->isFull())
+                // Use SHORTEST_WAIT_TIME strategy (default/original strategy)
+                if (queueManager->enqueue(LineSelectionStrategy::SHORTEST_WAIT_TIME))
                 {
-                    // Use SHORTEST_WAIT_TIME strategy (default/original strategy)
                     int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
-                    queueManager->enqueue(LineSelectionStrategy::SHORTEST_WAIT_TIME);
                     std::cout << "New arrival! Selected line " << selectedLine << " (SHORTEST WAIT TIME strategy)"
                               << " (wait time: " << std::fixed << std::setprecision(1)
                               << queueManager->getEstimatedWaitTime(selectedLine) << "s)"
@@ -109,7 +108,7 @@ private:
                 }
                 else
                 {
-                    std::cout << "Queue full - customer turned away" << std::endl;
+                    std::cout << "All lines full - customer turned away" << std::endl;
                 }
             }
 
