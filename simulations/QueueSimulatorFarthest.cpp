@@ -18,7 +18,7 @@ class QueueSimulatorFarthest
 private:
     // Configuration (must be declared before other members that use them)
     const int maxQueueSize = 7; // Per-line limit
-    const int numberOfLines = 2;
+    const int numberOfLines = 3;
     const double arrivalRate = 0.18;                       // Probability of arrival per second (~11 people/minute)
     const std::vector<double> serviceRates = {0.08, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
     const std::chrono::milliseconds updateInterval{2000};  // 2 second updates
