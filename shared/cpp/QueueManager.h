@@ -144,6 +144,7 @@ private:
     int m_completedPeopleEver;      // Total people who have completed (exited)
     double m_totalExpectedWaitTime; // Sum of all expected wait times
     double m_totalActualWaitTime;   // Sum of all actual wait times for completed people
+    int m_lastSelectedLine;         // Last line selected by enqueue strategy
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;

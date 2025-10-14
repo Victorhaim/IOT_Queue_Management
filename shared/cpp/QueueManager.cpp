@@ -13,7 +13,7 @@
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
       m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(numberOfLines),
-      m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0)
+      m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0), m_lastSelectedLine(-1)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -52,6 +52,9 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     {
         return false; // No available lines (all at capacity or no lines exist)
     }
+
+    // Store the selected line for Firebase reporting
+    m_lastSelectedLine = lineNumber;
 
     // Check per-line capacity only
     if (m_maxSize > 0 && static_cast<int>(m_lines[lineNumber - 1].size()) >= m_maxSize)
@@ -507,7 +510,7 @@ bool QueueManager::writeToFirebase()
         if (!allLinesData.empty())
         {
             FirebaseStructureBuilder::AggregatedData aggData =
-                FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()));
+                FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()), m_lastSelectedLine);
 
             std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
             std::string aggPath = "simulation" + m_strategyPrefix + "/currentBest";
