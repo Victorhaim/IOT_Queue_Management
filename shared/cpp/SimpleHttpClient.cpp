@@ -4,7 +4,7 @@
 #include <sstream>
 
 #ifdef ESP32
-#include <ArduinoJson.h>
+//#include <ArduinoJson.h>
 #endif
 
 #if defined(_WIN32) && !defined(ESP32)
@@ -129,6 +129,7 @@ bool SimpleHttpClient::sendRequest(const std::string &method, const std::string 
     
     httpClient->end();
     return success;
+}
 #else
 {
 #if defined(_WIN32)

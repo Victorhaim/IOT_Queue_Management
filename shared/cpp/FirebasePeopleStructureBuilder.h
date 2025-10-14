@@ -5,7 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
-#include "../queueManagment/Person.h"
+#include "Person.h"
 
 /**
  * FirebasePeopleStructureBuilder - Creates Firebase data structures for individual people tracking

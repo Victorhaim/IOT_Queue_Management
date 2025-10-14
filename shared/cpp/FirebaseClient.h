@@ -5,7 +5,7 @@
 #ifdef ESP32
 #include <Arduino.h>
 #endif
-#include "../http/SimpleHttpClient.h"
+#include "SimpleHttpClient.h"
 
 class FirebaseClient
 {
