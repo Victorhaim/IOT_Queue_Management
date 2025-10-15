@@ -6,6 +6,7 @@ import '../graphics/animated_waves.dart';
 import '../graphics/hover_box.dart';
 import '../parameters/time_conversion_util.dart';
 import 'connectivity_indicator.dart';
+import '../services/connectivity_service.dart';
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -40,6 +41,7 @@ class _QueueScreenState extends State<QueueScreen>
   late AnimationController _clockController;
   late AnimationController _placeHoverController;
   late AnimationController _waitHoverController;
+  late ConnectivityService _connectivityService;
 
   bool _isAnimating = false;
   bool _isPlaceHovered = false;
@@ -66,6 +68,16 @@ class _QueueScreenState extends State<QueueScreen>
   void initState() {
     super.initState();
     _initializeControllers();
+    _connectivityService = ConnectivityService();
+    _connectivityService.addListener(_onConnectivityChanged);
+  }
+
+  void _onConnectivityChanged() {
+    if (mounted) {
+      setState(() {
+        // Rebuild to reflect connectivity changes
+      });
+    }
   }
 
   void _initializeControllers() {
@@ -99,6 +111,7 @@ class _QueueScreenState extends State<QueueScreen>
     _placeHoverController.dispose();
     _waitHoverController.dispose();
     _countdownTimer?.cancel();
+    _connectivityService.removeListener(_onConnectivityChanged);
     super.dispose();
   }
 
@@ -293,6 +306,35 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildAnimatedNumber() {
+    // If no internet connection, show line 1
+    if (!_connectivityService.hasInternet) {
+      String display = "1";
+      _triggerAnimationOnChange(display);
+      return SizedBox(
+        width: AppParameters.size_maxCircleRadius,
+        height: AppParameters.size_maxCircleRadius,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedWaves(
+              controller: _waveController,
+              isAnimating: _isAnimating,
+            ),
+            Text(
+              display,
+              style: TextStyle(
+                fontSize: AppParameters.size_queueNumberFontSize,
+                fontWeight: FontWeight.w900,
+                fontFamily: AppParameters.string_expandedFontFamily,
+                color: AppParameters.color_primaryBlue,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // If online, use Firebase data
     final ref = FirebaseDatabase.instance.ref(
       'simulation_$_selectedStrategy/currentBest/recommendedLine',
     );
@@ -348,6 +390,21 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicPlaceBox() {
+    // If no internet connection, show offline values
+    if (!_connectivityService.hasInternet) {
+      return HoverBox(
+        icon: AppAssets.string_queueIcon,
+        text: AppStrings.string_placeInLineText,
+        number: '0', // No people in line when offline
+        suffix: '',
+        controller: _placeHoverController,
+        isHovered: _isPlaceHovered,
+        explanation: 'Offline - Using default line 1',
+        onHover: _handlePlaceHover,
+      );
+    }
+
+    // If online, use Firebase data
     final queueRef = FirebaseDatabase.instance.ref(
       'simulation_$_selectedStrategy/currentBest',
     );
@@ -383,6 +440,23 @@ class _QueueScreenState extends State<QueueScreen>
   }
 
   Widget _buildDynamicWaitBox() {
+    // If no internet connection, show offline values
+    if (!_connectivityService.hasInternet) {
+      return HoverBox(
+        icon: AppAssets.string_clockIcon,
+        text: AppStrings.string_waitTimeText,
+        number: '0',
+        suffix: 'min',
+        controller: _waitHoverController,
+        isHovered: _isWaitHovered,
+        explanation: 'Offline - No wait time',
+        onHover: _handleWaitHover,
+        isClockIcon: true,
+        clockController: _clockController,
+      );
+    }
+
+    // If online, use Firebase data
     final queueRef = FirebaseDatabase.instance.ref(
       'simulation_$_selectedStrategy/currentBest',
     );
