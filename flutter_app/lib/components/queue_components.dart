@@ -5,6 +5,7 @@ import '../parameters/app_parameters.dart';
 import '../graphics/animated_waves.dart';
 import '../graphics/hover_box.dart';
 import '../parameters/time_conversion_util.dart';
+import 'connectivity_indicator.dart';
 
 /// Queue app main widget
 class QueueApp extends StatelessWidget {
@@ -198,6 +199,15 @@ class _QueueScreenState extends State<QueueScreen>
       backgroundColor: AppParameters.color_backgroundColor,
       body: Stack(
         children: [
+          // Connectivity indicator positioned at top-left
+          Positioned(
+            top: 40,
+            left: 20,
+            child: ConnectivityIndicator(
+              iconSize: 28,
+              showStatusText: true,
+            ),
+          ),
           // Strategy selector positioned at top-right
           Positioned(top: 40, right: 20, child: _buildStrategySelector()),
           // Main content centered
