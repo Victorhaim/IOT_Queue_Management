@@ -1,4 +1,5 @@
 #include "QueueManager.h"
+#include "parameters.h"
 #include "FirebaseClient.h"
 #include "FirebaseStructureBuilder.h"
 #include "FirebasePeopleStructureBuilder.h"
@@ -29,8 +30,8 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
     // Initialize Firebase client with provided app name and database secret
     m_firebaseClient = std::make_shared<FirebaseClient>(
         appName,
-        "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app",
-        "bvNiGOwhdBR2KDerLCSUm1Xu8clmBCM83gGsKXo8");
+        FIREBASE_URL,
+        FIREBASE_SECRET);
 
     // Initialize Firebase client
     if (!m_firebaseClient->initialize())

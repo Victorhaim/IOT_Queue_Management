@@ -1,6 +1,11 @@
 ESP32/SECRETS.h
 .DS_Store
 
+# Firebase configuration files with secrets
+firebase.config
+*/firebase.config
+shared/cpp/parameters.h
+
 shared/cpp/queue_sim
 
 shared/cpp/queue_sim_shortest

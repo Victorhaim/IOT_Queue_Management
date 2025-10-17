@@ -8,6 +8,7 @@
 #include "FirebasePeopleStructureBuilder.h"
 #include "ThroughputTracker.h"
 #include "Person.h"
+#include "ConfigReader.h"
 
 /// Line selection strategies for queue management
 enum class LineSelectionStrategy
