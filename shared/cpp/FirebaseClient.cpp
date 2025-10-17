@@ -4,10 +4,10 @@
 #include <Arduino.h>
 #endif
 
-FirebaseClient::FirebaseClient(const std::string &projectId, const std::string &databaseUrl)
-    : projectId(projectId), databaseUrl(databaseUrl)
+FirebaseClient::FirebaseClient(const std::string &projectId, const std::string &databaseUrl, const std::string &databaseSecret)
+    : projectId(projectId), databaseUrl(databaseUrl), databaseSecret(databaseSecret)
 {
-    httpClient = std::make_unique<SimpleHttpClient>(databaseUrl);
+    httpClient = std::make_unique<SimpleHttpClient>(databaseUrl, databaseSecret);
 }
 
 FirebaseClient::~FirebaseClient()

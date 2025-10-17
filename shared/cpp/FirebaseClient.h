@@ -12,10 +12,11 @@ class FirebaseClient
 private:
     std::string projectId;
     std::string databaseUrl;
+    std::string databaseSecret;
     std::unique_ptr<SimpleHttpClient> httpClient;
 
 public:
-    FirebaseClient(const std::string &projectId, const std::string &databaseUrl);
+    FirebaseClient(const std::string &projectId, const std::string &databaseUrl, const std::string &databaseSecret = "");
     ~FirebaseClient();
 
     bool initialize();

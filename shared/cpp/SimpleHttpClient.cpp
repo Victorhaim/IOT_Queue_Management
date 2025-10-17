@@ -15,7 +15,7 @@
     #include <curl/curl.h>
 #endif
 
-SimpleHttpClient::SimpleHttpClient(const std::string &baseUrl) : baseUrl(baseUrl)
+SimpleHttpClient::SimpleHttpClient(const std::string &baseUrl, const std::string &authSecret) : baseUrl(baseUrl), authSecret(authSecret)
 {
 #ifdef ESP32
     wifiClient = new WiFiClientSecure();
@@ -62,9 +62,7 @@ std::string SimpleHttpClient::sendGetRequest(const std::string &path)
 {
 #ifdef ESP32
     // ESP32 implementation for GET request
-    std::string url = baseUrl;
-    if (!url.empty() && url.back() != '/') url += "/";
-    url += path + ".json";
+    std::string url = constructUrl(path);
     
     httpClient->begin(*wifiClient, url.c_str());
     httpClient->addHeader("Content-Type", "application/json");
@@ -87,6 +85,20 @@ std::string SimpleHttpClient::sendGetRequest(const std::string &path)
 #endif
 }
 
+std::string SimpleHttpClient::constructUrl(const std::string &path)
+{
+    std::string url = baseUrl;
+    if (!url.empty() && url.back() != '/') url += "/";
+    url += path + ".json";
+    
+    // Add authentication if secret is provided
+    if (!authSecret.empty()) {
+        url += "?auth=" + authSecret;
+    }
+    
+    return url;
+}
+
 void SimpleHttpClient::debugPrint(const std::string &message)
 {
 #ifdef ESP32
@@ -100,9 +112,7 @@ bool SimpleHttpClient::sendRequest(const std::string &method, const std::string 
 {
 #ifdef ESP32
     // ESP32 implementation
-    std::string url = baseUrl;
-    if (!url.empty() && url.back() != '/') url += "/";
-    url += path + ".json";
+    std::string url = constructUrl(path);
     
     httpClient->begin(*wifiClient, url.c_str());
     httpClient->addHeader("Content-Type", "application/json");
@@ -142,6 +152,9 @@ bool SimpleHttpClient::sendRequest(const std::string &method, const std::string 
         size_t slashPos = hostname.find('/');
         if (slashPos != std::string::npos) { urlPath = hostname.substr(slashPos); hostname = hostname.substr(0, slashPos); }
         std::string fullPath = urlPath + "/" + path + ".json";
+        if (!authSecret.empty()) {
+            fullPath += "?auth=" + authSecret;
+        }
         std::wstring wHostname(hostname.begin(), hostname.end());
         std::wstring wPath(fullPath.begin(), fullPath.end());
         std::wstring wMethod(method.begin(), method.end());
@@ -171,6 +184,9 @@ bool SimpleHttpClient::sendRequest(const std::string &method, const std::string 
     std::string url = baseUrl;
     if (!url.empty() && url.back() == '/') url.pop_back();
     url += "/" + path + ".json";
+    if (!authSecret.empty()) {
+        url += "?auth=" + authSecret;
+    }
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_USERAGENT, "QueueSimulator/1.0");
     struct curl_slist *headers = nullptr;
