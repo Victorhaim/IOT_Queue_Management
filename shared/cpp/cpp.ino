@@ -34,8 +34,8 @@ bool syncNTP(uint32_t maxWaitMs = 15000) {
 }
 
 // ======================= WIFI  Setup =======================
-const char* WIFI_SSID = "YuvalandElla 2.4";
-const char* WIFI_PASS = "28112016";
+const char* WIFI_SSID = "iPhone";
+const char* WIFI_PASS = "11111112";
 bool connectWiFi(uint32_t timeoutMs = 20000) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
