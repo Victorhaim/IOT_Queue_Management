@@ -83,126 +83,126 @@ CMakeFiles/queue_simulator_farthest.dir/Users/victor_haim/Documents/technion/IOT
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorFarthest.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorFarthest.cpp -o CMakeFiles/queue_simulator_farthest.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorFarthest.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/QueueManager.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/QueueManager.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/QueueManager.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/QueueManager.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/QueueManager.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/QueueManager.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/QueueManager.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/QueueManager.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/ThroughputTracker.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/ThroughputTracker.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/ThroughputTracker.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/ThroughputTracker.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/ThroughputTracker.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/ThroughputTracker.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/ThroughputTracker.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/ThroughputTracker.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/Person.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/Person.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/Person.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment/Person.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/Person.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseStructureBuilder.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseStructureBuilder.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseStructureBuilder.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseStructureBuilder.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseStructureBuilder.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebasePeopleStructureBuilder.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebasePeopleStructureBuilder.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebasePeopleStructureBuilder.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebasePeopleStructureBuilder.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebasePeopleStructureBuilder.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase/FirebaseClient.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/FirebaseClient.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.s
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
-CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp
-CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/flags.make
+CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o: /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp
+CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o: CMakeFiles/queue_simulator_farthest.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o -MF CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o.d -o CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o -c /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.i
+CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp > CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.i
 
-CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http/SimpleHttpClient.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.s
+CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/SimpleHttpClient.cpp -o CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.s
 
 # Object files for target queue_simulator_farthest
 queue_simulator_farthest_OBJECTS = \
 "CMakeFiles/queue_simulator_farthest.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorFarthest.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o" \
-"CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o"
+"CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o" \
+"CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o"
 
 # External object files for target queue_simulator_farthest
 queue_simulator_farthest_EXTERNAL_OBJECTS =
 
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorFarthest.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o
-/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/build.make
 /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest: CMakeFiles/queue_simulator_farthest.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable /Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/bin/queue_simulator_farthest"

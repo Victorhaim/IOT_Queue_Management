@@ -4,7 +4,7 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/. -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/queueManagment -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/firebase -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp/http
+CXX_INCLUDES = -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/. -I/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/cpp
 
 CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
 

@@ -7,41 +7,41 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Simple source compilation - no libraries
 add_executable(queue_simulator_shortest 
     ../simulations/QueueSimulatorShortest.cpp 
-    cpp/queueManagment/QueueManager.cpp
-    cpp/queueManagment/ThroughputTracker.cpp
-    cpp/queueManagment/Person.cpp
-    cpp/firebase/FirebaseStructureBuilder.cpp
-    cpp/firebase/FirebasePeopleStructureBuilder.cpp
-    cpp/firebase/FirebaseClient.cpp
-    cpp/http/SimpleHttpClient.cpp
+    cpp/QueueManager.cpp
+    cpp/ThroughputTracker.cpp
+    cpp/Person.cpp
+    cpp/FirebaseStructureBuilder.cpp
+    cpp/FirebasePeopleStructureBuilder.cpp
+    cpp/FirebaseClient.cpp
+    cpp/SimpleHttpClient.cpp
 )
 
 add_executable(queue_simulator_farthest 
     ../simulations/QueueSimulatorFarthest.cpp 
-    cpp/queueManagment/QueueManager.cpp
-    cpp/queueManagment/ThroughputTracker.cpp
-    cpp/queueManagment/Person.cpp
-    cpp/firebase/FirebaseStructureBuilder.cpp
-    cpp/firebase/FirebasePeopleStructureBuilder.cpp
-    cpp/firebase/FirebaseClient.cpp
-    cpp/http/SimpleHttpClient.cpp
+    cpp/QueueManager.cpp
+    cpp/ThroughputTracker.cpp
+    cpp/Person.cpp
+    cpp/FirebaseStructureBuilder.cpp
+    cpp/FirebasePeopleStructureBuilder.cpp
+    cpp/FirebaseClient.cpp
+    cpp/SimpleHttpClient.cpp
 )
 
 add_executable(queue_simulator_project 
     ../simulations/QueueSimulatorProject.cpp 
-    cpp/queueManagment/QueueManager.cpp
-    cpp/queueManagment/ThroughputTracker.cpp
-    cpp/queueManagment/Person.cpp
-    cpp/firebase/FirebaseStructureBuilder.cpp
-    cpp/firebase/FirebasePeopleStructureBuilder.cpp
-    cpp/firebase/FirebaseClient.cpp
-    cpp/http/SimpleHttpClient.cpp
+    cpp/QueueManager.cpp
+    cpp/ThroughputTracker.cpp
+    cpp/Person.cpp
+    cpp/FirebaseStructureBuilder.cpp
+    cpp/FirebasePeopleStructureBuilder.cpp
+    cpp/FirebaseClient.cpp
+    cpp/SimpleHttpClient.cpp
 )
 
 # Include paths
-target_include_directories(queue_simulator_shortest PRIVATE . cpp cpp/queueManagment cpp/firebase cpp/http)
-target_include_directories(queue_simulator_farthest PRIVATE . cpp cpp/queueManagment cpp/firebase cpp/http)
-target_include_directories(queue_simulator_project PRIVATE . cpp cpp/queueManagment cpp/firebase cpp/http)
+target_include_directories(queue_simulator_shortest PRIVATE . cpp)
+target_include_directories(queue_simulator_farthest PRIVATE . cpp)
+target_include_directories(queue_simulator_project PRIVATE . cpp)
 
 # Put executables in bin folder
 set_target_properties(queue_simulator_shortest PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")

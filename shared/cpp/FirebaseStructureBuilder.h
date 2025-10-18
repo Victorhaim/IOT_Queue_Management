@@ -68,18 +68,12 @@ public:
     static std::string getAggregatedDataPath();
 
     /**
-     * Calculate recommended line based on occupancy and wait times
-     * Returns the line number with the shortest effective wait time
-     * Works with both C++ vectors (use .data()) and C-style arrays
-     */
-    static int calculateRecommendedLine(const LineData *allLines, int numberOfLines);
-
-    /**
      * Create AggregatedData with recommended line and duplicated wait time/occupancy info
-     * This function automatically finds the recommended line and copies its data
+     * Uses the provided recommendedLine (from actual strategy selection)
      * Works with both C++ vectors (use .data()) and C-style arrays
+     * @param recommendedLine The line that was actually chosen by the strategy
      */
-    static AggregatedData createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines);
+    static AggregatedData createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines, int recommendedLine);
 
     /**
      * Calculate average wait time based on occupancy and throughput
