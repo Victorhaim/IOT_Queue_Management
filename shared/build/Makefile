@@ -227,215 +227,215 @@ Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulation
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorShortest.cpp.s
 .PHONY : Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorShortest.cpp.s
 
-cpp/firebase/FirebaseClient.o: cpp/firebase/FirebaseClient.cpp.o
-.PHONY : cpp/firebase/FirebaseClient.o
+cpp/FirebaseClient.o: cpp/FirebaseClient.cpp.o
+.PHONY : cpp/FirebaseClient.o
 
 # target to build an object file
-cpp/firebase/FirebaseClient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseClient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.o
-.PHONY : cpp/firebase/FirebaseClient.cpp.o
+cpp/FirebaseClient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseClient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseClient.cpp.o
+.PHONY : cpp/FirebaseClient.cpp.o
 
-cpp/firebase/FirebaseClient.i: cpp/firebase/FirebaseClient.cpp.i
-.PHONY : cpp/firebase/FirebaseClient.i
+cpp/FirebaseClient.i: cpp/FirebaseClient.cpp.i
+.PHONY : cpp/FirebaseClient.i
 
 # target to preprocess a source file
-cpp/firebase/FirebaseClient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseClient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.i
-.PHONY : cpp/firebase/FirebaseClient.cpp.i
+cpp/FirebaseClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseClient.cpp.i
+.PHONY : cpp/FirebaseClient.cpp.i
 
-cpp/firebase/FirebaseClient.s: cpp/firebase/FirebaseClient.cpp.s
-.PHONY : cpp/firebase/FirebaseClient.s
+cpp/FirebaseClient.s: cpp/FirebaseClient.cpp.s
+.PHONY : cpp/FirebaseClient.s
 
 # target to generate assembly for a file
-cpp/firebase/FirebaseClient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseClient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseClient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseClient.cpp.s
-.PHONY : cpp/firebase/FirebaseClient.cpp.s
+cpp/FirebaseClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseClient.cpp.s
+.PHONY : cpp/FirebaseClient.cpp.s
 
-cpp/firebase/FirebasePeopleStructureBuilder.o: cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.o
+cpp/FirebasePeopleStructureBuilder.o: cpp/FirebasePeopleStructureBuilder.cpp.o
+.PHONY : cpp/FirebasePeopleStructureBuilder.o
 
 # target to build an object file
-cpp/firebase/FirebasePeopleStructureBuilder.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.cpp.o
+cpp/FirebasePeopleStructureBuilder.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebasePeopleStructureBuilder.cpp.o
+.PHONY : cpp/FirebasePeopleStructureBuilder.cpp.o
 
-cpp/firebase/FirebasePeopleStructureBuilder.i: cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.i
+cpp/FirebasePeopleStructureBuilder.i: cpp/FirebasePeopleStructureBuilder.cpp.i
+.PHONY : cpp/FirebasePeopleStructureBuilder.i
 
 # target to preprocess a source file
-cpp/firebase/FirebasePeopleStructureBuilder.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.cpp.i
+cpp/FirebasePeopleStructureBuilder.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebasePeopleStructureBuilder.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebasePeopleStructureBuilder.cpp.i
+.PHONY : cpp/FirebasePeopleStructureBuilder.cpp.i
 
-cpp/firebase/FirebasePeopleStructureBuilder.s: cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.s
+cpp/FirebasePeopleStructureBuilder.s: cpp/FirebasePeopleStructureBuilder.cpp.s
+.PHONY : cpp/FirebasePeopleStructureBuilder.s
 
 # target to generate assembly for a file
-cpp/firebase/FirebasePeopleStructureBuilder.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
-.PHONY : cpp/firebase/FirebasePeopleStructureBuilder.cpp.s
+cpp/FirebasePeopleStructureBuilder.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebasePeopleStructureBuilder.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebasePeopleStructureBuilder.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebasePeopleStructureBuilder.cpp.s
+.PHONY : cpp/FirebasePeopleStructureBuilder.cpp.s
 
-cpp/firebase/FirebaseStructureBuilder.o: cpp/firebase/FirebaseStructureBuilder.cpp.o
-.PHONY : cpp/firebase/FirebaseStructureBuilder.o
+cpp/FirebaseStructureBuilder.o: cpp/FirebaseStructureBuilder.cpp.o
+.PHONY : cpp/FirebaseStructureBuilder.o
 
 # target to build an object file
-cpp/firebase/FirebaseStructureBuilder.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.o
-.PHONY : cpp/firebase/FirebaseStructureBuilder.cpp.o
+cpp/FirebaseStructureBuilder.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseStructureBuilder.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseStructureBuilder.cpp.o
+.PHONY : cpp/FirebaseStructureBuilder.cpp.o
 
-cpp/firebase/FirebaseStructureBuilder.i: cpp/firebase/FirebaseStructureBuilder.cpp.i
-.PHONY : cpp/firebase/FirebaseStructureBuilder.i
+cpp/FirebaseStructureBuilder.i: cpp/FirebaseStructureBuilder.cpp.i
+.PHONY : cpp/FirebaseStructureBuilder.i
 
 # target to preprocess a source file
-cpp/firebase/FirebaseStructureBuilder.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.i
-.PHONY : cpp/firebase/FirebaseStructureBuilder.cpp.i
+cpp/FirebaseStructureBuilder.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseStructureBuilder.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseStructureBuilder.cpp.i
+.PHONY : cpp/FirebaseStructureBuilder.cpp.i
 
-cpp/firebase/FirebaseStructureBuilder.s: cpp/firebase/FirebaseStructureBuilder.cpp.s
-.PHONY : cpp/firebase/FirebaseStructureBuilder.s
+cpp/FirebaseStructureBuilder.s: cpp/FirebaseStructureBuilder.cpp.s
+.PHONY : cpp/FirebaseStructureBuilder.s
 
 # target to generate assembly for a file
-cpp/firebase/FirebaseStructureBuilder.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/firebase/FirebaseStructureBuilder.cpp.s
-.PHONY : cpp/firebase/FirebaseStructureBuilder.cpp.s
+cpp/FirebaseStructureBuilder.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/FirebaseStructureBuilder.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/FirebaseStructureBuilder.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/FirebaseStructureBuilder.cpp.s
+.PHONY : cpp/FirebaseStructureBuilder.cpp.s
 
-cpp/http/SimpleHttpClient.o: cpp/http/SimpleHttpClient.cpp.o
-.PHONY : cpp/http/SimpleHttpClient.o
+cpp/Person.o: cpp/Person.cpp.o
+.PHONY : cpp/Person.o
 
 # target to build an object file
-cpp/http/SimpleHttpClient.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/http/SimpleHttpClient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.o
-.PHONY : cpp/http/SimpleHttpClient.cpp.o
+cpp/Person.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/Person.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/Person.cpp.o
+.PHONY : cpp/Person.cpp.o
 
-cpp/http/SimpleHttpClient.i: cpp/http/SimpleHttpClient.cpp.i
-.PHONY : cpp/http/SimpleHttpClient.i
+cpp/Person.i: cpp/Person.cpp.i
+.PHONY : cpp/Person.i
 
 # target to preprocess a source file
-cpp/http/SimpleHttpClient.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/http/SimpleHttpClient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.i
-.PHONY : cpp/http/SimpleHttpClient.cpp.i
+cpp/Person.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/Person.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/Person.cpp.i
+.PHONY : cpp/Person.cpp.i
 
-cpp/http/SimpleHttpClient.s: cpp/http/SimpleHttpClient.cpp.s
-.PHONY : cpp/http/SimpleHttpClient.s
+cpp/Person.s: cpp/Person.cpp.s
+.PHONY : cpp/Person.s
 
 # target to generate assembly for a file
-cpp/http/SimpleHttpClient.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/http/SimpleHttpClient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/http/SimpleHttpClient.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/http/SimpleHttpClient.cpp.s
-.PHONY : cpp/http/SimpleHttpClient.cpp.s
+cpp/Person.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/Person.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/Person.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/Person.cpp.s
+.PHONY : cpp/Person.cpp.s
 
-cpp/queueManagment/Person.o: cpp/queueManagment/Person.cpp.o
-.PHONY : cpp/queueManagment/Person.o
+cpp/QueueManager.o: cpp/QueueManager.cpp.o
+.PHONY : cpp/QueueManager.o
 
 # target to build an object file
-cpp/queueManagment/Person.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/Person.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.o
-.PHONY : cpp/queueManagment/Person.cpp.o
+cpp/QueueManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/QueueManager.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/QueueManager.cpp.o
+.PHONY : cpp/QueueManager.cpp.o
 
-cpp/queueManagment/Person.i: cpp/queueManagment/Person.cpp.i
-.PHONY : cpp/queueManagment/Person.i
+cpp/QueueManager.i: cpp/QueueManager.cpp.i
+.PHONY : cpp/QueueManager.i
 
 # target to preprocess a source file
-cpp/queueManagment/Person.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/Person.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.i
-.PHONY : cpp/queueManagment/Person.cpp.i
+cpp/QueueManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/QueueManager.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/QueueManager.cpp.i
+.PHONY : cpp/QueueManager.cpp.i
 
-cpp/queueManagment/Person.s: cpp/queueManagment/Person.cpp.s
-.PHONY : cpp/queueManagment/Person.s
+cpp/QueueManager.s: cpp/QueueManager.cpp.s
+.PHONY : cpp/QueueManager.s
 
 # target to generate assembly for a file
-cpp/queueManagment/Person.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/Person.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/Person.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/Person.cpp.s
-.PHONY : cpp/queueManagment/Person.cpp.s
+cpp/QueueManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/QueueManager.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/QueueManager.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/QueueManager.cpp.s
+.PHONY : cpp/QueueManager.cpp.s
 
-cpp/queueManagment/QueueManager.o: cpp/queueManagment/QueueManager.cpp.o
-.PHONY : cpp/queueManagment/QueueManager.o
+cpp/SimpleHttpClient.o: cpp/SimpleHttpClient.cpp.o
+.PHONY : cpp/SimpleHttpClient.o
 
 # target to build an object file
-cpp/queueManagment/QueueManager.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/QueueManager.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/QueueManager.cpp.o
-.PHONY : cpp/queueManagment/QueueManager.cpp.o
+cpp/SimpleHttpClient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/SimpleHttpClient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/SimpleHttpClient.cpp.o
+.PHONY : cpp/SimpleHttpClient.cpp.o
 
-cpp/queueManagment/QueueManager.i: cpp/queueManagment/QueueManager.cpp.i
-.PHONY : cpp/queueManagment/QueueManager.i
+cpp/SimpleHttpClient.i: cpp/SimpleHttpClient.cpp.i
+.PHONY : cpp/SimpleHttpClient.i
 
 # target to preprocess a source file
-cpp/queueManagment/QueueManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/QueueManager.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/QueueManager.cpp.i
-.PHONY : cpp/queueManagment/QueueManager.cpp.i
+cpp/SimpleHttpClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/SimpleHttpClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/SimpleHttpClient.cpp.i
+.PHONY : cpp/SimpleHttpClient.cpp.i
 
-cpp/queueManagment/QueueManager.s: cpp/queueManagment/QueueManager.cpp.s
-.PHONY : cpp/queueManagment/QueueManager.s
+cpp/SimpleHttpClient.s: cpp/SimpleHttpClient.cpp.s
+.PHONY : cpp/SimpleHttpClient.s
 
 # target to generate assembly for a file
-cpp/queueManagment/QueueManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/QueueManager.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/QueueManager.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/QueueManager.cpp.s
-.PHONY : cpp/queueManagment/QueueManager.cpp.s
+cpp/SimpleHttpClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/SimpleHttpClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/SimpleHttpClient.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/SimpleHttpClient.cpp.s
+.PHONY : cpp/SimpleHttpClient.cpp.s
 
-cpp/queueManagment/ThroughputTracker.o: cpp/queueManagment/ThroughputTracker.cpp.o
-.PHONY : cpp/queueManagment/ThroughputTracker.o
+cpp/ThroughputTracker.o: cpp/ThroughputTracker.cpp.o
+.PHONY : cpp/ThroughputTracker.o
 
 # target to build an object file
-cpp/queueManagment/ThroughputTracker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/ThroughputTracker.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.o
-.PHONY : cpp/queueManagment/ThroughputTracker.cpp.o
+cpp/ThroughputTracker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/ThroughputTracker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/ThroughputTracker.cpp.o
+.PHONY : cpp/ThroughputTracker.cpp.o
 
-cpp/queueManagment/ThroughputTracker.i: cpp/queueManagment/ThroughputTracker.cpp.i
-.PHONY : cpp/queueManagment/ThroughputTracker.i
+cpp/ThroughputTracker.i: cpp/ThroughputTracker.cpp.i
+.PHONY : cpp/ThroughputTracker.i
 
 # target to preprocess a source file
-cpp/queueManagment/ThroughputTracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/ThroughputTracker.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.i
-.PHONY : cpp/queueManagment/ThroughputTracker.cpp.i
+cpp/ThroughputTracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/ThroughputTracker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/ThroughputTracker.cpp.i
+.PHONY : cpp/ThroughputTracker.cpp.i
 
-cpp/queueManagment/ThroughputTracker.s: cpp/queueManagment/ThroughputTracker.cpp.s
-.PHONY : cpp/queueManagment/ThroughputTracker.s
+cpp/ThroughputTracker.s: cpp/ThroughputTracker.cpp.s
+.PHONY : cpp/ThroughputTracker.s
 
 # target to generate assembly for a file
-cpp/queueManagment/ThroughputTracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/queueManagment/ThroughputTracker.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/queueManagment/ThroughputTracker.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/queueManagment/ThroughputTracker.cpp.s
-.PHONY : cpp/queueManagment/ThroughputTracker.cpp.s
+cpp/ThroughputTracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_shortest.dir/build.make CMakeFiles/queue_simulator_shortest.dir/cpp/ThroughputTracker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_farthest.dir/build.make CMakeFiles/queue_simulator_farthest.dir/cpp/ThroughputTracker.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/queue_simulator_project.dir/build.make CMakeFiles/queue_simulator_project.dir/cpp/ThroughputTracker.cpp.s
+.PHONY : cpp/ThroughputTracker.cpp.s
 
 # Help Target
 help:
@@ -457,27 +457,27 @@ help:
 	@echo "... Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorShortest.o"
 	@echo "... Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorShortest.i"
 	@echo "... Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/simulations/QueueSimulatorShortest.s"
-	@echo "... cpp/firebase/FirebaseClient.o"
-	@echo "... cpp/firebase/FirebaseClient.i"
-	@echo "... cpp/firebase/FirebaseClient.s"
-	@echo "... cpp/firebase/FirebasePeopleStructureBuilder.o"
-	@echo "... cpp/firebase/FirebasePeopleStructureBuilder.i"
-	@echo "... cpp/firebase/FirebasePeopleStructureBuilder.s"
-	@echo "... cpp/firebase/FirebaseStructureBuilder.o"
-	@echo "... cpp/firebase/FirebaseStructureBuilder.i"
-	@echo "... cpp/firebase/FirebaseStructureBuilder.s"
-	@echo "... cpp/http/SimpleHttpClient.o"
-	@echo "... cpp/http/SimpleHttpClient.i"
-	@echo "... cpp/http/SimpleHttpClient.s"
-	@echo "... cpp/queueManagment/Person.o"
-	@echo "... cpp/queueManagment/Person.i"
-	@echo "... cpp/queueManagment/Person.s"
-	@echo "... cpp/queueManagment/QueueManager.o"
-	@echo "... cpp/queueManagment/QueueManager.i"
-	@echo "... cpp/queueManagment/QueueManager.s"
-	@echo "... cpp/queueManagment/ThroughputTracker.o"
-	@echo "... cpp/queueManagment/ThroughputTracker.i"
-	@echo "... cpp/queueManagment/ThroughputTracker.s"
+	@echo "... cpp/FirebaseClient.o"
+	@echo "... cpp/FirebaseClient.i"
+	@echo "... cpp/FirebaseClient.s"
+	@echo "... cpp/FirebasePeopleStructureBuilder.o"
+	@echo "... cpp/FirebasePeopleStructureBuilder.i"
+	@echo "... cpp/FirebasePeopleStructureBuilder.s"
+	@echo "... cpp/FirebaseStructureBuilder.o"
+	@echo "... cpp/FirebaseStructureBuilder.i"
+	@echo "... cpp/FirebaseStructureBuilder.s"
+	@echo "... cpp/Person.o"
+	@echo "... cpp/Person.i"
+	@echo "... cpp/Person.s"
+	@echo "... cpp/QueueManager.o"
+	@echo "... cpp/QueueManager.i"
+	@echo "... cpp/QueueManager.s"
+	@echo "... cpp/SimpleHttpClient.o"
+	@echo "... cpp/SimpleHttpClient.i"
+	@echo "... cpp/SimpleHttpClient.s"
+	@echo "... cpp/ThroughputTracker.o"
+	@echo "... cpp/ThroughputTracker.i"
+	@echo "... cpp/ThroughputTracker.s"
 .PHONY : help
 
 
