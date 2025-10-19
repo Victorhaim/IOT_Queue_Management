@@ -9,6 +9,11 @@
 #include <iomanip>
 #include <cmath>
 #include <limits>
+#include <algorithm>
+#include <chrono>
+
+// Constants
+static const long long ONE_HOUR_MS = 60 * 60 * 1000; // One hour in milliseconds
 
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
@@ -70,6 +75,9 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     auto &line = m_lines[lineNumber - 1];
     line.push_back(newPerson);
     m_totalPeople++;
+
+    // Add person to history for offline functionality
+    addPersonToHistory(newPerson);
 
     // Update running statistics
     m_totalPeopleEver++;
@@ -151,6 +159,9 @@ bool QueueManager::enqueueOnLine(int lineNumber)
     auto &line = m_lines[lineNumber - 1];
     line.push_back(newPerson);
     m_totalPeople++;
+
+    // Add person to history for offline functionality
+    addPersonToHistory(newPerson);
 
     // Update running statistics
     m_totalPeopleEver++;
@@ -631,4 +642,144 @@ FirebasePeopleStructureBuilder::PeopleSummary QueueManager::getCumulativePeopleS
 
     return FirebasePeopleStructureBuilder::PeopleSummary(
         totalPeople, activePeople, completedPeople, averageExpectedWait, averageActualWait);
+}
+
+// History management methods for offline functionality
+void QueueManager::addPersonToHistory(const Person& person)
+{
+    // Clean old entries before adding new one
+    cleanOldHistoryEntries();
+    
+    // Add the new person to history
+    m_lastHourHistory.push_back(person);
+}
+
+void QueueManager::cleanOldHistoryEntries()
+{
+    long long currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+    
+    long long oneHourAgo = currentTime - ONE_HOUR_MS;
+    
+    // Remove entries older than one hour
+    m_lastHourHistory.erase(
+        std::remove_if(m_lastHourHistory.begin(), m_lastHourHistory.end(),
+            [oneHourAgo](const Person& person) {
+                return person.getEnteringTimestamp() < oneHourAgo;
+            }),
+        m_lastHourHistory.end()
+    );
+}
+
+std::vector<Person> QueueManager::getPeopleFromLastHour() const
+{
+    // Return a copy of the last hour history
+    return m_lastHourHistory;
+}
+
+bool QueueManager::writeHistoryToFirebase()
+{
+    if (!m_firebaseClient)
+    {
+        std::cerr << "❌ No Firebase client configured for history upload" << std::endl;
+        return false;
+    }
+
+    try
+    {
+        std::cout << "📤 Uploading " << m_lastHourHistory.size() << " people from last hour to cloud..." << std::endl;
+        
+        int successCount = 0;
+        int totalCount = static_cast<int>(m_lastHourHistory.size());
+        
+        // Upload each person from the history
+        for (const auto& person : m_lastHourHistory)
+        {
+            FirebasePeopleStructureBuilder::PersonData personData(person);
+            std::string personJson = FirebasePeopleStructureBuilder::generatePersonDataJson(personData);
+            std::string personPath = "simulation" + m_strategyPrefix + "/" +
+                                   FirebasePeopleStructureBuilder::getPersonDataPath(person.getId());
+
+            if (m_firebaseClient->updateData(personPath, personJson))
+            {
+                successCount++;
+            }
+            else
+            {
+                std::cerr << "❌ Failed to upload person " << person.getId() << " to Firebase" << std::endl;
+            }
+        }
+
+        // Update summary with historical data
+        FirebasePeopleStructureBuilder::PeopleSummary summary = getCumulativePeopleSummary();
+        std::string summaryJson = FirebasePeopleStructureBuilder::generatePeopleSummaryJson(summary);
+        std::string summaryPath = "simulation" + m_strategyPrefix + "/" +
+                                FirebasePeopleStructureBuilder::getPeopleSummaryPath();
+
+        bool summarySuccess = m_firebaseClient->updateData(summaryPath, summaryJson);
+        
+        if (summarySuccess)
+        {
+            std::cout << "✅ Successfully uploaded " << successCount << "/" << totalCount 
+                      << " people and updated summary to cloud" << std::endl;
+        }
+        else
+        {
+            std::cout << "⚠️  Uploaded " << successCount << "/" << totalCount 
+                      << " people but failed to update summary" << std::endl;
+        }
+
+        return (successCount == totalCount) && summarySuccess;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "❌ Error uploading history to Firebase: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool QueueManager::updateAllAndCleanHistory()
+{
+    std::cout << "🔄 Starting offline data synchronization..." << std::endl;
+    
+    // Clean old entries first
+    cleanOldHistoryEntries();
+    
+    if (m_lastHourHistory.empty())
+    {
+        std::cout << "ℹ️  No historical data from the last hour to upload" << std::endl;
+        return true; // Nothing to do, but not an error
+    }
+    
+    // Upload all historical data to Firebase
+    bool historyUploadSuccess = writeHistoryToFirebase();
+    
+    if (historyUploadSuccess)
+    {
+        // Clear the history after successful upload
+        size_t clearedCount = m_lastHourHistory.size();
+        m_lastHourHistory.clear();
+        
+        std::cout << "✅ Successfully synchronized and cleared " << clearedCount 
+                  << " historical entries" << std::endl;
+        
+        // Also update current state to Firebase
+        bool currentStateSuccess = writeToFirebase();
+        
+        if (currentStateSuccess)
+        {
+            std::cout << "✅ Current queue state also synchronized to cloud" << std::endl;
+            return true;
+        }
+        else
+        {
+            std::cout << "⚠️  Historical data uploaded but current state sync failed" << std::endl;
+            return false;
+        }
+    }
+    else
+    {
+        std::cout << "❌ Failed to upload historical data - keeping local history for retry" << std::endl;
+        return false;
+    }
 }

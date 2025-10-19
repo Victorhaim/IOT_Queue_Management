@@ -115,6 +115,19 @@ public:
     FirebasePeopleStructureBuilder::PeopleSummary getCumulativePeopleSummary() const;
 
     /**
+     * @brief Updates cloud with all people data from the last hour and cleans local history
+     * This is designed to be called when WiFi reconnects after being offline
+     * @return true if successfully updated cloud and cleaned data, false otherwise
+     */
+    bool updateAllAndCleanHistory();
+
+    /**
+     * @brief Gets all people who entered the queues in the last hour
+     * @return Vector containing all people from the last hour with their complete information
+     */
+    std::vector<Person> getPeopleFromLastHour() const;
+
+    /**
      * @brief Calculates estimated wait time for a specific line
      * @param lineNumber Line to analyze (1-based indexing)
      * @return Estimated wait time in seconds, based on queue length and throughput
@@ -151,6 +164,9 @@ private:
     std::string m_strategyPrefix;                        // e.g., "", "_shortest", "_farthest"
     std::vector<ThroughputTracker> m_throughputTrackers; // Throughput tracking for each line
 
+    // History tracking for offline functionality
+    std::vector<Person> m_lastHourHistory; // Queue of all people who entered in the last hour
+
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
     void updateTotalPeople();
@@ -161,4 +177,9 @@ private:
     void clearCloudData();
     void setLineCount(int lineNumber, int count);
     void reset();
+    
+    // History management helpers
+    void addPersonToHistory(const Person& person);
+    void cleanOldHistoryEntries();
+    bool writeHistoryToFirebase();
 };
