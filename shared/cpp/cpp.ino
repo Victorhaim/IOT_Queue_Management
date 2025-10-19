@@ -1,10 +1,15 @@
 #include <WiFi.h>
+#include <WiFiClient.h>
 #include "QueueManager.h"
 #include <esp_core_dump.h>  // for esp_core_dump_image_erase()
 #include "time.h"
+
+// ======================= Timezone & NTP =======================
+// Israel TZ (DST: last Sunday of Mar/Oct at 02:00)
 static const char* TZ_IL = "IST-2IDT,M3.5.0/2,M10.5.0/2";
-static const char* NTP1 = "pool.ntp.org";
-static const char* NTP2 = "time.google.com";
+// NTP servers
+static const char* NTP1  = "pool.ntp.org";
+static const char* NTP2  = "time.google.com";
 
 // ============================ Types ================================
 struct Sensor {
@@ -21,21 +26,29 @@ struct Sensor {
   float lastCm = NAN;
 };
 
-bool syncNTP(uint32_t maxWaitMs = 15000) {
-  configTzTime(TZ_IL, NTP1, NTP2);
-  struct tm tmnow;
-  uint32_t start = millis();
-  while (!getLocalTime(&tmnow, 250)) {
-    if (millis() - start > maxWaitMs) return false;
-  }
-  time_t now = time(nullptr);
-  Serial.printf("Time synced: %s", asctime(localtime(&now)));
-  return true;
-}
+// ============================ Config ===============================
+// Entry (A) "hostess"
+static const int TRIG_A = 19, ECHO_A = 18;
+// Exit (B) "exit line 1"
+static const int TRIG_B = 23, ECHO_B = 22;
+// Exit (C) "exit line 2"
+static const int TRIG_C = 2,  ECHO_C = 4;
+
+static const float SPEED_CM_PER_US = 0.0343f;
+static const unsigned long PULSE_TO_US = 25000;      // ~4.3m timeout
+
+// trip logic (with hysteresis)
+static const int  ENTER_THRESH_CM = 15, EXIT_THRESH_CM = 18;
+
+// UI + dwell
+static const unsigned long CLEAR_DWELL_MS = 250;
+static const unsigned long MANUAL_PULSE_MS = 200;
+static const unsigned long UI_REFRESH_MS = 500;       // dashboard refresh ~2 Hz
 
 // ======================= WIFI  Setup =======================
-const char* WIFI_SSID = "YuvalandElla 2.4";
-const char* WIFI_PASS = "28112016";
+const char* WIFI_SSID = "iPhone";
+const char* WIFI_PASS = "11111112";
+
 bool connectWiFi(uint32_t timeoutMs = 20000) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -56,34 +69,122 @@ bool connectWiFi(uint32_t timeoutMs = 20000) {
 
 // ======================= Queue Manager Setup =======================
 static LineSelectionStrategy g_strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME;
-static const int NUM_LINES = 1;             // we manage 1 line (you can change later)
-static const int EXIT_LINE_NUMBER = 1;      // hard-coded exit line
+static const int NUM_LINES = 2;              // now managing 2 lines
+static const int EXIT1_LINE_NUMBER = 1;      // Sensor B drains line 1
+static const int EXIT2_LINE_NUMBER = 2;      // Sensor C drains line 2
 
 // Defer construction to setup() to avoid early crashes
 QueueManager* g_qm = nullptr;
 
-// ============================ Config ===============================
-static const int TRIG_A = 19, ECHO_A = 18;   // Entry (A)  "hostess"
-static const int TRIG_B = 23, ECHO_B = 22;   // Exit  (B)  "exit"
-static const float SPEED_CM_PER_US = 0.0343f;
-static const unsigned long PULSE_TO_US = 25000;      // ~4.3m timeout
-
-// trip logic (with hysteresis)
-static const int  ENTER_THRESH_CM = 15, EXIT_THRESH_CM = 18;
-
-// UI + dwell
-static const unsigned long CLEAR_DWELL_MS = 250;
-static const unsigned long MANUAL_PULSE_MS = 200;
-static const unsigned long UI_REFRESH_MS = 500;       // dashboard refresh ~2 Hz
-
 // ============================ Globals ==============================
-Sensor A, B;
+Sensor A, B, C;
 unsigned long lastUiAt = 0;
 
 // Counters + last event
 volatile unsigned long g_entryEvents = 0;
 volatile unsigned long g_exitEvents  = 0;
 String g_lastEvent = "";
+
+// ============================ Time/NTP =============================
+// Simple sanity check (avoid 1970)
+static inline bool timeIsSynced() {
+  const time_t MIN_VALID = 1609459200; // 2021-01-01
+  return time(nullptr) >= MIN_VALID;
+}
+
+// ---------- HTTP fallback: worldtimeapi.org ----------
+bool httpTimeFallback(uint32_t timeoutMs = 8000) {
+  WiFiClient client;
+  const char* host = "worldtimeapi.org";
+  const char* path = "/api/ip";
+  uint32_t start = millis();
+
+  if (!client.connect(host, 80)) {
+    Serial.println("[Time] HTTP fallback: connect failed");
+    return false;
+  }
+  client.print(String("GET ") + path + " HTTP/1.1\r\n"
+               "Host: " + host + "\r\n"
+               "User-Agent: ESP32\r\n"
+               "Connection: close\r\n\r\n");
+
+  while (!client.available() && millis() - start < timeoutMs) delay(10);
+  if (!client.available()) {
+    Serial.println("[Time] HTTP fallback: no response");
+    return false;
+  }
+
+  String body;
+  bool inBody = false;
+  while (client.connected() || client.available()) {
+    String line = client.readStringUntil('\n');
+    if (!inBody) {
+      if (line == "\r") inBody = true; // end of headers
+    } else {
+      body += line;
+    }
+  }
+  int k = body.indexOf("\"unixtime\"");
+  if (k < 0) { Serial.println("[Time] HTTP fallback: 'unixtime' not found"); return false; }
+  int colon = body.indexOf(':', k);
+  if (colon < 0) return false;
+  while (colon+1 < (int)body.length() && body[colon+1] == ' ') colon++;
+  int j = colon + 1;
+  long unixSec = 0;
+  while (j < (int)body.length() && isDigit(body[j])) {
+    unixSec = unixSec * 10 + (body[j] - '0');
+    j++;
+  }
+  if (unixSec <= 0) { Serial.println("[Time] HTTP fallback: bad unixtime"); return false; }
+
+  struct timeval tv;
+  tv.tv_sec = unixSec;
+  tv.tv_usec = 0;
+  settimeofday(&tv, nullptr);
+
+  setenv("TZ", TZ_IL, 1);
+  tzset();
+
+  time_t now = time(nullptr);
+  Serial.printf("[Time] HTTP fallback set: %s", asctime(localtime(&now)));
+  return timeIsSynced();
+}
+
+// ---------- Primary NTP sync with fallback ----------
+bool syncNTP(uint32_t maxWaitMs = 15000) {
+  configTzTime(TZ_IL, NTP1, NTP2);
+  struct tm tmnow;
+  uint32_t start = millis();
+  while (!getLocalTime(&tmnow, 250)) {
+    if (millis() - start > maxWaitMs) {
+      Serial.println("[Time] NTP sync timeout — trying HTTP fallback...");
+      if (httpTimeFallback()) return true;
+      return false;
+    }
+  }
+  time_t now = time(nullptr);
+  Serial.printf("[Time] NTP synced (local): %s", asctime(localtime(&now)));
+  return true;
+}
+
+String formatNowLocalOrUnsynced() {
+  if (!timeIsSynced()) return String("1970-01-01 00:00:00 UTC (unsynced)");
+  struct tm tmnow;
+  if (!getLocalTime(&tmnow, 50)) return String("1970-01-01 00:00:00 UTC (unsynced)");
+  char buf[48];
+  strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", &tmnow);
+  return String(buf);
+}
+
+String formatNowUTC() {
+  if (!timeIsSynced()) return String("1970-01-01 00:00:00 UTC (unsynced)");
+  time_t now = time(nullptr);
+  struct tm tm_utc;
+  gmtime_r(&now, &tm_utc);
+  char buf[32];
+  strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S UTC", &tm_utc);
+  return String(buf);
+}
 
 // ============================ Utils/UI =============================
 static inline const char* onoff(bool x){ return x ? "ON " : "OFF"; }
@@ -107,20 +208,15 @@ void printLineState() {
   }
 }
 
-String formatNow() {
-  struct tm tmnow;
-  if (getLocalTime(&tmnow, 50)) {  // non-blocking; 50ms timeout
-    char buf[32];
-    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", &tmnow);
-    return String(buf);
-  }
-  return String("1970-01-01 00:00:00 UTC (unsynced)");
-}
-
-void renderDashboard(const Sensor& a, const Sensor& b){
+void renderDashboard(const Sensor& a, const Sensor& b, const Sensor& c){
   fakeClearScreen();
   Serial.println(F("== Queue Dashboard =="));
-  Serial.print(F("Time: "));      Serial.println(formatNow());            // timestamp
+  if (timeIsSynced()) {
+    Serial.print(F("Time (Local): ")); Serial.println(formatNowLocalOrUnsynced());
+    Serial.print(F("Time (UTC)  : ")); Serial.println(formatNowUTC());
+  } else {
+    Serial.print(F("Time: ")); Serial.println("1970-01-01 00:00:00 UTC (unsynced)");
+  }
   Serial.print(F("Strategy: "));  Serial.println("_ESP32");
   Serial.print(F("Last event: ")); Serial.println(g_lastEvent);
   Serial.print(F("Entries: "));    Serial.print(g_entryEvents);
@@ -133,21 +229,30 @@ void renderDashboard(const Sensor& a, const Sensor& b){
   Serial.print(F("   TRIPPED=")); Serial.print(onoff(a.tripped));
   Serial.print(F("   CLEAR_STABLE=")); Serial.println(yesno(a.clearStable));
 
-  Serial.print(F("B(exit)    cm="));
+  Serial.print(F("B(exit L1) cm="));
   if (isnan(b.lastCm)) Serial.print("NaN ");
   else { Serial.print(b.lastCm, 1); Serial.print(" "); }
   Serial.print(F("   TRIPPED=")); Serial.print(onoff(b.tripped));
   Serial.print(F("   CLEAR_STABLE=")); Serial.println(yesno(b.clearStable));
 
+  Serial.print(F("C(exit L2) cm="));
+  if (isnan(c.lastCm)) Serial.print("NaN ");
+  else { Serial.print(c.lastCm, 1); Serial.print(" "); }
+  Serial.print(F("   TRIPPED=")); Serial.print(onoff(c.tripped));
+  Serial.print(F("   CLEAR_STABLE=")); Serial.println(yesno(c.clearStable));
+
   Serial.println(F("\n-- Thresholds --"));
   Serial.print(F("ENTER_THRESH_CM=")); Serial.println(ENTER_THRESH_CM);
   Serial.print(F("EXIT_THRESH_CM =")); Serial.println(EXIT_THRESH_CM);
+
+  Serial.println(F("\n-- Mapping --"));
+  Serial.println(F("B → line 1   |   C → line 2"));
 
   Serial.println(F("\n-- Queues --"));
   printLineState();
 
   Serial.println();
-  Serial.println(F("Hints: 'A'/'B' simulate pulses • Serial @115200 baud"));
+  Serial.println(F("Hints: 'A'/'B'/'C' simulate pulses • 'D'=dequeue L1 • 'F'=dequeue L2 • 'E'=enqueue by strategy • Serial @115200 baud"));
 }
 
 // ============================ Driver ===============================
@@ -190,34 +295,49 @@ void updateSensor(Sensor& S){
 }
 
 // ============================ Keyboard =============================
-void handleKeyboard(Sensor& a, Sensor& b){
+void handleKeyboard(Sensor& a, Sensor& b, Sensor& c){
   while (Serial.available() > 0){
-    char c = (char)Serial.read();
-    if (c=='A'||c=='a') a.manualTripEnd = millis() + MANUAL_PULSE_MS;
-    else if (c=='B'||c=='b') b.manualTripEnd = millis() + MANUAL_PULSE_MS;
-    else if (c=='e'||c=='E') { // manual enqueue
+    char ch = (char)Serial.read();
+    if (ch=='A'||ch=='a') a.manualTripEnd = millis() + MANUAL_PULSE_MS;
+    else if (ch=='B'||ch=='b') b.manualTripEnd = millis() + MANUAL_PULSE_MS;
+    else if (ch=='C'||ch=='c') c.manualTripEnd = millis() + MANUAL_PULSE_MS;
+    else if (ch=='e'||ch=='E') { // manual enqueue by strategy
       if (g_qm){
         int recommended = g_qm->getNextLineNumber(g_strategy);
         bool ok = g_qm->enqueue(g_strategy);
         if (ok){ g_entryEvents++; g_lastEvent = String("[ENTRY] Manual -> line ") + recommended; }
         else   { g_lastEvent = "[ENTRY] Manual FAILED (capacity?)"; }
       }
-    } else if (c=='d'||c=='D') { // manual dequeue line 1
+    } else if (ch=='d'||ch=='D') { // manual dequeue line 1
       if (g_qm){
-        bool ok = g_qm->dequeue(EXIT_LINE_NUMBER);
+        bool ok = g_qm->dequeue(EXIT1_LINE_NUMBER);
         if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Manual -> line 1"; }
-        else   { g_lastEvent = "[EXIT] Manual FAILED (empty)"; }
+        else   { g_lastEvent = "[EXIT] Manual FAILED (empty line 1)"; }
+      }
+    } else if (ch=='f'||ch=='F') { // manual dequeue line 2
+      if (g_qm){
+        bool ok = g_qm->dequeue(EXIT2_LINE_NUMBER);
+        if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Manual -> line 2"; }
+        else   { g_lastEvent = "[EXIT] Manual FAILED (empty line 2)"; }
       }
     }
   }
 }
 
 // ============== Edge processing (rising edges only) ================
-void processEdges(QueueManager& qmRef, const Sensor& hostessSensor, const Sensor& exitSensor) {
-  bool hostessRising = (!hostessSensor.prevTripped && hostessSensor.tripped && hostessSensor.clearStablePre);
-  bool exitRising    = (!exitSensor.prevTripped    && exitSensor.tripped    && exitSensor.clearStablePre);
+static inline bool risingEdgeReady(const Sensor& s) {
+  return (!s.prevTripped && s.tripped && s.clearStablePre);
+}
 
-  // --- Hostess sensor triggered -> enqueue (assign a line) ---
+void processEdges3(QueueManager& qmRef,
+                   const Sensor& hostessSensor,
+                   const Sensor& exit1,   // B
+                   const Sensor& exit2) { // C
+  bool hostessRising = risingEdgeReady(hostessSensor);
+  bool exit1Rising   = risingEdgeReady(exit1);
+  bool exit2Rising   = risingEdgeReady(exit2);
+
+  // --- Hostess sensor triggered -> enqueue (assign a line by strategy) ---
   if (hostessRising) {
     int recommended = qmRef.getNextLineNumber(g_strategy); // peek for logging
     bool ok = qmRef.enqueue(g_strategy);                   // writes to Firebase inside
@@ -225,11 +345,18 @@ void processEdges(QueueManager& qmRef, const Sensor& hostessSensor, const Sensor
     else   { g_lastEvent = "[ENTRY] Hostess FAILED (capacity?)"; }
   }
 
-  // --- Exit sensor triggered -> dequeue from line 1 ---
-  if (exitRising) {
-    bool ok = qmRef.dequeue(EXIT_LINE_NUMBER);             // writes to Firebase inside
-    if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Exit -> line 1"; }
-    else   { g_lastEvent = "[EXIT] Exit FAILED (empty)"; }
+  // --- Exit B drains line 1 ---
+  if (exit1Rising) {
+    bool ok = qmRef.dequeue(EXIT1_LINE_NUMBER);
+    if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Exit(B) -> line 1"; }
+    else   { g_lastEvent = "[EXIT] Exit(B) FAILED (empty line 1)"; }
+  }
+
+  // --- Exit C drains line 2 ---
+  if (exit2Rising) {
+    bool ok = qmRef.dequeue(EXIT2_LINE_NUMBER);
+    if (ok){ g_exitEvents++; g_lastEvent = "[EXIT] Exit(C) -> line 2"; }
+    else   { g_lastEvent = "[EXIT] Exit(C) FAILED (empty line 2)"; }
   }
 }
 
@@ -248,7 +375,7 @@ void snapshotPrevStates(Sensor& S){
 
 // ======================== Arduino lifecycle ========================
 void setup(){
- delay(1500);
+  delay(1500);
   Serial.begin(115200);
   delay(50);
 
@@ -256,42 +383,43 @@ void setup(){
 
   initSensor(A, TRIG_A, ECHO_A);
   initSensor(B, TRIG_B, ECHO_B);
+  initSensor(C, TRIG_C, ECHO_C);
 
   // Connect Wi-Fi BEFORE creating QueueManager (prevents HTTP from crashing)
   bool wifiOk = connectWiFi();
 
   if (wifiOk) {
     if (!syncNTP()) {
-      Serial.println("WARN: NTP sync failed; using epoch=1970 fallback.");
+      Serial.println("WARN: Time sync failed; using epoch=1970 fallback.");
     }
     g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   } else {
-    // Fallback: create a local-only manager if your class supports it.
-    // If it doesn't, you can still create it; writes will likely fail gracefully.
     g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   }
 
   fakeClearScreen();
-  Serial.println(F("Queue Manager ready. A=Entry (19/18), B=Exit (23/22). 'A'/'B' simulate pulses."));
+  Serial.println(F("Queue Manager ready. A=Entry (19/18), B=Exit L1 (23/22), C=Exit L2 (5/17). 'A'/'B'/'C' simulate pulses; 'D'=L1 dequeue; 'F'=L2 dequeue; 'E'=enqueue."));
   lastUiAt = millis();
 }
 
 void loop() {
-  handleKeyboard(A, B);
+  handleKeyboard(A, B, C);
 
   snapshotPrevStates(A);
   snapshotPrevStates(B);
+  snapshotPrevStates(C);
 
   updateSensor(A);
   updateSensor(B);
+  updateSensor(C);
 
-  if (g_qm) {                // <-- guard
-    processEdges(*g_qm, A, B);
+  if (g_qm) {
+    processEdges3(*g_qm, A, B, C);
   }
 
   unsigned long now = millis();
   if (now - lastUiAt >= UI_REFRESH_MS) {
-    renderDashboard(A, B);
+    renderDashboard(A, B, C);
     lastUiAt = now;
   }
 
