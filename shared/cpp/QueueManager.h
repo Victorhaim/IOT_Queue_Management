@@ -55,6 +55,13 @@ public:
     bool enqueue(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
 
     /**
+     * @brief Adds a person using automatic strategy selection based on available data
+     * Uses FEWEST_PEOPLE until 30 total services completed, then SHORTEST_WAIT_TIME
+     * @return true if person was successfully added, false if queue is full
+     */
+    bool enqueueAuto();
+
+    /**
      * @brief Removes a person from the specified line (service completion)
      * @param lineNumber Line number to remove person from (1-based indexing)
      * @return true if person was successfully removed, false if line is empty or invalid
@@ -143,7 +150,7 @@ public:
     double getEstimatedWaitTimeForNewPerson(int lineNumber) const;
 
 private:
-    static const int MAX_LINES = 10;                  // Historical cap; still enforced to avoid runaway usage
+    static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
 
     int m_maxSize;
     int m_numberOfLines;

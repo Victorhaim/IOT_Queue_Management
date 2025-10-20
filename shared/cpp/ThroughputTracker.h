@@ -22,14 +22,8 @@ private:
     double currentThroughput;
     bool hasRecordedService;
 
-    // Sliding window for recent services
-    std::vector<std::chrono::steady_clock::time_point> recentServices;
-    static constexpr size_t MAX_WINDOW_SIZE = 10;       // Keep last 10 services
-    static constexpr double WINDOW_TIME_SECONDS = 60.0; // Only consider services in last 60 seconds
-
     // Configuration
     static constexpr double DEFAULT_THROUGHPUT = 0.1; // people/second
-    static constexpr int MIN_SERVICES_FOR_CALCULATION = 2;
 
 public:
     /**

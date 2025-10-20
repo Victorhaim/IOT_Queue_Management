@@ -94,6 +94,25 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     return true;
 }
 
+bool QueueManager::enqueueAuto()
+{
+    // Automatically choose strategy based on available throughput data
+    LineSelectionStrategy strategy;
+
+    if (m_completedPeopleEver >= 30)
+    {
+        // Use throughput-based strategy after collecting data from 30 people
+        strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME;
+    }
+    else
+    {
+        // Use simple people counting until we have enough data
+        strategy = LineSelectionStrategy::FEWEST_PEOPLE;
+    }
+
+    return enqueue(strategy);
+}
+
 bool QueueManager::dequeue(int lineNumber)
 {
     if (!isValidLineNumber(lineNumber))
