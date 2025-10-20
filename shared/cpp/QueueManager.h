@@ -168,12 +168,8 @@ private:
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
-    void updateTotalPeople();
-    int getNumberOfLines() const;
     bool writeToFirebase();
     void clearCloudData();
-    void setLineCount(int lineNumber, int count);
-    void reset();
     
     // History management helpers
     void addPersonToHistory(const Person& person);

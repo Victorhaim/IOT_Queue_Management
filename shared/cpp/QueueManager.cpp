@@ -262,11 +262,6 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
     }
 }
 
-int QueueManager::getNumberOfLines() const
-{
-    return m_numberOfLines;
-}
-
 int QueueManager::getLineCount(int lineNumber) const
 {
     if (!isValidLineNumber(lineNumber))
@@ -277,50 +272,9 @@ int QueueManager::getLineCount(int lineNumber) const
     return static_cast<int>(m_lines[lineNumber - 1].size());
 }
 
-void QueueManager::setLineCount(int lineNumber, int count)
-{
-    if (!isValidLineNumber(lineNumber))
-    {
-        return;
-    }
-
-    // Clear the line and recreate with empty Person objects for the count
-    m_totalPeople -= static_cast<int>(m_lines[lineNumber - 1].size());
-    m_lines[lineNumber - 1].clear();
-
-    // Add dummy persons if count > 0 (for simulation purposes)
-    int validCount = (count < 0) ? 0 : count;
-    for (int i = 0; i < validCount; i++)
-    {
-        double expectedWaitTime = getEstimatedWaitTime(lineNumber);
-        Person dummyPerson(expectedWaitTime, lineNumber);
-        m_lines[lineNumber - 1].push_back(dummyPerson);
-    }
-
-    m_totalPeople += validCount;
-}
-
-void QueueManager::reset()
-{
-    for (int i = 0; i < m_numberOfLines; i++)
-    {
-        m_lines[i].clear();
-    }
-    m_totalPeople = 0;
-}
-
 bool QueueManager::isValidLineNumber(int lineNumber) const
 {
     return lineNumber >= 1 && lineNumber <= m_numberOfLines;
-}
-
-void QueueManager::updateTotalPeople()
-{
-    m_totalPeople = 0;
-    for (int i = 0; i < m_numberOfLines; i++)
-    {
-        m_totalPeople += m_lines[i].size();
-    }
 }
 
 double QueueManager::getEstimatedWaitTime(int lineNumber) const
@@ -617,11 +571,11 @@ FirebasePeopleStructureBuilder::PeopleSummary QueueManager::getCumulativePeopleS
 }
 
 // History management methods for offline functionality
-void QueueManager::addPersonToHistory(const Person& person)
+void QueueManager::addPersonToHistory(const Person &person)
 {
     // Clean old entries before adding new one
     cleanOldHistoryEntries();
-    
+
     // Add the new person to history
     m_lastHourHistory.push_back(person);
 }
@@ -629,18 +583,19 @@ void QueueManager::addPersonToHistory(const Person& person)
 void QueueManager::cleanOldHistoryEntries()
 {
     long long currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
-    
+                                std::chrono::system_clock::now().time_since_epoch())
+                                .count();
+
     long long oneHourAgo = currentTime - ONE_HOUR_MS;
-    
+
     // Remove entries older than one hour
     m_lastHourHistory.erase(
         std::remove_if(m_lastHourHistory.begin(), m_lastHourHistory.end(),
-            [oneHourAgo](const Person& person) {
-                return person.getEnteringTimestamp() < oneHourAgo;
-            }),
-        m_lastHourHistory.end()
-    );
+                       [oneHourAgo](const Person &person)
+                       {
+                           return person.getEnteringTimestamp() < oneHourAgo;
+                       }),
+        m_lastHourHistory.end());
 }
 
 std::vector<Person> QueueManager::getPeopleFromLastHour() const
@@ -660,17 +615,17 @@ bool QueueManager::writeHistoryToFirebase()
     try
     {
         std::cout << "📤 Uploading " << m_lastHourHistory.size() << " people from last hour to cloud..." << std::endl;
-        
+
         int successCount = 0;
         int totalCount = static_cast<int>(m_lastHourHistory.size());
-        
+
         // Upload each person from the history
-        for (const auto& person : m_lastHourHistory)
+        for (const auto &person : m_lastHourHistory)
         {
             FirebasePeopleStructureBuilder::PersonData personData(person);
             std::string personJson = FirebasePeopleStructureBuilder::generatePersonDataJson(personData);
             std::string personPath = "simulation" + m_strategyPrefix + "/" +
-                                   FirebasePeopleStructureBuilder::getPersonDataPath(person.getId());
+                                     FirebasePeopleStructureBuilder::getPersonDataPath(person.getId());
 
             if (m_firebaseClient->updateData(personPath, personJson))
             {
@@ -686,24 +641,24 @@ bool QueueManager::writeHistoryToFirebase()
         FirebasePeopleStructureBuilder::PeopleSummary summary = getCumulativePeopleSummary();
         std::string summaryJson = FirebasePeopleStructureBuilder::generatePeopleSummaryJson(summary);
         std::string summaryPath = "simulation" + m_strategyPrefix + "/" +
-                                FirebasePeopleStructureBuilder::getPeopleSummaryPath();
+                                  FirebasePeopleStructureBuilder::getPeopleSummaryPath();
 
         bool summarySuccess = m_firebaseClient->updateData(summaryPath, summaryJson);
-        
+
         if (summarySuccess)
         {
-            std::cout << "✅ Successfully uploaded " << successCount << "/" << totalCount 
+            std::cout << "✅ Successfully uploaded " << successCount << "/" << totalCount
                       << " people and updated summary to cloud" << std::endl;
         }
         else
         {
-            std::cout << "⚠️  Uploaded " << successCount << "/" << totalCount 
+            std::cout << "⚠️  Uploaded " << successCount << "/" << totalCount
                       << " people but failed to update summary" << std::endl;
         }
 
         return (successCount == totalCount) && summarySuccess;
     }
-    catch (const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << "❌ Error uploading history to Firebase: " << e.what() << std::endl;
         return false;
@@ -713,31 +668,31 @@ bool QueueManager::writeHistoryToFirebase()
 bool QueueManager::updateAllAndCleanHistory()
 {
     std::cout << "🔄 Starting offline data synchronization..." << std::endl;
-    
+
     // Clean old entries first
     cleanOldHistoryEntries();
-    
+
     if (m_lastHourHistory.empty())
     {
         std::cout << "ℹ️  No historical data from the last hour to upload" << std::endl;
         return true; // Nothing to do, but not an error
     }
-    
+
     // Upload all historical data to Firebase
     bool historyUploadSuccess = writeHistoryToFirebase();
-    
+
     if (historyUploadSuccess)
     {
         // Clear the history after successful upload
         size_t clearedCount = m_lastHourHistory.size();
         m_lastHourHistory.clear();
-        
-        std::cout << "✅ Successfully synchronized and cleared " << clearedCount 
+
+        std::cout << "✅ Successfully synchronized and cleared " << clearedCount
                   << " historical entries" << std::endl;
-        
+
         // Also update current state to Firebase
         bool currentStateSuccess = writeToFirebase();
-        
+
         if (currentStateSuccess)
         {
             std::cout << "✅ Current queue state also synchronized to cloud" << std::endl;
