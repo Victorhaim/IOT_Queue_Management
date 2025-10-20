@@ -16,7 +16,7 @@
 static const long long ONE_HOUR_MS = 60 * 60 * 1000; // One hour in milliseconds
 
 QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
-    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(), m_lineThroughputs(),
+    : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(),
       m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(numberOfLines),
       m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0), m_lastSelectedLine(-1)
 {
@@ -26,10 +26,6 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
         m_numberOfLines = MAX_LINES;                      // enforce historical cap
     m_lines.reserve(m_numberOfLines);                     // reserve capacity to avoid reallocations
     m_lines.assign(m_numberOfLines, std::list<Person>()); // initialize with empty lists
-
-    // Initialize throughput tracking for each line
-    m_lineThroughputs.reserve(m_numberOfLines);
-    m_lineThroughputs.assign(m_numberOfLines, DEFAULT_THROUGHPUT);
 
     // Initialize Firebase client with provided app name
     m_firebaseClient = std::make_shared<FirebaseClient>(
@@ -327,28 +323,6 @@ void QueueManager::updateTotalPeople()
     }
 }
 
-void QueueManager::updateLineThroughput(int lineNumber, double throughputPerSecond)
-{
-    if (!isValidLineNumber(lineNumber))
-    {
-        return;
-    }
-
-    // Ensure reasonable bounds for throughput
-    double boundedThroughput = std::max(0.1, std::min(5.0, throughputPerSecond));
-    m_lineThroughputs[lineNumber - 1] = boundedThroughput;
-}
-
-double QueueManager::getLineThroughput(int lineNumber) const
-{
-    if (!isValidLineNumber(lineNumber))
-    {
-        return DEFAULT_THROUGHPUT;
-    }
-
-    return m_lineThroughputs[lineNumber - 1];
-}
-
 double QueueManager::getEstimatedWaitTime(int lineNumber) const
 {
     if (!isValidLineNumber(lineNumber))
@@ -359,9 +333,7 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
     int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
 
     // Use throughput from tracker, fall back to default if no reliable data
-    double throughput = m_throughputTrackers[lineNumber - 1].hasReliableData()
-                            ? m_throughputTrackers[lineNumber - 1].getCurrentThroughput()
-                            : DEFAULT_THROUGHPUT;
+    double throughput = m_throughputTrackers[lineNumber - 1].getCurrentThroughput();
 
     // Estimated wait time = number of people ahead / service rate
     if (peopleInLine == 0)

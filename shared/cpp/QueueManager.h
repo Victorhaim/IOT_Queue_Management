@@ -150,7 +150,6 @@ private:
     int m_numberOfLines;
     int m_totalPeople;
     std::vector<std::list<Person>> m_lines; // Each line contains a list of Person objects
-    std::vector<double> m_lineThroughputs;  // Throughput per line (people/second)
 
     // Running statistics for all people throughout simulation
     int m_totalPeopleEver;          // Total people who have ever entered
@@ -171,8 +170,6 @@ private:
     bool isValidLineNumber(int lineNumber) const;
     void updateTotalPeople();
     int getNumberOfLines() const;
-    void updateLineThroughput(int lineNumber, double throughputPerSecond);
-    double getLineThroughput(int lineNumber) const;
     bool writeToFirebase();
     void clearCloudData();
     void setLineCount(int lineNumber, int count);
