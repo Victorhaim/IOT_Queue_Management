@@ -309,10 +309,8 @@ double QueueManager::getEstimatedWaitTimeForNewPerson(int lineNumber) const
 
     int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
 
-    // Use throughput from tracker, fall back to default if no reliable data
-    double throughput = m_throughputTrackers[lineNumber - 1].hasReliableData()
-                            ? m_throughputTrackers[lineNumber - 1].getCurrentThroughput()
-                            : DEFAULT_THROUGHPUT;
+    // Use throughput from tracker (includes built-in fallback to default value)
+    double throughput = m_throughputTrackers[lineNumber - 1].getCurrentThroughput();
 
     // Expected wait time for new person = time until they become first in line
     // This is the number of people currently in line * average service time

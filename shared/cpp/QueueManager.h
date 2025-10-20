@@ -144,7 +144,6 @@ public:
 
 private:
     static const int MAX_LINES = 10;                  // Historical cap; still enforced to avoid runaway usage
-    static constexpr double DEFAULT_THROUGHPUT = 0.5; // Default people/second when no data available
 
     int m_maxSize;
     int m_numberOfLines;
@@ -170,9 +169,9 @@ private:
     bool isValidLineNumber(int lineNumber) const;
     bool writeToFirebase();
     void clearCloudData();
-    
+
     // History management helpers
-    void addPersonToHistory(const Person& person);
+    void addPersonToHistory(const Person &person);
     void cleanOldHistoryEntries();
     bool writeHistoryToFirebase();
 };
