@@ -9,12 +9,23 @@
 #include <mutex>
 #include <vector>
 #include <memory>
+#include <queue>
+#include <condition_variable>
 #include "../shared/cpp/QueueManager.h"
 #include "../shared/cpp/ThroughputTracker.h"
 
 #include <fstream>
 #include <sstream>
 #include <string>
+
+// Event structure for coordinating between threads
+struct SimulationEvent {
+    enum Type { ARRIVAL, SERVICE } type;
+    int line = 0; // For service events
+    std::chrono::steady_clock::time_point timestamp;
+    
+    SimulationEvent(Type t, int l = 0) : type(t), line(l), timestamp(std::chrono::steady_clock::now()) {}
+};
 
 enum class StrategyType {
     FEWEST_PEOPLE,
@@ -137,8 +148,18 @@ private:
     std::uniform_real_distribution<double> serviceDist;
     
     std::atomic<bool> running{false};
-    std::thread simulationThread;
-    std::mutex outputMutex; // For synchronized console output
+    
+    // Multithreading components
+    std::thread eventGeneratorThread;
+    std::vector<std::thread> strategyThreads;
+    
+    // Event coordination
+    std::queue<SimulationEvent> eventQueue;
+    std::mutex eventMutex;
+    std::condition_variable eventCV;
+    
+    // Output synchronization
+    std::mutex outputMutex;
 
 public:
     UnifiedQueueSimulator() : 
@@ -195,96 +216,170 @@ public:
         }
 
         running.store(true);
-        std::cout << "Starting unified queue simulation..." << std::endl;
+        std::cout << "Starting multithreaded unified queue simulation..." << std::endl;
 
-        simulationThread = std::thread([this]() { simulate(); });
+        // Start event generator thread
+        eventGeneratorThread = std::thread([this]() { generateEvents(); });
+        
+        // Start one thread per strategy for parallel processing
+        for (size_t i = 0; i < simulators.size(); ++i) {
+            strategyThreads.emplace_back([this, i]() {
+                processEventsForStrategy(i);
+            });
+        }
     }
 
     void stop() {
         if (running.load()) {
             std::cout << "Stopping simulation..." << std::endl;
             running.store(false);
-            if (simulationThread.joinable()) {
-                simulationThread.join();
+            
+            // Notify all waiting threads
+            eventCV.notify_all();
+            
+            // Join event generator thread
+            if (eventGeneratorThread.joinable()) {
+                eventGeneratorThread.join();
             }
+            
+            // Join all strategy threads
+            for (auto& thread : strategyThreads) {
+                if (thread.joinable()) {
+                    thread.join();
+                }
+            }
+            
             std::cout << "Simulation stopped." << std::endl;
         }
     }
 
 private:
-    void simulate() {
-        std::cout << "Unified simulation loop started" << std::endl;
-
+    void generateEvents() {
+        std::cout << "Event generator thread started" << std::endl;
+        
         while (running.load()) {
-            // Simulate arrivals (same random event for all strategies)
-            bool shouldArrive = arrivalDist(rng) < arrivalRate;
+            // Generate arrival events
+            if (arrivalDist(rng) < arrivalRate) {
+                {
+                    std::lock_guard<std::mutex> lock(eventMutex);
+                    eventQueue.push(SimulationEvent(SimulationEvent::ARRIVAL));
+                }
+                eventCV.notify_all(); // Notify all strategy threads
+            }
             
-            if (shouldArrive) {
-                std::lock_guard<std::mutex> lock(outputMutex);
-                std::cout << "\n--- NEW ARRIVAL EVENT ---" << std::endl;
-                
-                for (auto& simulator : simulators) {
-                    if (simulator->processArrival()) {
-                        int selectedLine = simulator->getNextLineNumber();
-                        std::cout << "[" << simulator->getName() << "] -> Line " << selectedLine 
-                                  << " (Strategy: " << simulator->getCurrentStrategyDescription() << ")"
-                                  << " | People in line: " << simulator->getLineCount(selectedLine)
-                                  << " | Total queue: " << simulator->getTotalSize()
-                                  << " | Wait time: " << std::fixed << std::setprecision(1) 
-                                  << simulator->getEstimatedWaitTime(selectedLine) << "s" << std::endl;
-                    } else {
-                        std::cout << "[" << simulator->getName() << "] -> ALL LINES FULL - customer turned away" << std::endl;
-                    }
-                }
-            }
-
-            // Simulate service completions (same random events for all strategies)
-            std::vector<std::pair<int, double>> serviceEvents;
+            // Generate service events for each line
             for (int line = 1; line <= numberOfLines; ++line) {
-                double serviceCheck = serviceDist(rng);
-                serviceEvents.emplace_back(line, serviceCheck);
-            }
-
-            // Apply the same service events to all strategies
-            bool anyServiceCompleted = false;
-            for (const auto& event : serviceEvents) {
-                int line = event.first;
-                double serviceCheck = event.second;
-                double lineServiceRate = serviceRates[line - 1];
-                
-                if (serviceCheck < lineServiceRate) {
-                    std::vector<std::string> completions;
-                    
-                    for (auto& simulator : simulators) {
-                        if (simulator->processService(line)) {
-                            completions.push_back("[" + simulator->getName() + "] Line " + std::to_string(line) + 
-                                                " completed | Remaining: " + std::to_string(simulator->getLineCount(line)) +
-                                                " | Wait time: " + std::to_string(simulator->getEstimatedWaitTime(line)) + "s");
-                            anyServiceCompleted = true;
-                        }
+                if (serviceDist(rng) < serviceRates[line - 1]) {
+                    {
+                        std::lock_guard<std::mutex> lock(eventMutex);
+                        eventQueue.push(SimulationEvent(SimulationEvent::SERVICE, line));
                     }
-                    
-                    if (!completions.empty()) {
-                        std::lock_guard<std::mutex> lock(outputMutex);
-                        std::cout << "\n--- SERVICE COMPLETION (Line " << line 
-                                  << ", rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ") ---" << std::endl;
-                        for (const auto& completion : completions) {
-                            std::cout << completion << std::endl;
-                        }
-                    }
+                    eventCV.notify_all(); // Notify all strategy threads
                 }
             }
-
-            // Periodically show summary statistics
-            static int updateCounter = 0;
-            updateCounter++;
-            if (updateCounter % 10 == 0) { // Every 20 seconds (10 * 2s intervals)
-                printSummaryStatistics();
-            }
-
-            // Wait for next update
+            
+            // Wait before generating next batch of events
             std::this_thread::sleep_for(updateInterval);
         }
+        
+        std::cout << "Event generator thread stopped" << std::endl;
+    }
+    
+    void processEventsForStrategy(size_t strategyIndex) {
+        auto& simulator = simulators[strategyIndex];
+        std::cout << "[" << simulator->getName() << "] Strategy thread started" << std::endl;
+        
+        // Statistics tracking for this strategy
+        int processedEvents = 0;
+        auto lastStatsTime = std::chrono::steady_clock::now();
+        
+        while (running.load()) {
+            std::unique_lock<std::mutex> lock(eventMutex);
+            
+            // Wait for events to be available
+            eventCV.wait(lock, [this]() { 
+                return !eventQueue.empty() || !running.load(); 
+            });
+            
+            if (!running.load()) break;
+            
+            // Copy all current events for processing (DON'T remove from queue!)
+            std::queue<SimulationEvent> localEvents;
+            std::queue<SimulationEvent> tempQueue = eventQueue; // Copy the entire queue
+            while (!tempQueue.empty()) {
+                localEvents.push(tempQueue.front());
+                tempQueue.pop();
+            }
+            
+            // Only the first strategy clears the queue to avoid infinite processing
+            if (strategyIndex == 0) {
+                while (!eventQueue.empty()) {
+                    eventQueue.pop();
+                }
+            }
+            lock.unlock();
+            
+            // Process events for this specific strategy
+            while (!localEvents.empty()) {
+                auto event = localEvents.front();
+                localEvents.pop();
+                processedEvents++;
+                
+                if (event.type == SimulationEvent::ARRIVAL) {
+                    if (simulator->processArrival()) {
+                        int selectedLine = simulator->getNextLineNumber();
+                        
+                        std::lock_guard<std::mutex> outputLock(outputMutex);
+                        std::cout << "[" << simulator->getName() << "] ARRIVAL -> Line " 
+                                  << selectedLine << " (" << simulator->getCurrentStrategyDescription() << ")"
+                                  << " | People: " << simulator->getLineCount(selectedLine)
+                                  << " | Total: " << simulator->getTotalSize()
+                                  << " | Wait: " << std::fixed << std::setprecision(1) 
+                                  << simulator->getEstimatedWaitTime(selectedLine) << "s" << std::endl;
+                    } else {
+                        std::lock_guard<std::mutex> outputLock(outputMutex);
+                        std::cout << "[" << simulator->getName() << "] ARRIVAL -> ALL LINES FULL!" << std::endl;
+                    }
+                } 
+                else if (event.type == SimulationEvent::SERVICE) {
+                    if (simulator->processService(event.line)) {
+                        std::lock_guard<std::mutex> outputLock(outputMutex);
+                        std::cout << "[" << simulator->getName() << "] SERVICE -> Line " 
+                                  << event.line << " completed | Remaining: " 
+                                  << simulator->getLineCount(event.line) << std::endl;
+                    }
+                }
+            }
+            
+            // Print periodic stats for this strategy (every 20 seconds)
+            auto now = std::chrono::steady_clock::now();
+            if (std::chrono::duration_cast<std::chrono::seconds>(now - lastStatsTime).count() >= 20) {
+                printStrategyStatistics(simulator.get());
+                lastStatsTime = now;
+            }
+        }
+        
+        std::cout << "[" << simulator->getName() << "] Strategy thread stopped (processed " 
+                  << processedEvents << " events)" << std::endl;
+    }
+    
+    void printStrategyStatistics(StrategySimulator* simulator) {
+        std::lock_guard<std::mutex> lock(outputMutex);
+        std::cout << "\n--- [" << simulator->getName() << "] STATS ---" << std::endl;
+        std::cout << "  Total people in system: " << simulator->getTotalSize() << std::endl;
+        std::cout << "  Line distribution: ";
+        for (int line = 1; line <= numberOfLines; ++line) {
+            std::cout << "L" << line << ":" << simulator->getLineCount(line);
+            if (line < numberOfLines) std::cout << ", ";
+        }
+        std::cout << std::endl;
+        std::cout << "  Wait times: ";
+        for (int line = 1; line <= numberOfLines; ++line) {
+            std::cout << "L" << line << ":" << std::fixed << std::setprecision(1) 
+                      << simulator->getEstimatedWaitTime(line) << "s";
+            if (line < numberOfLines) std::cout << ", ";
+        }
+        std::cout << std::endl;
     }
 
     void printSummaryStatistics() {

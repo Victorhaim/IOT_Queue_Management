@@ -1,5 +1,6 @@
-C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_shortest.dir
-C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_farthest.dir
-C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_project.dir
-C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/build/CMakeFiles/edit_cache.dir
-C:/Users/t-tseroussi/Documents/IoT project/IOT_Queue_Management/shared/build/CMakeFiles/rebuild_cache.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_shortest.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_farthest.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/queue_simulator_project.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/unified_queue_simulator.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/edit_cache.dir
+/Users/victor_haim/Documents/technion/IOT_Project/IOT_Queue_Management/shared/build/CMakeFiles/rebuild_cache.dir
