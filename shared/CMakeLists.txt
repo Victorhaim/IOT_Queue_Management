@@ -38,24 +38,39 @@ add_executable(queue_simulator_project
     cpp/SimpleHttpClient.cpp
 )
 
+add_executable(unified_queue_simulator 
+    ../simulations/UnifiedQueueSimulator.cpp 
+    cpp/QueueManager.cpp
+    cpp/ThroughputTracker.cpp
+    cpp/Person.cpp
+    cpp/FirebaseStructureBuilder.cpp
+    cpp/FirebasePeopleStructureBuilder.cpp
+    cpp/FirebaseClient.cpp
+    cpp/SimpleHttpClient.cpp
+)
+
 # Include paths
 target_include_directories(queue_simulator_shortest PRIVATE . cpp)
 target_include_directories(queue_simulator_farthest PRIVATE . cpp)
 target_include_directories(queue_simulator_project PRIVATE . cpp)
+target_include_directories(unified_queue_simulator PRIVATE . cpp)
 
 # Put executables in bin folder
 set_target_properties(queue_simulator_shortest PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set_target_properties(queue_simulator_farthest PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set_target_properties(queue_simulator_project PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+set_target_properties(unified_queue_simulator PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 # Windows HTTP library
 if(WIN32)
     target_link_libraries(queue_simulator_shortest winhttp)
     target_link_libraries(queue_simulator_farthest winhttp)
     target_link_libraries(queue_simulator_project winhttp)
+    target_link_libraries(unified_queue_simulator winhttp)
 else()
     # macOS/Linux: link with curl
     target_link_libraries(queue_simulator_shortest curl)
     target_link_libraries(queue_simulator_farthest curl)
     target_link_libraries(queue_simulator_project curl)
+    target_link_libraries(unified_queue_simulator curl)
 endif()
