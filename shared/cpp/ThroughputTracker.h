@@ -23,7 +23,8 @@ private:
     bool hasRecordedService;
 
     // Configuration
-    static constexpr double DEFAULT_THROUGHPUT = 0.1; // people/second
+    static constexpr double DEFAULT_THROUGHPUT = 0.1;        // people/second
+    static constexpr int MIN_SERVICES_FOR_RELIABLE_DATA = 7; // minimum completions needed
 
 public:
     /**

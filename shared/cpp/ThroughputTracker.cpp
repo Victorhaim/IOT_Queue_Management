@@ -59,6 +59,6 @@ void ThroughputTracker::reset()
 
 bool ThroughputTracker::hasReliableData() const
 {
-    // Return true if we have recorded at least one service completion
-    return serviceCompletionCount > 0;
+    // Return true if we have at least the minimum required service completions for this line
+    return serviceCompletionCount >= MIN_SERVICES_FOR_RELIABLE_DATA;
 }

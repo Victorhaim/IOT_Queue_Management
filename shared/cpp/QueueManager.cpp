@@ -96,18 +96,38 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
 
 bool QueueManager::enqueueAuto()
 {
-    // Automatically choose strategy based on available throughput data
+    // Only switch to SHORTEST_WAIT_TIME when EVERY line has 7+ completions
+    // This ensures we have reliable throughput data for all lines before making decisions
     LineSelectionStrategy strategy;
 
-    if (m_completedPeopleEver >= 30)
+    // Check if every line has reliable throughput data (7+ completions each)
+    bool allLinesReliable = true;
+    std::cout << "🔍 Strategy Check - Total completions: " << m_completedPeopleEver << std::endl;
+
+    for (int i = 0; i < m_numberOfLines; i++)
     {
-        // Use throughput-based strategy after collecting data from 30 people
+        int lineCompletions = m_throughputTrackers[i].getServiceCount();
+        bool lineReliable = m_throughputTrackers[i].hasReliableData();
+        std::cout << "   Line " << (i + 1) << ": " << lineCompletions << " completions, reliable: "
+                  << (lineReliable ? "YES" : "NO") << std::endl;
+
+        if (!lineReliable)
+        {
+            allLinesReliable = false;
+        }
+    }
+
+    if (allLinesReliable)
+    {
+        // All lines have 7+ completions - use sophisticated strategy
         strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME;
+        std::cout << "✅ STRATEGY SWITCHED TO SHORTEST_WAIT_TIME (all lines reliable)" << std::endl;
     }
     else
     {
-        // Use simple people counting until we have enough data
+        // Some lines still don't have enough data - stick with simple strategy
         strategy = LineSelectionStrategy::FEWEST_PEOPLE;
+        std::cout << "⏳ Using FEWEST_PEOPLE (waiting for all lines to be reliable)" << std::endl;
     }
 
     return enqueue(strategy);
