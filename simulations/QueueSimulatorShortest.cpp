@@ -17,7 +17,7 @@ class QueueSimulatorShortest
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 7; // Per-line limit
+    const int maxQueueSize = 50; // Per-line limit
     const int numberOfLines = 3;
     const double arrivalRate = 0.5;                              // Increased arrival rate (~30 people/minute)
     const std::vector<double> serviceRates = {0.08, 0.12, 0.18}; // Service rates for 5 lines
