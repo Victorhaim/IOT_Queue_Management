@@ -42,8 +42,11 @@ public:
      * @param numberOfLines Number of queue lines to manage (1-10)
      * @param strategyPrefix Firebase path prefix for data organization (e.g., "_shortest", "_farthest")
      * @param appName Firebase application name for cloud integration
+     * @param serviceRates Expected service rates for each line (people/second). If empty, uses defaults.
      */
-    QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix = "", const std::string &appName = "iot-queue-management");
+    QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix = "",
+                 const std::string &appName = "iot-queue-management",
+                 const std::vector<double> &serviceRates = {});
     ~QueueManager() = default;
 
     // Core queue operations
@@ -149,6 +152,18 @@ public:
      */
     double getEstimatedWaitTimeForNewPerson(int lineNumber) const;
 
+    /**
+     * @brief Set the current arrival rate for queue theory calculations
+     * @param arrivalRate Arrivals per second
+     */
+    void setArrivalRate(double arrivalRate);
+
+    /**
+     * @brief Get current arrival rate
+     * @return Arrivals per second
+     */
+    double getArrivalRate() const;
+
 private:
     static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
 
@@ -169,6 +184,10 @@ private:
     std::string m_strategyPrefix;                        // e.g., "", "_shortest", "_farthest"
     std::vector<ThroughputTracker> m_throughputTrackers; // Throughput tracking for each line
 
+    // Queue theory enhancements
+    std::vector<double> m_expectedServiceRates; // Expected service rates for each line
+    double m_currentArrivalRate;                // Current system arrival rate
+
     // History tracking for offline functionality
     std::vector<Person> m_lastHourHistory; // Queue of all people who entered in the last hour
 
@@ -176,6 +195,10 @@ private:
     bool isValidLineNumber(int lineNumber) const;
     bool writeToFirebase();
     void clearCloudData();
+
+    // Queue theory initialization
+    void initializeThroughputTrackers(const std::vector<double> &serviceRates);
+    std::vector<double> getDefaultServiceRates(int numberOfLines) const;
 
     // History management helpers
     void addPersonToHistory(const Person &person);

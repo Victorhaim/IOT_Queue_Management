@@ -15,9 +15,11 @@
 // Constants
 static const long long ONE_HOUR_MS = 60 * 60 * 1000; // One hour in milliseconds
 
-QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix, const std::string &appName)
+QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix,
+                           const std::string &appName, const std::vector<double> &serviceRates)
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(),
-      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(numberOfLines),
+      m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(),
+      m_expectedServiceRates(), m_currentArrivalRate(0.5), // Default arrival rate from simulations
       m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0), m_lastSelectedLine(-1)
 {
     if (m_numberOfLines < 0)
@@ -26,6 +28,9 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
         m_numberOfLines = MAX_LINES;                      // enforce historical cap
     m_lines.reserve(m_numberOfLines);                     // reserve capacity to avoid reallocations
     m_lines.assign(m_numberOfLines, std::list<Person>()); // initialize with empty lists
+
+    // Initialize throughput trackers with service rates
+    initializeThroughputTrackers(serviceRates);
 
     // Initialize Firebase client with provided app name
     m_firebaseClient = std::make_shared<FirebaseClient>(
@@ -325,18 +330,11 @@ double QueueManager::getEstimatedWaitTime(int lineNumber) const
 
     int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
 
-    // Use throughput from tracker, fall back to default if no reliable data
-    double throughput = m_throughputTrackers[lineNumber - 1].getCurrentThroughput();
+    // Use enhanced throughput tracker with M/M/1 queue theory
+    const auto &tracker = m_throughputTrackers[lineNumber - 1];
 
-    // Estimated wait time = number of people ahead / service rate
-    if (peopleInLine == 0)
-    {
-        return 0.0; // No wait for empty line
-    }
-
-    // Simple formula: time = people / throughput
-    // Could be enhanced with more sophisticated queueing theory
-    return static_cast<double>(peopleInLine) / throughput;
+    // Get estimated wait time using M/M/1 queue theory
+    return tracker.getEstimatedWaitTime(peopleInLine, m_currentArrivalRate);
 }
 
 double QueueManager::getEstimatedWaitTimeForNewPerson(int lineNumber) const
@@ -348,18 +346,12 @@ double QueueManager::getEstimatedWaitTimeForNewPerson(int lineNumber) const
 
     int peopleInLine = static_cast<int>(m_lines[lineNumber - 1].size());
 
-    // Use throughput from tracker (includes built-in fallback to default value)
-    double throughput = m_throughputTrackers[lineNumber - 1].getCurrentThroughput();
+    // Use enhanced throughput tracker with M/M/1 queue theory
+    const auto &tracker = m_throughputTrackers[lineNumber - 1];
 
     // Expected wait time for new person = time until they become first in line
-    // This is the number of people currently in line * average service time
-    if (peopleInLine == 0)
-    {
-        return 0.0; // No wait - they'll be first immediately
-    }
-
-    // Time = people ahead of them / service rate
-    return static_cast<double>(peopleInLine) / throughput;
+    // This accounts for people currently ahead of them
+    return tracker.getEstimatedWaitTime(peopleInLine, m_currentArrivalRate);
 }
 
 // Cloud integration methods
@@ -746,4 +738,63 @@ bool QueueManager::updateAllAndCleanHistory()
         std::cout << "❌ Failed to upload historical data - keeping local history for retry" << std::endl;
         return false;
     }
+}
+
+// Queue theory initialization methods
+void QueueManager::initializeThroughputTrackers(const std::vector<double> &serviceRates)
+{
+    // Use provided service rates or get defaults
+    if (!serviceRates.empty() && serviceRates.size() >= static_cast<size_t>(m_numberOfLines))
+    {
+        m_expectedServiceRates = std::vector<double>(serviceRates.begin(),
+                                                     serviceRates.begin() + m_numberOfLines);
+    }
+    else
+    {
+        m_expectedServiceRates = getDefaultServiceRates(m_numberOfLines);
+    }
+
+    // Initialize throughput trackers with expected rates
+    m_throughputTrackers.clear();
+    m_throughputTrackers.reserve(m_numberOfLines);
+
+    for (int i = 0; i < m_numberOfLines; ++i)
+    {
+        m_throughputTrackers.emplace_back(m_expectedServiceRates[i]);
+        std::cout << "Line " << (i + 1) << " initialized with expected service rate: "
+                  << std::fixed << std::setprecision(3) << m_expectedServiceRates[i]
+                  << " people/sec" << std::endl;
+    }
+}
+
+std::vector<double> QueueManager::getDefaultServiceRates(int numberOfLines) const
+{
+    // Default service rates based on simulation configuration
+    // These match the rates used in UnifiedQueueSimulator: {0.08, 0.12, 0.18}
+    std::vector<double> defaults;
+
+    if (numberOfLines >= 1)
+        defaults.push_back(0.08); // Line 1: slowest
+    if (numberOfLines >= 2)
+        defaults.push_back(0.12); // Line 2: medium
+    if (numberOfLines >= 3)
+        defaults.push_back(0.18); // Line 3: fastest
+
+    // For more than 3 lines, extrapolate with increasing rates
+    for (int i = 3; i < numberOfLines; ++i)
+    {
+        defaults.push_back(0.18 + (i - 2) * 0.06); // Increment by 0.06 for additional lines
+    }
+
+    return defaults;
+}
+
+void QueueManager::setArrivalRate(double arrivalRate)
+{
+    m_currentArrivalRate = std::max(0.0, arrivalRate);
+}
+
+double QueueManager::getArrivalRate() const
+{
+    return m_currentArrivalRate;
 }
