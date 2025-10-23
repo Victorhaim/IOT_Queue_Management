@@ -21,15 +21,15 @@ private:
     // Time tracking
     std::chrono::steady_clock::time_point sessionStartTime;
     std::chrono::steady_clock::time_point lastServiceTime;
-    
+
     // Service tracking
     int serviceCompletionCount;
     double currentThroughput;
     bool hasRecordedService;
-    
+
     // Expected service rate for this line (set during initialization)
     double expectedServiceRate;
-    
+
     // Configuration constants
     static constexpr double DEFAULT_THROUGHPUT = 0.1;        // people/second
     static constexpr int MIN_SERVICES_FOR_RELIABLE_DATA = 5; // Reduced for faster adaptation
@@ -52,7 +52,7 @@ public:
      * Blends expected rate with observed rate for stability
      */
     double getCurrentThroughput() const;
-    
+
     /**
      * Get estimated wait time using M/M/1 queue theory
      * @param queueLength Current number of people in queue (n)
@@ -66,7 +66,7 @@ public:
      * Critical for M/M/1 stability analysis
      */
     double getUtilizationFactor(double arrivalRate) const;
-    
+
     /**
      * Check if the system is stable (ρ < 1) for given arrival rate
      */
