@@ -366,33 +366,33 @@ void QueueManager::clearCloudData()
 
     try
     {
-        // Clear all queue lines
+        // Clear all queue line data
         for (int i = 1; i <= m_numberOfLines; ++i)
         {
             std::string queuePath = "simulation" + m_strategyPrefix + "/queues/line" + std::to_string(i);
             if (m_firebaseClient->deleteData(queuePath))
             {
-                std::cout << "✅ Successfully cleared existing data for "
+                std::cout << "✅ Successfully cleared existing queue data for "
                           << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "line " << i << std::endl;
             }
             else
             {
-                std::cout << "ℹ️  Note: No existing data found for "
+                std::cout << "ℹ️  Note: No existing queue data found for "
                           << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "line " << i << " or failed to clear" << std::endl;
             }
         }
 
-        // Clear the currentBest aggregated data
-        std::string aggPath = "simulation" + m_strategyPrefix + "/currentBest";
+        // Clear the recommended choice data
+        std::string aggPath = "simulation" + m_strategyPrefix + "/recommendedChoice";
         if (m_firebaseClient->deleteData(aggPath))
         {
-            std::cout << "✅ Successfully cleared " << aggPath << " data" << std::endl;
+            std::cout << "✅ Successfully cleared recommended choice data" << std::endl;
         }
         else
         {
-            std::cout << "ℹ️  Note: No existing " << aggPath << " data found or failed to clear" << std::endl;
+            std::cout << "ℹ️  Note: No existing recommended choice data found or failed to clear" << std::endl;
         }
 
         // Optional: Also clear the entire simulation node to ensure a fresh start
@@ -440,8 +440,8 @@ bool QueueManager::writeToFirebase()
             // Use throughput from internal trackers
             double throughputFactor = m_throughputTrackers[line - 1].getCurrentThroughput();
 
-            double averageWaitTime = FirebaseStructureBuilder::calculateAverageWaitTime(
-                currentOccupancy, throughputFactor);
+            // Use actual estimated wait time from queue theory instead of simple division
+            double averageWaitTime = getEstimatedWaitTimeForNewPerson(line);
 
             totalPeople += currentOccupancy;
 
@@ -459,7 +459,7 @@ bool QueueManager::writeToFirebase()
                 std::cout << "✅ " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
                           << "Line " << line << " updated - Occupancy: " << currentOccupancy
                           << ", Throughput: " << std::fixed << std::setprecision(3) << throughputFactor
-                          << ", Avg Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s"
+                          << ", Est Wait: " << std::fixed << std::setprecision(1) << averageWaitTime << "s"
                           << " [" << (m_throughputTrackers[line - 1].hasReliableData() ? "measured" : "default") << "]"
                           << std::endl;
             }
@@ -479,21 +479,21 @@ bool QueueManager::writeToFirebase()
                 FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()), m_lastSelectedLine);
 
             std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
-            std::string aggPath = "simulation" + m_strategyPrefix + "/currentBest";
+            std::string aggPath = "simulation" + m_strategyPrefix + "/recommendedChoice";
 
             if (m_firebaseClient->updateData(aggPath, aggJson))
             {
-                std::cout << "✅ Aggregated " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
-                          << "queue object updated (simulation" << m_strategyPrefix << "/currentBest) totalPeople=" << totalPeople
+                std::cout << "✅ Recommended choice " << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
+                          << "updated (simulation" << m_strategyPrefix << "/recommendedChoice) totalPeople=" << totalPeople
                           << " recommendedLine=" << aggData.recommendedLine
-                          << " waitTime=" << std::round(aggData.averageWaitTime) << "s"
-                          << " placeInLine=" << aggData.currentOccupancy << std::endl;
+                          << " waitTime=" << std::round(aggData.recommendedLineEstWaitTime) << "s"
+                          << " queueLength=" << aggData.recommendedLineQueueLength << std::endl;
             }
             else
             {
-                std::cerr << "❌ Failed to update aggregated "
+                std::cerr << "❌ Failed to update recommended choice "
                           << (m_strategyPrefix.empty() ? "" : m_strategyPrefix.substr(1) + " ")
-                          << "queue object" << std::endl;
+                          << "data" << std::endl;
                 return false;
             }
         }
@@ -510,13 +510,13 @@ bool QueueManager::writeToFirebase()
 
         if (m_firebaseClient->updateData(summaryPath, summaryJson))
         {
-            std::cout << "✅ People summary updated: " << summary.totalPeople
+            std::cout << "✅ Overall stats updated: " << summary.totalPeople
                       << " total, " << summary.activePeople << " active, "
                       << summary.completedPeople << " completed" << std::endl;
         }
         else
         {
-            std::cerr << "❌ Failed to update people summary" << std::endl;
+            std::cerr << "❌ Failed to update overall stats" << std::endl;
         }
 
         // Write individual people data (limit to recent people to avoid overwhelming Firebase)

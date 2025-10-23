@@ -39,15 +39,15 @@ public:
     struct PeopleSummary
     {
         int totalPeople;
-        int activePeople;          // People still in queue
-        int completedPeople;       // People who have exited
-        double averageExpectedWait;
-        double averageActualWait;  // Only for completed people
+        int activePeople;                    // People still in queue
+        int completedPeople;                 // People who have exited
+        double historicalAvgExpectedWait;    // Average of what people were told they'd wait
+        double historicalAvgActualWait;      // Average of what people actually waited (completed only)
         std::string lastUpdated;
 
         PeopleSummary(int total, int active, int completed, double avgExpected, double avgActual)
             : totalPeople(total), activePeople(active), completedPeople(completed)
-            , averageExpectedWait(avgExpected), averageActualWait(avgActual)
+            , historicalAvgExpectedWait(avgExpected), historicalAvgActualWait(avgActual)
             , lastUpdated(getCurrentTimestamp()) {}
     };
 
@@ -59,7 +59,7 @@ public:
 
     /**
      * Generate JSON for people summary data
-     * Structure: { totalPeople, activePeople, completedPeople, averageExpectedWait, averageActualWait, lastUpdated }
+     * Structure: { totalPeople, activePeople, completedPeople, historicalAvgExpectedWait, historicalAvgActualWait, lastUpdated }
      */
     static std::string generatePeopleSummaryJson(const PeopleSummary& summary);
 
@@ -71,7 +71,7 @@ public:
 
     /**
      * Get the Firebase path for people summary data
-     * Returns: "people_summary"
+     * Returns: "overallStats"
      */
     static std::string getPeopleSummaryPath();
 

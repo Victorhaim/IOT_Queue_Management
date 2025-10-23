@@ -10,8 +10,8 @@
  * FirebaseStructureBuilder - Unified class for creating consistent Firebase data structures
  *
  * This class ensures that both the simulation and ESP32 create the same Firebase structure:
- * - queues/line1, queues/line2, etc. (individual line data with detailed metrics)
- * - currentBest (aggregated data with recommendations)
+ * - queues/line1, queues/line2, etc. (current conditions if you join this line now)
+ * - recommendedChoice (which line the algorithm suggests with its current wait time)
  *
  * Works with both standard C++ and ESP32 environments
  */
@@ -20,38 +20,38 @@ class FirebaseStructureBuilder
 public:
     struct LineData
     {
-        int currentOccupancy;
-        double throughputFactor;
-        double averageWaitTime;
+        int queueLength;
+        double serviceRatePeoplePerSec;
+        double estimatedWaitForNewPerson;
         int lineNumber;
 
         LineData(int occupancy, double throughput, double waitTime, int number)
-            : currentOccupancy(occupancy), throughputFactor(throughput),
-              averageWaitTime(waitTime), lineNumber(number) {}
+            : queueLength(occupancy), serviceRatePeoplePerSec(throughput),
+              estimatedWaitForNewPerson(waitTime), lineNumber(number) {}
     };
 
     struct AggregatedData
     {
-        int totalPeople;
+        int totalPeopleInAllQueues;
         int numberOfLines;
         int recommendedLine;
-        double averageWaitTime;
-        int currentOccupancy;
+        double recommendedLineEstWaitTime;
+        int recommendedLineQueueLength;
 
         AggregatedData(int total, int numLines, int recommended, double waitTime = 0.0, int occupancy = 0)
-            : totalPeople(total), numberOfLines(numLines), recommendedLine(recommended),
-              averageWaitTime(waitTime), currentOccupancy(occupancy) {}
+            : totalPeopleInAllQueues(total), numberOfLines(numLines), recommendedLine(recommended),
+              recommendedLineEstWaitTime(waitTime), recommendedLineQueueLength(occupancy) {}
     };
 
     /**
-     * Generate JSON for individual queue line data
-     * Structure: { currentOccupancy, throughputFactor, averageWaitTime, lastUpdated, lineNumber }
+     * Generate JSON for queue line data (what you'd see if you joined this line right now)
+     * Structure: { queueLength, serviceRatePeoplePerSec, estimatedWaitForNewPerson, lastUpdated, lineNumber }
      */
     static std::string generateLineDataJson(const LineData &lineData);
 
     /**
-     * Generate JSON for aggregated queue data (currentBest)
-     * Structure: { totalPeople, numberOfLines, recommendedLine }
+     * Generate JSON for recommended choice (which line the algorithm suggests)
+     * Structure: { totalPeopleInAllQueues, numberOfLines, recommendedLine, recommendedLineEstWaitTime, recommendedLineQueueLength }
      */
     static std::string generateAggregatedDataJson(const AggregatedData &aggData);
 
@@ -63,7 +63,7 @@ public:
 
     /**
      * Get the Firebase path for aggregated data
-     * Returns: "currentBest"
+     * Returns: "recommendedChoice"
      */
     static std::string getAggregatedDataPath();
 
@@ -74,12 +74,6 @@ public:
      * @param recommendedLine The line that was actually chosen by the strategy
      */
     static AggregatedData createAggregatedData(const LineData *allLines, int totalPeople, int numberOfLines, int recommendedLine);
-
-    /**
-     * Calculate average wait time based on occupancy and throughput
-     * waitTime = occupancy / throughputFactor (if throughput > 0, else 0)
-     */
-    static double calculateAverageWaitTime(int occupancy, double throughputFactor);
 
     /**
      * Get current timestamp as std::string

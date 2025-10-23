@@ -25,8 +25,8 @@ std::string FirebasePeopleStructureBuilder::generatePeopleSummaryJson(const Peop
          << "\"totalPeople\":" << summary.totalPeople << ","
          << "\"activePeople\":" << summary.activePeople << ","
          << "\"completedPeople\":" << summary.completedPeople << ","
-         << "\"averageExpectedWait\":" << std::fixed << std::setprecision(2) << summary.averageExpectedWait << ","
-         << "\"averageActualWait\":" << std::fixed << std::setprecision(2) << summary.averageActualWait << ","
+         << "\"historicalAvgExpectedWait\":" << std::fixed << std::setprecision(2) << summary.historicalAvgExpectedWait << ","
+         << "\"historicalAvgActualWait\":" << std::fixed << std::setprecision(2) << summary.historicalAvgActualWait << ","
          << "\"lastUpdated\":\"" << summary.lastUpdated << "\""
          << "}";
     return json.str();
@@ -39,7 +39,7 @@ std::string FirebasePeopleStructureBuilder::getPersonDataPath(const std::string&
 
 std::string FirebasePeopleStructureBuilder::getPeopleSummaryPath()
 {
-    return "people_summary";
+    return "overallStats";
 }
 
 FirebasePeopleStructureBuilder::PeopleSummary FirebasePeopleStructureBuilder::createPeopleSummary(const std::vector<Person>& allPeople)
