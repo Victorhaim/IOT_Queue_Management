@@ -65,11 +65,20 @@ public:
     bool enqueueAuto();
 
     /**
-     * @brief Removes a person from the specified line (service completion)
+     * @brief Removes a person from the specified line using automatic strategy selection
+     * Uses FEWEST_PEOPLE until 30 total services completed, then SHORTEST_WAIT_TIME
      * @param lineNumber Line number to remove person from (1-based indexing)
      * @return true if person was successfully removed, false if line is empty or invalid
      */
-    bool dequeue(int lineNumber);
+    bool dequeueAuto(int lineNumber);
+
+    /**
+     * @brief Removes a person from the specified line (service completion)
+     * @param lineNumber Line number to remove person from (1-based indexing)
+     * @param strategy Line selection strategy to use for updating the recommendation
+     * @return true if person was successfully removed, false if line is empty or invalid
+     */
+    bool dequeue(int lineNumber, LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
 
     /**
      * @brief Adds a person directly to a specific line, bypassing strategy selection
@@ -193,7 +202,7 @@ private:
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
-    bool writeToFirebase();
+    bool writeToFirebase(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
     void clearCloudData();
 
     // Queue theory initialization

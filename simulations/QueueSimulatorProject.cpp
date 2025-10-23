@@ -125,7 +125,7 @@ private:
                 double lineServiceRate = serviceRates[line - 1]; // Get specific rate for this line
                 if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < lineServiceRate)
                 {
-                    queueManager->dequeue(line);
+                    queueManager->dequeueAuto(line);
 
                     std::cout << "Service completed on line " << line
                               << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"

@@ -435,7 +435,7 @@ void handleKeyboard(Sensor &a, Sensor &b, Sensor &c)
     { // manual dequeue line 1
       if (g_qm)
       {
-        bool ok = g_qm->dequeue(EXIT1_LINE_NUMBER);
+        bool ok = g_qm->dequeueAuto(EXIT1_LINE_NUMBER);
         if (ok)
         {
           g_exitEvents++;
@@ -451,7 +451,7 @@ void handleKeyboard(Sensor &a, Sensor &b, Sensor &c)
     { // manual dequeue line 2
       if (g_qm)
       {
-        bool ok = g_qm->dequeue(EXIT2_LINE_NUMBER);
+        bool ok = g_qm->dequeueAuto(EXIT2_LINE_NUMBER);
         if (ok)
         {
           g_exitEvents++;
@@ -506,7 +506,7 @@ void processEdges3(QueueManager &qmRef,
   // --- Exit B drains line 1 ---
   if (exit1Rising)
   {
-    bool ok = qmRef.dequeue(EXIT1_LINE_NUMBER);
+    bool ok = qmRef.dequeueAuto(EXIT1_LINE_NUMBER);
     if (ok)
     {
       g_exitEvents++;
@@ -521,7 +521,7 @@ void processEdges3(QueueManager &qmRef,
   // --- Exit C drains line 2 ---
   if (exit2Rising)
   {
-    bool ok = qmRef.dequeue(EXIT2_LINE_NUMBER);
+    bool ok = qmRef.dequeueAuto(EXIT2_LINE_NUMBER);
     if (ok)
     {
       g_exitEvents++;

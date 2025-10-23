@@ -95,8 +95,21 @@ public:
     {
         if (queueManager->getLineCount(line) > 0)
         {
-            queueManager->dequeue(line);
-            return true;
+            // Use appropriate dequeue method for this simulator type
+            bool success = false;
+            switch (strategyType)
+            {
+            case StrategyType::FEWEST_PEOPLE:
+                success = queueManager->dequeue(line, LineSelectionStrategy::FEWEST_PEOPLE);
+                break;
+            case StrategyType::SHORTEST_WAIT_TIME:
+                success = queueManager->dequeueAuto(line); // Uses adaptive strategy
+                break;
+            case StrategyType::FARTHEST_FROM_ENTRANCE:
+                success = queueManager->dequeue(line, LineSelectionStrategy::FARTHEST_FROM_ENTRANCE);
+                break;
+            }
+            return success;
         }
         return false;
     }

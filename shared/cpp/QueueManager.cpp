@@ -20,7 +20,8 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
     : m_maxSize(maxSize), m_numberOfLines(numberOfLines), m_totalPeople(0), m_lines(),
       m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(),
       m_expectedServiceRates(), m_currentArrivalRate(0.5), // Default arrival rate from simulations
-      m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0), m_lastSelectedLine(-1)
+      m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0),
+      m_lastSelectedLine(-1)
 {
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
@@ -94,7 +95,7 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
     }
 
     // Automatically write to Firebase after state change
-    writeToFirebase();
+    writeToFirebase(strategy);
 
     return true;
 }
@@ -138,7 +139,40 @@ bool QueueManager::enqueueAuto()
     return enqueue(strategy);
 }
 
-bool QueueManager::dequeue(int lineNumber)
+bool QueueManager::dequeueAuto(int lineNumber)
+{
+    // Only switch to SHORTEST_WAIT_TIME when EVERY line has 7+ completions
+    // This ensures we have reliable throughput data for all lines before making decisions
+    LineSelectionStrategy strategy;
+
+    // Check if every line has reliable throughput data (7+ completions each)
+    bool allLinesReliable = true;
+
+    for (int i = 0; i < m_numberOfLines; i++)
+    {
+        bool lineReliable = m_throughputTrackers[i].hasReliableData();
+
+        if (!lineReliable)
+        {
+            allLinesReliable = false;
+        }
+    }
+
+    if (allLinesReliable)
+    {
+        // All lines have 7+ completions - use sophisticated strategy
+        strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME;
+    }
+    else
+    {
+        // Some lines still don't have enough data - stick with simple strategy
+        strategy = LineSelectionStrategy::FEWEST_PEOPLE;
+    }
+
+    return dequeue(lineNumber, strategy);
+}
+
+bool QueueManager::dequeue(int lineNumber, LineSelectionStrategy strategy)
 {
     if (!isValidLineNumber(lineNumber))
     {
@@ -172,8 +206,15 @@ bool QueueManager::dequeue(int lineNumber)
     // Record service completion for throughput tracking
     m_throughputTrackers[lineNumber - 1].recordServiceCompletion();
 
+    // Store the selected line for Firebase reporting (same as enqueue)
+    int recommendedLine = getNextLineNumber(strategy);
+    if (recommendedLine != -1)
+    {
+        m_lastSelectedLine = recommendedLine;
+    }
+
     // Automatically write to Firebase after state change
-    writeToFirebase();
+    writeToFirebase(strategy);
 
     return true;
 }
@@ -419,7 +460,7 @@ void QueueManager::clearCloudData()
     std::cout << "🚀 Starting fresh simulation..." << std::endl;
 }
 
-bool QueueManager::writeToFirebase()
+bool QueueManager::writeToFirebase(LineSelectionStrategy strategy)
 {
     if (!m_firebaseClient)
     {
@@ -475,8 +516,10 @@ bool QueueManager::writeToFirebase()
         // Calculate recommended line and write aggregated data
         if (!allLinesData.empty())
         {
+            int currentRecommendation = getNextLineNumber(strategy);
+
             FirebaseStructureBuilder::AggregatedData aggData =
-                FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()), m_lastSelectedLine);
+                FirebaseStructureBuilder::createAggregatedData(allLinesData.data(), totalPeople, static_cast<int>(allLinesData.size()), currentRecommendation);
 
             std::string aggJson = FirebaseStructureBuilder::generateAggregatedDataJson(aggData);
             std::string aggPath = "simulation" + m_strategyPrefix + "/recommendedChoice";
