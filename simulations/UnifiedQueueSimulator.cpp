@@ -17,6 +17,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 // Event structure for coordinating between threads
 struct SimulationEvent
@@ -39,6 +40,21 @@ enum class StrategyType
     FARTHEST_FROM_ENTRANCE
 };
 
+// Structure to track line-specific actual wait time statistics
+struct LineWaitStats
+{
+    double totalWaitTime = 0.0;
+    int completedPeople = 0;
+    double averageWaitTime = 0.0;
+
+    void addCompletedPerson(double actualWaitTime)
+    {
+        totalWaitTime += actualWaitTime;
+        completedPeople++;
+        averageWaitTime = completedPeople > 0 ? totalWaitTime / completedPeople : 0.0;
+    }
+};
+
 class StrategySimulator
 {
 private:
@@ -46,6 +62,9 @@ private:
     StrategyType strategyType;
     std::string strategyName;
     std::string firestoreCollection;
+
+    // Line-specific wait time tracking
+    std::vector<LineWaitStats> lineWaitStats;
 
     // Configuration (shared across all strategies)
     const int maxQueueSize = 10000;
@@ -56,6 +75,8 @@ public:
     StrategySimulator(StrategyType type, const std::string &name, const std::string &collection)
         : strategyType(type), strategyName(name), firestoreCollection(collection)
     {
+        // Initialize line wait statistics
+        lineWaitStats.resize(numberOfLines);
 
         std::string suffix;
         switch (type)
@@ -95,6 +116,19 @@ public:
     {
         if (queueManager->getLineCount(line) > 0)
         {
+            // Get the person being served before removing them
+            auto peopleInLine = queueManager->getPeopleInLine(line);
+            if (!peopleInLine.empty())
+            {
+                const auto &personBeingServed = peopleInLine.front();
+                if (personBeingServed.hasExited())
+                {
+                    // Track actual wait time for this line
+                    double actualWaitTime = personBeingServed.getActualWaitTime();
+                    lineWaitStats[line - 1].addCompletedPerson(actualWaitTime);
+                }
+            }
+
             // Use appropriate dequeue method for this simulator type
             bool success = false;
             switch (strategyType)
@@ -161,6 +195,142 @@ public:
         }
         return strategyName;
     }
+
+    // New methods for JSON output
+    std::vector<Person> getAllPeople() const
+    {
+        return queueManager->getAllPeople();
+    }
+
+    FirebasePeopleStructureBuilder::PeopleSummary getCumulativePeopleSummary() const
+    {
+        return queueManager->getCumulativePeopleSummary();
+    }
+
+    LineWaitStats getLineActualWaitStats(int line) const
+    {
+        if (line >= 1 && line <= numberOfLines)
+        {
+            return lineWaitStats[line - 1];
+        }
+        return LineWaitStats(); // Return empty stats for invalid line
+    }
+};
+
+// JSON output structure that mirrors Firebase
+struct JSONOutputManager
+{
+    std::string outputDirectory;
+
+    JSONOutputManager(const std::string &dir) : outputDirectory(dir)
+    {
+        // Create output directory if it doesn't exist
+        std::filesystem::create_directories(outputDirectory);
+    }
+
+    void writeUnifiedStrategyData(const std::vector<std::unique_ptr<StrategySimulator>> &simulators)
+    {
+        std::string filename = outputDirectory + "/unified_simulation_data.json";
+        std::ofstream file(filename);
+
+        file << "{\n";
+        file << "  \"timestamp\": \"" << getCurrentTimestamp() << "\",\n";
+        file << "  \"strategies\": {\n";
+
+        bool firstStrategy = true;
+        for (const auto &simulator : simulators)
+        {
+            if (!firstStrategy)
+                file << ",\n";
+            firstStrategy = false;
+
+            std::string strategyKey;
+            if (simulator->getName() == "FEWEST_PEOPLE")
+                strategyKey = "shortest";
+            else if (simulator->getName() == "SHORTEST_WAIT_TIME")
+                strategyKey = "project";
+            else if (simulator->getName() == "FARTHEST_FROM_ENTRANCE")
+                strategyKey = "farthest";
+
+            file << "    \"" << strategyKey << "\": {\n";
+
+            // Overall stats
+            auto summary = simulator->getCumulativePeopleSummary();
+            file << "      \"overallStats\": {\n";
+            file << "        \"totalPeople\": " << summary.totalPeople << ",\n";
+            file << "        \"activePeople\": " << summary.activePeople << ",\n";
+            file << "        \"completedPeople\": " << summary.completedPeople << ",\n";
+            file << "        \"historicalAvgExpectedWait\": " << std::fixed << std::setprecision(2)
+                 << summary.historicalAvgExpectedWait << ",\n";
+            file << "        \"historicalAvgActualWait\": " << std::fixed << std::setprecision(2)
+                 << summary.historicalAvgActualWait << "\n";
+            file << "      },\n";
+
+            // Line stats
+            file << "      \"lineStats\": {\n";
+            for (int line = 1; line <= 3; ++line)
+            {
+                if (line > 1)
+                    file << ",\n";
+
+                auto lineActualWaitStats = simulator->getLineActualWaitStats(line);
+
+                file << "        \"line" << line << "\": {\n";
+                file << "          \"currentPeople\": " << simulator->getLineCount(line) << ",\n";
+                file << "          \"estimatedWaitTime\": " << std::fixed << std::setprecision(2)
+                     << simulator->getEstimatedWaitTime(line) << ",\n";
+                file << "          \"actualAvgWaitTime\": " << std::fixed << std::setprecision(2)
+                     << lineActualWaitStats.averageWaitTime << ",\n";
+                file << "          \"totalCompletedInLine\": " << lineActualWaitStats.completedPeople << ",\n";
+                file << "          \"totalActualWaitTime\": " << std::fixed << std::setprecision(2)
+                     << lineActualWaitStats.totalWaitTime << "\n";
+                file << "        }";
+            }
+            file << "\n      },\n";
+
+            // People data
+            auto allPeople = simulator->getAllPeople();
+            file << "      \"people\": {\n";
+            bool firstPerson = true;
+            for (const auto &person : allPeople)
+            {
+                if (!firstPerson)
+                    file << ",\n";
+                firstPerson = false;
+
+                file << "        \"" << person.getId() << "\": {\n";
+                file << "          \"personId\": \"" << person.getId() << "\",\n";
+                file << "          \"expectedWaitTime\": " << std::fixed << std::setprecision(2)
+                     << person.getExpectedWaitTime() << ",\n";
+                file << "          \"enteringTimestamp\": " << person.getEnteringTimestamp() << ",\n";
+                file << "          \"exitingTimestamp\": " << person.getExitingTimestamp() << ",\n";
+                file << "          \"lineNumber\": " << person.getLineNumber() << ",\n";
+                file << "          \"actualWaitTime\": " << std::fixed << std::setprecision(2)
+                     << person.getActualWaitTime() << ",\n";
+                file << "          \"hasExited\": " << (person.hasExited() ? "true" : "false") << "\n";
+                file << "        }";
+            }
+            file << "\n      }\n";
+            file << "    }";
+        }
+
+        file << "\n  }\n";
+        file << "}";
+        file.close();
+    }
+
+private:
+    std::string getCurrentTimestamp()
+    {
+        auto now = std::chrono::system_clock::now();
+        auto time_t = std::chrono::system_clock::to_time_t(now);
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+        std::ostringstream oss;
+        oss << std::put_time(std::gmtime(&time_t), "%Y-%m-%dT%H:%M:%S");
+        oss << '.' << std::setfill('0') << std::setw(3) << ms.count() << 'Z';
+        return oss.str();
+    }
 };
 
 class UnifiedQueueSimulator
@@ -172,9 +342,13 @@ private:
     const double arrivalRate = 0.5;
     const std::vector<double> serviceRates = {0.08, 0.12, 0.18};
     const std::chrono::milliseconds updateInterval{2000};
+    const std::chrono::seconds jsonOutputInterval{30}; // Output JSON every 30 seconds
 
     // Simulators for each strategy
     std::vector<std::unique_ptr<StrategySimulator>> simulators;
+
+    // JSON output manager
+    std::unique_ptr<JSONOutputManager> jsonManager;
 
     // Shared random number generation (ensures same scenarios for all strategies)
     std::mt19937 rng;
@@ -197,6 +371,9 @@ public:
                               arrivalDist(0.0, 1.0),
                               serviceDist(0.0, 1.0)
     {
+        // Initialize JSON output manager
+        std::string outputDir = "simulation_output";
+        jsonManager = std::make_unique<JSONOutputManager>(outputDir);
 
         // Create simulators for all three strategies
         simulators.emplace_back(std::make_unique<StrategySimulator>(
@@ -233,6 +410,8 @@ public:
         }
         std::cout << std::endl;
         std::cout << "  Update interval: " << updateInterval.count() << "ms" << std::endl;
+        std::cout << "  JSON output directory: " << outputDir << std::endl;
+        std::cout << "  JSON output interval: " << jsonOutputInterval.count() << "s" << std::endl;
         std::cout << "================================" << std::endl;
     }
 
@@ -280,6 +459,7 @@ private:
         std::cout << "Event generator and processor thread started" << std::endl;
 
         auto lastStatsTime = std::chrono::steady_clock::now();
+        auto lastJsonTime = std::chrono::steady_clock::now();
 
         while (running.load())
         {
@@ -309,8 +489,9 @@ private:
                 }
             }
 
-            // Print periodic stats (every 20 seconds)
             auto now = std::chrono::steady_clock::now();
+
+            // Print periodic stats (every 20 seconds)
             if (std::chrono::duration_cast<std::chrono::seconds>(now - lastStatsTime).count() >= 20)
             {
                 for (const auto &simulator : simulators)
@@ -320,10 +501,19 @@ private:
                 lastStatsTime = now;
             }
 
+            // Write JSON output periodically
+            if (std::chrono::duration_cast<std::chrono::seconds>(now - lastJsonTime) >= jsonOutputInterval)
+            {
+                writeJSONOutput();
+                lastJsonTime = now;
+            }
+
             // Wait before generating next batch of events
             std::this_thread::sleep_for(updateInterval);
         }
 
+        // Write final JSON output when stopping
+        writeJSONOutput();
         std::cout << "Event generator and processor thread stopped" << std::endl;
     }
 
@@ -376,11 +566,21 @@ private:
                 std::cout << ", ";
         }
         std::cout << std::endl;
-        std::cout << "  Wait times: ";
+        std::cout << "  Estimated wait times: ";
         for (int line = 1; line <= numberOfLines; ++line)
         {
             std::cout << "L" << line << ":" << std::fixed << std::setprecision(1)
                       << simulator->getEstimatedWaitTime(line) << "s";
+            if (line < numberOfLines)
+                std::cout << ", ";
+        }
+        std::cout << std::endl;
+        std::cout << "  Actual avg wait times: ";
+        for (int line = 1; line <= numberOfLines; ++line)
+        {
+            auto lineStats = simulator->getLineActualWaitStats(line);
+            std::cout << "L" << line << ":" << std::fixed << std::setprecision(1)
+                      << lineStats.averageWaitTime << "s(" << lineStats.completedPeople << ")";
             if (line < numberOfLines)
                 std::cout << ", ";
         }
@@ -416,6 +616,28 @@ private:
                       << std::endl;
         }
         std::cout << "=========================================" << std::endl;
+    }
+
+    void writeJSONOutput()
+    {
+        std::lock_guard<std::mutex> lock(outputMutex);
+
+        std::cout << "\n📁 Writing unified JSON output file..." << std::endl;
+
+        jsonManager->writeUnifiedStrategyData(simulators);
+
+        // Print summary for all strategies
+        for (const auto &simulator : simulators)
+        {
+            auto summary = simulator->getCumulativePeopleSummary();
+            std::cout << "   [" << simulator->getName() << "] Total: " << summary.totalPeople
+                      << ", Active: " << summary.activePeople
+                      << ", Completed: " << summary.completedPeople
+                      << ", Avg Actual Wait: " << std::fixed << std::setprecision(1)
+                      << summary.historicalAvgActualWait << "s" << std::endl;
+        }
+
+        std::cout << "✅ Unified JSON file updated: simulation_output/unified_simulation_data.json" << std::endl;
     }
 };
 
