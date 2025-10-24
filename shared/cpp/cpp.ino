@@ -244,8 +244,8 @@ void renderDashboard(const Sensor& a, const Sensor& b, const Sensor& c){
     case LineSelectionStrategy::SHORTEST_WAIT_TIME:
       Serial.println("SHORTEST_WAIT_TIME");
       break;
-    case LineSelectionStrategy::FARTHEST_FROM_ENTRANCE:
-      Serial.println("FARTHEST_FROM_ENTRANCE");
+    case LineSelectionStrategy::NEAREST_TO_ENTRANCE:
+      Serial.println("NEAREST_TO_ENTRANCE");
       break;
     default:
       Serial.println("_ESP32");
@@ -488,18 +488,18 @@ void onWifiReconnect() {
 // We immediately fall back to local/offline behavior.
 //
 // Specifically:
-// - Switch strategy to FARTHEST_FROM_ENTRANCE so hostess routing
+// - Switch strategy to NEAREST_TO_ENTRANCE so hostess routing
 //   continues deterministically even with no Firebase/clock.
 // - Record that for the dashboard.
 //
 void onWifiDisconnect() {
   Serial.println("[WiFi] LOST. Switching to offline strategy...");
-
+  
   // Switch to offline failover strategy
-  g_strategy = LineSelectionStrategy::FARTHEST_FROM_ENTRANCE;
+  g_strategy = LineSelectionStrategy::NEAREST_TO_ENTRANCE;
 
   // Let dashboard reflect this state change
-  g_lastEvent = "[NET] WiFi lost -> FARTHEST_FROM_ENTRANCE";
+  g_lastEvent = "[NET] WiFi lost -> NEAREST_TO_ENTRANCE";
 }
 
 // ======================== Arduino lifecycle ========================
@@ -526,7 +526,7 @@ void setup(){
     g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   } else {
     // We start offline. Pick fallback strategy immediately.
-    g_strategy = LineSelectionStrategy::FARTHEST_FROM_ENTRANCE;
+    g_strategy = LineSelectionStrategy::NEAREST_TO_ENTRANCE;
     g_qm = new QueueManager(0, NUM_LINES, "_ESP32", "iot-queue-management-ESP32");
   }
 
