@@ -19,13 +19,14 @@ class SimpleHttpClient
 {
 private:
     std::string baseUrl;
+    std::string authSecret;
 #ifdef ESP32
     WiFiClientSecure *wifiClient;
     HTTPClient *httpClient;
 #endif
 
 public:
-    SimpleHttpClient(const std::string &baseUrl);
+    SimpleHttpClient(const std::string &baseUrl, const std::string &authSecret = "");
     ~SimpleHttpClient();
 
     bool initialize();
@@ -36,5 +37,6 @@ public:
 
 private:
     bool sendRequest(const std::string &method, const std::string &path, const std::string &data);
+    std::string constructUrl(const std::string &path);
     void debugPrint(const std::string &message);
 };

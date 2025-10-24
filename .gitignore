@@ -6,8 +6,12 @@
 *.swo
 *~
 
-# Secrets and sensitive files
-ESP32/SECRETS.h
+# Firebase configuration files with secrets
+firebase.config
+*/firebase.config
+shared/cpp/parameters.h
+
+shared/cpp/queue_sim
 
 # C/C++ Build artifacts
 *.o
