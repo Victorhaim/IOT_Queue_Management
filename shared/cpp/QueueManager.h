@@ -42,8 +42,11 @@ public:
      * @param numberOfLines Number of queue lines to manage (1-10)
      * @param strategyPrefix Firebase path prefix for data organization (e.g., "_shortest", "_farthest")
      * @param appName Firebase application name for cloud integration
+     * @param serviceRates Expected service rates for each line (people/second). If empty, uses defaults.
      */
-    QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix = "", const std::string &appName = "iot-queue-management");
+    QueueManager(int maxSize, int numberOfLines, const std::string &strategyPrefix = "",
+                 const std::string &appName = "iot-queue-management",
+                 const std::vector<double> &serviceRates = {});
     ~QueueManager() = default;
 
     // Core queue operations
@@ -55,11 +58,27 @@ public:
     bool enqueue(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
 
     /**
-     * @brief Removes a person from the specified line (service completion)
+     * @brief Adds a person using automatic strategy selection based on available data
+     * Uses FEWEST_PEOPLE until 30 total services completed, then SHORTEST_WAIT_TIME
+     * @return true if person was successfully added, false if queue is full
+     */
+    bool enqueueAuto();
+
+    /**
+     * @brief Removes a person from the specified line using automatic strategy selection
+     * Uses FEWEST_PEOPLE until 30 total services completed, then SHORTEST_WAIT_TIME
      * @param lineNumber Line number to remove person from (1-based indexing)
      * @return true if person was successfully removed, false if line is empty or invalid
      */
-    bool dequeue(int lineNumber);
+    bool dequeueAuto(int lineNumber);
+
+    /**
+     * @brief Removes a person from the specified line (service completion)
+     * @param lineNumber Line number to remove person from (1-based indexing)
+     * @param strategy Line selection strategy to use for updating the recommendation
+     * @return true if person was successfully removed, false if line is empty or invalid
+     */
+    bool dequeue(int lineNumber, LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
 
     /**
      * @brief Adds a person directly to a specific line, bypassing strategy selection
@@ -142,15 +161,25 @@ public:
      */
     double getEstimatedWaitTimeForNewPerson(int lineNumber) const;
 
+    /**
+     * @brief Set the current arrival rate for queue theory calculations
+     * @param arrivalRate Arrivals per second
+     */
+    void setArrivalRate(double arrivalRate);
+
+    /**
+     * @brief Get current arrival rate
+     * @return Arrivals per second
+     */
+    double getArrivalRate() const;
+
 private:
-    static const int MAX_LINES = 10;                  // Historical cap; still enforced to avoid runaway usage
-    static constexpr double DEFAULT_THROUGHPUT = 0.5; // Default people/second when no data available
+    static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
 
     int m_maxSize;
     int m_numberOfLines;
     int m_totalPeople;
     std::vector<std::list<Person>> m_lines; // Each line contains a list of Person objects
-    std::vector<double> m_lineThroughputs;  // Throughput per line (people/second)
 
     // Running statistics for all people throughout simulation
     int m_totalPeopleEver;          // Total people who have ever entered
@@ -164,22 +193,24 @@ private:
     std::string m_strategyPrefix;                        // e.g., "", "_shortest", "_farthest"
     std::vector<ThroughputTracker> m_throughputTrackers; // Throughput tracking for each line
 
+    // Queue theory enhancements
+    std::vector<double> m_expectedServiceRates; // Expected service rates for each line
+    double m_currentArrivalRate;                // Current system arrival rate
+
     // History tracking for offline functionality
     std::vector<Person> m_lastHourHistory; // Queue of all people who entered in the last hour
 
     // Helper methods
     bool isValidLineNumber(int lineNumber) const;
-    void updateTotalPeople();
-    int getNumberOfLines() const;
-    void updateLineThroughput(int lineNumber, double throughputPerSecond);
-    double getLineThroughput(int lineNumber) const;
-    bool writeToFirebase();
+    bool writeToFirebase(LineSelectionStrategy strategy = LineSelectionStrategy::SHORTEST_WAIT_TIME);
     void clearCloudData();
-    void setLineCount(int lineNumber, int count);
-    void reset();
-    
+
+    // Queue theory initialization
+    void initializeThroughputTrackers(const std::vector<double> &serviceRates);
+    std::vector<double> getDefaultServiceRates(int numberOfLines) const;
+
     // History management helpers
-    void addPersonToHistory(const Person& person);
+    void addPersonToHistory(const Person &person);
     void cleanOldHistoryEntries();
     bool writeHistoryToFirebase();
 };

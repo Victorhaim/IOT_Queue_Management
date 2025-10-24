@@ -336,7 +336,7 @@ class _QueueScreenState extends State<QueueScreen>
 
     // If online, use Firebase data
     final ref = FirebaseDatabase.instance.ref(
-      'simulation_$_selectedStrategy/currentBest/recommendedLine',
+      'simulation_$_selectedStrategy/recommendedChoice/recommendedLine',
     );
     return StreamBuilder<DatabaseEvent>(
       stream: ref.onValue,
@@ -406,7 +406,7 @@ class _QueueScreenState extends State<QueueScreen>
 
     // If online, use Firebase data
     final queueRef = FirebaseDatabase.instance.ref(
-      'simulation_$_selectedStrategy/currentBest',
+      'simulation_$_selectedStrategy/recommendedChoice',
     );
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
@@ -417,10 +417,10 @@ class _QueueScreenState extends State<QueueScreen>
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
           final raw = snapshot.data!.snapshot.value as Map;
           final recommendedLine = raw['recommendedLine'];
-          final currentOccupancy = raw['currentOccupancy'];
+          final recommendedLineQueueLength = raw['recommendedLineQueueLength'];
 
-          if (currentOccupancy != null && recommendedLine != null) {
-            int peopleCount = (currentOccupancy as num).toInt();
+          if (recommendedLineQueueLength != null && recommendedLine != null) {
+            int peopleCount = (recommendedLineQueueLength as num).toInt();
             placeDisplay = peopleCount.toString();
           }
         }
@@ -458,7 +458,7 @@ class _QueueScreenState extends State<QueueScreen>
 
     // If online, use Firebase data
     final queueRef = FirebaseDatabase.instance.ref(
-      'simulation_$_selectedStrategy/currentBest',
+      'simulation_$_selectedStrategy/recommendedChoice',
     );
     return StreamBuilder<DatabaseEvent>(
       stream: queueRef.onValue,
@@ -469,10 +469,10 @@ class _QueueScreenState extends State<QueueScreen>
 
         if (snapshot.hasData && snapshot.data!.snapshot.value is Map) {
           final raw = snapshot.data!.snapshot.value as Map;
-          final averageWaitTime = raw['averageWaitTime'];
+          final recommendedLineEstWaitTime = raw['recommendedLineEstWaitTime'];
 
-          if (averageWaitTime != null) {
-            double waitTimeSeconds = (averageWaitTime as num).toDouble();
+          if (recommendedLineEstWaitTime != null) {
+            double waitTimeSeconds = (recommendedLineEstWaitTime as num).toDouble();
 
             // Only start countdown if Firebase data actually changed
             if (_lastFirebaseValue == null ||

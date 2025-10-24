@@ -11,9 +11,9 @@ int main()
 
     // When a customer arrives (detected by sensor):
     std::cout << "\n--- Customer Detection Example ---" << std::endl;
-    if (queueManager.enqueue(LineSelectionStrategy::SHORTEST_WAIT_TIME))
+    if (queueManager.enqueueAuto())
     {
-        std::cout << "✅ Customer added to queue successfully" << std::endl;
+        std::cout << "✅ Customer added to queue successfully (using automatic strategy selection)" << std::endl;
     }
 
     // When a customer is served (detected by sensor):

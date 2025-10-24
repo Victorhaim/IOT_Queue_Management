@@ -17,11 +17,11 @@ class QueueSimulator
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 7; // Per-line limit
-    const int numberOfLines = 5;
-    const double arrivalRate = 0.5;                                        // Increased arrival rate (~30 people/minute)
-    const std::vector<double> serviceRates = {0.08, 0.12, 0.18, 0.24, 0.30}; // Service rates for 5 lines
-    const std::chrono::milliseconds updateInterval{2000};                  // 2 second updates
+    const int maxQueueSize = 50; // Per-line limit
+    const int numberOfLines = 3;
+    const double arrivalRate = 0.5;                              // Increased arrival rate (~30 people/minute)
+    const std::vector<double> serviceRates = {0.08, 0.12, 0.18}; // Service rates for 5 lines
+    const std::chrono::milliseconds updateInterval{2000};        // 2 second updates
 
     std::unique_ptr<QueueManager> queueManager;
     std::mt19937 rng;
@@ -97,11 +97,18 @@ private:
             // Simulate arrivals
             if (arrivalDist(rng) < arrivalRate)
             {
-                // Use SHORTEST_WAIT_TIME strategy (default/original strategy)
-                if (queueManager->enqueue(LineSelectionStrategy::SHORTEST_WAIT_TIME))
+                // Use automatic strategy selection (FEWEST_PEOPLE until 30 completions, then SHORTEST_WAIT_TIME)
+                if (queueManager->enqueueAuto())
                 {
-                    int selectedLine = queueManager->getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
-                    std::cout << "New arrival! Selected line " << selectedLine << " (SHORTEST WAIT TIME strategy)"
+                    // Determine which strategy was used for display purposes
+                    LineSelectionStrategy usedStrategy = (queueManager->getCumulativePeopleSummary().completedPeople >= 30)
+                                                             ? LineSelectionStrategy::SHORTEST_WAIT_TIME
+                                                             : LineSelectionStrategy::FEWEST_PEOPLE;
+                    int selectedLine = queueManager->getNextLineNumber(usedStrategy);
+                    std::string strategyName = (usedStrategy == LineSelectionStrategy::SHORTEST_WAIT_TIME)
+                                                   ? "SHORTEST WAIT TIME"
+                                                   : "FEWEST PEOPLE";
+                    std::cout << "New arrival! Selected line " << selectedLine << " (" << strategyName << " strategy)"
                               << " (wait time: " << std::fixed << std::setprecision(1)
                               << queueManager->getEstimatedWaitTime(selectedLine) << "s)"
                               << " Total queue size: " << queueManager->size() << std::endl;
@@ -118,7 +125,7 @@ private:
                 double lineServiceRate = serviceRates[line - 1]; // Get specific rate for this line
                 if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < lineServiceRate)
                 {
-                    queueManager->dequeue(line);
+                    queueManager->dequeueAuto(line);
 
                     std::cout << "Service completed on line " << line
                               << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"

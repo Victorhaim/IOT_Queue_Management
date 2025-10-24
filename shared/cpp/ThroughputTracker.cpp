@@ -1,14 +1,14 @@
 #include "ThroughputTracker.h"
 #include <algorithm>
 
-ThroughputTracker::ThroughputTracker()
+ThroughputTracker::ThroughputTracker(double expectedRate)
     : sessionStartTime(std::chrono::steady_clock::now()),
       lastServiceTime(sessionStartTime),
       serviceCompletionCount(0),
-      currentThroughput(DEFAULT_THROUGHPUT),
-      hasRecordedService(false)
+      currentThroughput(expectedRate),
+      hasRecordedService(false),
+      expectedServiceRate(expectedRate)
 {
-    recentServices.reserve(MAX_WINDOW_SIZE);
 }
 
 void ThroughputTracker::recordServiceCompletion()
@@ -19,55 +19,82 @@ void ThroughputTracker::recordServiceCompletion()
     lastServiceTime = currentTime;
     hasRecordedService = true;
 
-    // Add to sliding window
-    recentServices.push_back(currentTime);
-    
-    // Remove old services beyond window size
-    if (recentServices.size() > MAX_WINDOW_SIZE) {
-        recentServices.erase(recentServices.begin());
-    }
-    
-    // Remove services older than time window
-    auto cutoffTime = currentTime - std::chrono::seconds(static_cast<long>(WINDOW_TIME_SECONDS));
-    recentServices.erase(
-        std::remove_if(recentServices.begin(), recentServices.end(),
-            [cutoffTime](const std::chrono::steady_clock::time_point& t) {
-                return t < cutoffTime;
-            }),
-        recentServices.end()
-    );
+    // Calculate throughput using total session time and service count
+    auto totalSessionTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                currentTime - sessionStartTime)
+                                .count();
 
-    // Calculate throughput using sliding window if we have enough recent data
-    if (recentServices.size() >= MIN_SERVICES_FOR_CALCULATION)
+    if (totalSessionTime > 0)
     {
-        auto windowStart = recentServices.front();
-        auto windowEnd = recentServices.back();
-        auto windowDuration = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                    windowEnd - windowStart).count();
+        double observedThroughput = static_cast<double>(serviceCompletionCount) / (totalSessionTime / 1000.0);
 
-        if (windowDuration > 0)
+        if (hasReliableData())
         {
-            // Services per second = (services - 1) / time_span
-            // We subtract 1 because N services create N-1 intervals
-            double windowThroughput = static_cast<double>(recentServices.size() - 1) / (windowDuration / 1000.0);
-            
-            // Apply smoothing: blend old and new throughput
-            const double SMOOTHING_FACTOR = 0.3; // How much to weight new data
-            currentThroughput = (1.0 - SMOOTHING_FACTOR) * currentThroughput + 
-                               SMOOTHING_FACTOR * windowThroughput;
+            // Use observed rate when we have enough data
+            currentThroughput = observedThroughput;
+        }
+        else
+        {
+            // Blend expected rate with observed rate for early measurements
+            double blendFactor = static_cast<double>(serviceCompletionCount) / MIN_SERVICES_FOR_RELIABLE_DATA;
+            currentThroughput = expectedServiceRate * (1.0 - blendFactor) + observedThroughput * blendFactor;
         }
     }
-    else if (serviceCompletionCount >= MIN_SERVICES_FOR_CALCULATION)
-    {
-        // Fallback to original calculation for early stages
-        auto totalSessionTime = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                    currentTime - sessionStartTime).count();
+}
 
-        if (totalSessionTime > 0)
-        {
-            currentThroughput = static_cast<double>(serviceCompletionCount) / (totalSessionTime / 1000.0);
-        }
+double ThroughputTracker::getEstimatedWaitTime(int queueLength, double arrivalRate) const
+{
+    if (queueLength == 0)
+        return 0.0;
+
+    // Basic M/M/1 calculation: Average wait time = n/μ (for people currently in queue)
+    double basicWaitTime = static_cast<double>(queueLength) / currentThroughput;
+
+    // Apply M/M/1 theory if arrival rate is provided and system is not saturated
+    if (arrivalRate > 0.0 && isSystemStable(arrivalRate))
+    {
+        return applyMM1Theory(basicWaitTime, queueLength, arrivalRate);
     }
+
+    return basicWaitTime;
+}
+
+double ThroughputTracker::applyMM1Theory(double basicWaitTime, int queueLength, double arrivalRate) const
+{
+    // M/M/1 Queue Theory:
+    // ρ = λ/μ (utilization factor)
+    // W_q = ρ/(μ-λ) = λ/(μ(μ-λ)) (average wait time in queue)
+    // W_s = 1/μ (average service time)
+    // W = W_q + W_s = 1/(μ-λ) (average time in system)
+
+    double rho = arrivalRate / currentThroughput;
+
+    if (rho >= 0.95) // Safety margin to prevent numerical issues
+    {
+        return basicWaitTime; // Fallback to basic calculation
+    }
+
+    // For M/M/1: Expected wait time in queue = ρ/(μ-λ) * (1/μ)
+    double avgServiceTime = 1.0 / currentThroughput;
+    double avgWaitTimeInQueue = (rho / (1.0 - rho)) * avgServiceTime;
+
+    // Scale by current queue length vs theoretical average queue length
+    double theoreticalAvgQueueLength = rho * rho / (1.0 - rho); // E[Nq] in M/M/1
+
+    if (theoreticalAvgQueueLength > 0)
+    {
+        double scaleFactor = static_cast<double>(queueLength) / theoreticalAvgQueueLength;
+        return avgWaitTimeInQueue * scaleFactor;
+    }
+
+    return basicWaitTime;
+}
+
+double ThroughputTracker::getUtilizationFactor(double arrivalRate) const
+{
+    if (currentThroughput <= 0.0)
+        return 1.0; // Assume saturated if no throughput
+    return arrivalRate / currentThroughput;
 }
 
 double ThroughputTracker::getCurrentThroughput() const
@@ -94,14 +121,17 @@ void ThroughputTracker::reset()
     sessionStartTime = std::chrono::steady_clock::now();
     lastServiceTime = sessionStartTime;
     serviceCompletionCount = 0;
-    currentThroughput = DEFAULT_THROUGHPUT;
+    currentThroughput = expectedServiceRate;
     hasRecordedService = false;
-    recentServices.clear();
 }
 
 bool ThroughputTracker::hasReliableData() const
 {
-    // Require either enough recent services OR enough total services
-    return recentServices.size() >= MIN_SERVICES_FOR_CALCULATION || 
-           serviceCompletionCount >= MIN_SERVICES_FOR_CALCULATION;
+    // Return true if we have at least the minimum required service completions for this line
+    return serviceCompletionCount >= MIN_SERVICES_FOR_RELIABLE_DATA;
+}
+
+bool ThroughputTracker::isSystemStable(double arrivalRate) const
+{
+    return getUtilizationFactor(arrivalRate) < 1.0;
 }
