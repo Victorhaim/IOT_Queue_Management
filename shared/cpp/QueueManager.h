@@ -14,7 +14,8 @@ enum class LineSelectionStrategy
 {
     SHORTEST_WAIT_TIME,    ///< Selects line with shortest estimated wait time (considers queue length + throughput)
     FEWEST_PEOPLE,         ///< Simply chooses line with fewest people (ignores throughput differences)
-    FARTHEST_FROM_ENTRANCE ///< Chooses line where last person is farthest from entrance (assumes higher line numbers = farther)
+    FARTHEST_FROM_ENTRANCE,///< Chooses line where last person is farthest from entrance (assumes higher line numbers = farther)
+    NEAREST_TO_ENTRANCE  ///< Chooses line where last person is nearest to entrance (assumes lower line numbers = nearer)
 };
 
 /**

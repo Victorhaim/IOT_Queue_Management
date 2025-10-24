@@ -344,6 +344,11 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         return bestLine;
     }
 
+    case LineSelectionStrategy::NEAREST_TO_ENTRANCE:
+    {
+        return 1; // Always choose line 1 as nearest to entrance
+    }
+
     default:
         return getNextLineNumber(LineSelectionStrategy::SHORTEST_WAIT_TIME);
     }
