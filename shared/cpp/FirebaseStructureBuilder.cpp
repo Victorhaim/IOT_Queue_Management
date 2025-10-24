@@ -4,9 +4,9 @@ std::string FirebaseStructureBuilder::generateLineDataJson(const LineData &lineD
 {
     std::ostringstream json;
     json << "{\n";
-    json << "    \"currentOccupancy\": " << lineData.currentOccupancy << ",\n";
-    json << "    \"throughputFactor\": " << std::fixed << std::setprecision(4) << lineData.throughputFactor << ",\n";
-    json << "    \"averageWaitTime\": " << std::fixed << std::setprecision(2) << lineData.averageWaitTime << ",\n";
+    json << "    \"queueLength\": " << lineData.queueLength << ",\n";
+    json << "    \"serviceRatePeoplePerSec\": " << std::fixed << std::setprecision(4) << lineData.serviceRatePeoplePerSec << ",\n";
+    json << "    \"estimatedWaitForNewPerson\": " << std::fixed << std::setprecision(2) << lineData.estimatedWaitForNewPerson << ",\n";
     json << "    \"lastUpdated\": \"" << getCurrentTimestamp() << "\",\n";
     json << "    \"lineNumber\": " << lineData.lineNumber << "\n";
     json << "}";
@@ -17,11 +17,11 @@ std::string FirebaseStructureBuilder::generateAggregatedDataJson(const Aggregate
 {
     std::ostringstream json;
     json << "{\n";
-    json << "  \"totalPeople\": " << aggData.totalPeople << ",\n";
+    json << "  \"totalPeopleInAllQueues\": " << aggData.totalPeopleInAllQueues << ",\n";
     json << "  \"numberOfLines\": " << aggData.numberOfLines << ",\n";
     json << "  \"recommendedLine\": " << aggData.recommendedLine << ",\n";
-    json << "  \"averageWaitTime\": " << std::fixed << std::setprecision(2) << aggData.averageWaitTime << ",\n";
-    json << "  \"currentOccupancy\": " << aggData.currentOccupancy << "\n";
+    json << "  \"recommendedLineEstWaitTime\": " << std::fixed << std::setprecision(2) << aggData.recommendedLineEstWaitTime << ",\n";
+    json << "  \"recommendedLineQueueLength\": " << aggData.recommendedLineQueueLength << "\n";
     json << "}";
     return json.str();
 }
@@ -33,12 +33,7 @@ std::string FirebaseStructureBuilder::getLineDataPath(int lineNumber)
 
 std::string FirebaseStructureBuilder::getAggregatedDataPath()
 {
-    return "currentBest";
-}
-
-double FirebaseStructureBuilder::calculateAverageWaitTime(int occupancy, double throughputFactor)
-{
-    return (throughputFactor > 0.0) ? occupancy / throughputFactor : 0.0;
+    return "recommendedChoice";
 }
 
 std::string FirebaseStructureBuilder::getCurrentTimestamp()
@@ -66,8 +61,8 @@ FirebaseStructureBuilder::AggregatedData FirebaseStructureBuilder::createAggrega
     {
         if (allLines[i].lineNumber == recommendedLine)
         {
-            recommendedWaitTime = allLines[i].averageWaitTime;
-            recommendedOccupancy = allLines[i].currentOccupancy;
+            recommendedWaitTime = allLines[i].estimatedWaitForNewPerson;
+            recommendedOccupancy = allLines[i].queueLength;
             break;
         }
     }

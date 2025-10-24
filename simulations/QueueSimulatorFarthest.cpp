@@ -17,10 +17,10 @@ class QueueSimulatorFarthest
 {
 private:
     // Configuration (must be declared before other members that use them)
-    const int maxQueueSize = 7; // Per-line limit
+    const int maxQueueSize = 50; // Per-line limit
     const int numberOfLines = 3;
-    const double arrivalRate = 0.18;                             // Probability of arrival per second (~11 people/minute)
-    const std::vector<double> serviceRates = {0.08, 0.12, 0.18}; // Slower service rates per line (line 1: very slow, line 2: slow)
+    const double arrivalRate = 0.5;                              // Increased arrival rate (~30 people/minute)
+    const std::vector<double> serviceRates = {0.08, 0.12, 0.18}; // Service rates for 5 lines
     const std::chrono::milliseconds updateInterval{2000};        // 2 second updates
 
     std::unique_ptr<QueueManager> queueManager;
@@ -116,7 +116,7 @@ private:
                 double lineServiceRate = serviceRates[line - 1]; // Get specific rate for this line
                 if (queueManager->getLineCount(line) > 0 && serviceDist(rng) < lineServiceRate)
                 {
-                    queueManager->dequeue(line);
+                    queueManager->dequeue(line, LineSelectionStrategy::FARTHEST_FROM_ENTRANCE);
 
                     std::cout << "Service completed on line " << line
                               << " (rate=" << std::fixed << std::setprecision(2) << lineServiceRate << ")"
