@@ -1,105 +1,231 @@
 {
-  "timestamp": "2025-10-24T19:11:27.981Z",
+  "timestamp": "2025-10-24T23:48:29.592Z",
   "strategies": {
     "shortest": {
       "overallStats": {
-        "totalPeople": 12,
-        "activePeople": 8,
-        "completedPeople": 7,
-        "historicalAvgExpectedWait": 10.00,
-        "historicalAvgActualWait": 7.25
+        "totalPeople": 367,
+        "activePeople": 22,
+        "completedPeople": 348,
+        "historicalAvgExpectedWait": 292.89,
+        "historicalAvgActualWait": 369.63
       },
       "lineStats": {
         "line1": {
-          "currentPeople": 3,
-          "estimatedWaitTime": 44.71,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 1,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 8,
+          "estimatedWaitTime": 1554.32,
+          "actualAvgWaitTime": 688.93,
+          "totalCompletedInLine": 66,
+          "totalActualWaitTime": 45469.34
         },
         "line2": {
-          "currentPeople": 3,
-          "estimatedWaitTime": 29.70,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 1,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 8,
+          "estimatedWaitTime": 964.22,
+          "actualAvgWaitTime": 403.00,
+          "totalCompletedInLine": 101,
+          "totalActualWaitTime": 40703.47
         },
         "line3": {
-          "currentPeople": 2,
-          "estimatedWaitTime": 16.19,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 2,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 6,
+          "estimatedWaitTime": 432.56,
+          "actualAvgWaitTime": 212.83,
+          "totalCompletedInLine": 178,
+          "totalActualWaitTime": 37883.97
         }
       },
       "people": {
-        "person_1761333029250": {
-          "personId": "person_1761333029250",
-          "expectedWaitTime": 12.50,
-          "enteringTimestamp": 1761333029250,
-          "exitingTimestamp": 1761333073549,
+        "person_1761347400604": {
+          "personId": "person_1761347400604",
+          "expectedWaitTime": 1249.03,
+          "enteringTimestamp": 1761347400604,
+          "exitingTimestamp": 1761349686916,
           "lineNumber": 1,
-          "actualWaitTime": 44.30,
+          "actualWaitTime": 2286.31,
           "hasExited": true
         },
-        "person_1761333068938": {
-          "personId": "person_1761333068938",
-          "expectedWaitTime": 25.00,
-          "enteringTimestamp": 1761333068938,
+        "person_1761347482293": {
+          "personId": "person_1761347482293",
+          "expectedWaitTime": 1043.60,
+          "enteringTimestamp": 1761347482293,
           "exitingTimestamp": 0,
           "lineNumber": 1,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333077114": {
-          "personId": "person_1761333077114",
-          "expectedWaitTime": 29.81,
-          "enteringTimestamp": 1761333077114,
+        "person_1761347496738": {
+          "personId": "person_1761347496738",
+          "expectedWaitTime": 1217.54,
+          "enteringTimestamp": 1761347496738,
           "exitingTimestamp": 0,
           "lineNumber": 1,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333044752": {
-          "personId": "person_1761333044752",
-          "expectedWaitTime": 8.33,
-          "enteringTimestamp": 1761333044752,
-          "exitingTimestamp": 1761333048862,
+        "person_1761347632198": {
+          "personId": "person_1761347632198",
+          "expectedWaitTime": 1391.47,
+          "enteringTimestamp": 1761347632198,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347755344": {
+          "personId": "person_1761347755344",
+          "expectedWaitTime": 1565.41,
+          "enteringTimestamp": 1761347755344,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348820250": {
+          "personId": "person_1761348820250",
+          "expectedWaitTime": 1306.94,
+          "enteringTimestamp": 1761348820250,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348854766": {
+          "personId": "person_1761348854766",
+          "expectedWaitTime": 1493.64,
+          "enteringTimestamp": 1761348854766,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348949727": {
+          "personId": "person_1761348949727",
+          "expectedWaitTime": 1481.01,
+          "enteringTimestamp": 1761348949727,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347645360": {
+          "personId": "person_1761347645360",
+          "expectedWaitTime": 924.24,
+          "enteringTimestamp": 1761347645360,
+          "exitingTimestamp": 1761349037053,
           "lineNumber": 2,
-          "actualWaitTime": 4.11,
+          "actualWaitTime": 1391.69,
           "hasExited": true
         },
-        "person_1761333054115": {
-          "personId": "person_1761333054115",
-          "expectedWaitTime": 9.90,
-          "enteringTimestamp": 1761333054115,
+        "person_1761347708271": {
+          "personId": "person_1761347708271",
+          "expectedWaitTime": 922.21,
+          "enteringTimestamp": 1761347708271,
           "exitingTimestamp": 0,
           "lineNumber": 2,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333082498": {
-          "personId": "person_1761333082498",
-          "expectedWaitTime": 19.80,
-          "enteringTimestamp": 1761333082498,
+        "person_1761348663436": {
+          "personId": "person_1761348663436",
+          "expectedWaitTime": 859.70,
+          "enteringTimestamp": 1761348663436,
           "exitingTimestamp": 0,
           "lineNumber": 2,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333058219": {
-          "personId": "person_1761333058219",
-          "expectedWaitTime": 6.57,
-          "enteringTimestamp": 1761333058219,
-          "exitingTimestamp": 1761333060526,
+        "person_1761348677764": {
+          "personId": "person_1761348677764",
+          "expectedWaitTime": 982.51,
+          "enteringTimestamp": 1761348677764,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348776677": {
+          "personId": "person_1761348776677",
+          "expectedWaitTime": 850.43,
+          "enteringTimestamp": 1761348776677,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348967424": {
+          "personId": "person_1761348967424",
+          "expectedWaitTime": 971.92,
+          "enteringTimestamp": 1761348967424,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349019200": {
+          "personId": "person_1761349019200",
+          "expectedWaitTime": 850.21,
+          "enteringTimestamp": 1761349019200,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349044649": {
+          "personId": "person_1761349044649",
+          "expectedWaitTime": 843.69,
+          "enteringTimestamp": 1761349044649,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348801602": {
+          "personId": "person_1761348801602",
+          "expectedWaitTime": 416.01,
+          "enteringTimestamp": 1761348801602,
+          "exitingTimestamp": 1761349696380,
           "lineNumber": 3,
-          "actualWaitTime": 2.31,
+          "actualWaitTime": 894.78,
           "hasExited": true
         },
-        "person_1761333064614": {
-          "personId": "person_1761333064614",
-          "expectedWaitTime": 8.10,
-          "enteringTimestamp": 1761333064614,
+        "person_1761348834335": {
+          "personId": "person_1761348834335",
+          "expectedWaitTime": 485.34,
+          "enteringTimestamp": 1761348834335,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348884352": {
+          "personId": "person_1761348884352",
+          "expectedWaitTime": 485.69,
+          "enteringTimestamp": 1761348884352,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348931063": {
+          "personId": "person_1761348931063",
+          "expectedWaitTime": 484.40,
+          "enteringTimestamp": 1761348931063,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348997619": {
+          "personId": "person_1761348997619",
+          "expectedWaitTime": 484.85,
+          "enteringTimestamp": 1761348997619,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349677554": {
+          "personId": "person_1761349677554",
+          "expectedWaitTime": 433.97,
+          "enteringTimestamp": 1761349677554,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
@@ -109,103 +235,220 @@
     },
     "project": {
       "overallStats": {
-        "totalPeople": 12,
-        "activePeople": 8,
-        "completedPeople": 7,
-        "historicalAvgExpectedWait": 10.00,
-        "historicalAvgActualWait": 7.24
+        "totalPeople": 367,
+        "activePeople": 21,
+        "completedPeople": 349,
+        "historicalAvgExpectedWait": 283.87,
+        "historicalAvgActualWait": 353.01
       },
       "lineStats": {
         "line1": {
-          "currentPeople": 3,
-          "estimatedWaitTime": 44.72,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 1,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 4,
+          "estimatedWaitTime": 777.28,
+          "actualAvgWaitTime": 407.84,
+          "totalCompletedInLine": 66,
+          "totalActualWaitTime": 26917.69
         },
         "line2": {
-          "currentPeople": 3,
-          "estimatedWaitTime": 29.70,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 1,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 7,
+          "estimatedWaitTime": 843.84,
+          "actualAvgWaitTime": 309.66,
+          "totalCompletedInLine": 101,
+          "totalActualWaitTime": 31275.48
         },
         "line3": {
-          "currentPeople": 2,
-          "estimatedWaitTime": 16.19,
-          "actualAvgWaitTime": 0.00,
-          "totalCompletedInLine": 2,
-          "totalActualWaitTime": 0.00
+          "currentPeople": 10,
+          "estimatedWaitTime": 717.12,
+          "actualAvgWaitTime": 338.75,
+          "totalCompletedInLine": 179,
+          "totalActualWaitTime": 60636.03
         }
       },
       "people": {
-        "person_1761333029955": {
-          "personId": "person_1761333029955",
-          "expectedWaitTime": 12.50,
-          "enteringTimestamp": 1761333029955,
-          "exitingTimestamp": 1761333074334,
+        "person_1761347761243": {
+          "personId": "person_1761347761243",
+          "expectedWaitTime": 869.83,
+          "enteringTimestamp": 1761347761243,
+          "exitingTimestamp": 1761349689580,
           "lineNumber": 1,
-          "actualWaitTime": 44.38,
+          "actualWaitTime": 1928.34,
           "hasExited": true
         },
-        "person_1761333069851": {
-          "personId": "person_1761333069851",
-          "expectedWaitTime": 25.00,
-          "enteringTimestamp": 1761333069851,
+        "person_1761348823514": {
+          "personId": "person_1761348823514",
+          "expectedWaitTime": 560.20,
+          "enteringTimestamp": 1761348823514,
           "exitingTimestamp": 0,
           "lineNumber": 1,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333078037": {
-          "personId": "person_1761333078037",
-          "expectedWaitTime": 29.81,
-          "enteringTimestamp": 1761333078037,
+        "person_1761348840262": {
+          "personId": "person_1761348840262",
+          "expectedWaitTime": 746.94,
+          "enteringTimestamp": 1761348840262,
           "exitingTimestamp": 0,
           "lineNumber": 1,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333045417": {
-          "personId": "person_1761333045417",
-          "expectedWaitTime": 8.33,
-          "enteringTimestamp": 1761333045417,
-          "exitingTimestamp": 1761333049479,
+        "person_1761348934542": {
+          "personId": "person_1761348934542",
+          "expectedWaitTime": 740.62,
+          "enteringTimestamp": 1761348934542,
+          "exitingTimestamp": 0,
+          "lineNumber": 1,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347711281": {
+          "personId": "person_1761347711281",
+          "expectedWaitTime": 807.09,
+          "enteringTimestamp": 1761347711281,
+          "exitingTimestamp": 1761349039736,
           "lineNumber": 2,
-          "actualWaitTime": 4.06,
+          "actualWaitTime": 1328.45,
           "hasExited": true
         },
-        "person_1761333054791": {
-          "personId": "person_1761333054791",
-          "expectedWaitTime": 9.90,
-          "enteringTimestamp": 1761333054791,
+        "person_1761348666587": {
+          "personId": "person_1761348666587",
+          "expectedWaitTime": 737.06,
+          "enteringTimestamp": 1761348666587,
           "exitingTimestamp": 0,
           "lineNumber": 2,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333083504": {
-          "personId": "person_1761333083504",
-          "expectedWaitTime": 19.80,
-          "enteringTimestamp": 1761333083504,
+        "person_1761348728058": {
+          "personId": "person_1761348728058",
+          "expectedWaitTime": 732.66,
+          "enteringTimestamp": 1761348728058,
           "exitingTimestamp": 0,
           "lineNumber": 2,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333058970": {
-          "personId": "person_1761333058970",
-          "expectedWaitTime": 6.57,
-          "enteringTimestamp": 1761333058970,
-          "exitingTimestamp": 1761333061187,
+        "person_1761348779760": {
+          "personId": "person_1761348779760",
+          "expectedWaitTime": 729.05,
+          "enteringTimestamp": 1761348779760,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349000573": {
+          "personId": "person_1761349000573",
+          "expectedWaitTime": 734.43,
+          "enteringTimestamp": 1761349000573,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349022278": {
+          "personId": "person_1761349022278",
+          "expectedWaitTime": 728.89,
+          "enteringTimestamp": 1761349022278,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349047630": {
+          "personId": "person_1761349047630",
+          "expectedWaitTime": 723.29,
+          "enteringTimestamp": 1761349047630,
+          "exitingTimestamp": 0,
+          "lineNumber": 2,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348586927": {
+          "personId": "person_1761348586927",
+          "expectedWaitTime": 840.23,
+          "enteringTimestamp": 1761348586927,
+          "exitingTimestamp": 1761349700860,
           "lineNumber": 3,
-          "actualWaitTime": 2.22,
+          "actualWaitTime": 1113.93,
           "hasExited": true
         },
-        "person_1761333065364": {
-          "personId": "person_1761333065364",
-          "expectedWaitTime": 8.10,
-          "enteringTimestamp": 1761333065364,
+        "person_1761348627577": {
+          "personId": "person_1761348627577",
+          "expectedWaitTime": 764.61,
+          "enteringTimestamp": 1761348627577,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348680968": {
+          "personId": "person_1761348680968",
+          "expectedWaitTime": 834.13,
+          "enteringTimestamp": 1761348680968,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348754272": {
+          "personId": "person_1761348754272",
+          "expectedWaitTime": 690.33,
+          "enteringTimestamp": 1761348754272,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348804438": {
+          "personId": "person_1761348804438",
+          "expectedWaitTime": 689.45,
+          "enteringTimestamp": 1761348804438,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348858378": {
+          "personId": "person_1761348858378",
+          "expectedWaitTime": 758.40,
+          "enteringTimestamp": 1761348858378,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348886997": {
+          "personId": "person_1761348886997",
+          "expectedWaitTime": 758.95,
+          "enteringTimestamp": 1761348886997,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348956312": {
+          "personId": "person_1761348956312",
+          "expectedWaitTime": 757.04,
+          "enteringTimestamp": 1761348956312,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348971201": {
+          "personId": "person_1761348971201",
+          "expectedWaitTime": 825.86,
+          "enteringTimestamp": 1761348971201,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349679934": {
+          "personId": "person_1761349679934",
+          "expectedWaitTime": 719.31,
+          "enteringTimestamp": 1761349679934,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
@@ -215,11 +458,11 @@
     },
     "farthest": {
       "overallStats": {
-        "totalPeople": 12,
-        "activePeople": 10,
-        "completedPeople": 3,
-        "historicalAvgExpectedWait": 32.89,
-        "historicalAvgActualWait": 17.51
+        "totalPeople": 367,
+        "activePeople": 187,
+        "completedPeople": 181,
+        "historicalAvgExpectedWait": 5334.74,
+        "historicalAvgActualWait": 3920.30
       },
       "lineStats": {
         "line1": {
@@ -237,99 +480,1692 @@
           "totalActualWaitTime": 0.00
         },
         "line3": {
-          "currentPeople": 10,
-          "estimatedWaitTime": 81.03,
-          "actualAvgWaitTime": 7.65,
-          "totalCompletedInLine": 2,
-          "totalActualWaitTime": 15.30
+          "currentPeople": 187,
+          "estimatedWaitTime": 13337.78,
+          "actualAvgWaitTime": 3885.57,
+          "totalCompletedInLine": 180,
+          "totalActualWaitTime": 699402.56
         }
       },
       "people": {
-        "person_1761333024664": {
-          "personId": "person_1761333024664",
-          "expectedWaitTime": 11.11,
-          "enteringTimestamp": 1761333024664,
-          "exitingTimestamp": 1761333061886,
+        "person_1761339531778": {
+          "personId": "person_1761339531778",
+          "expectedWaitTime": 2964.27,
+          "enteringTimestamp": 1761339531778,
+          "exitingTimestamp": 1761349703228,
           "lineNumber": 3,
-          "actualWaitTime": 37.22,
+          "actualWaitTime": 10171.45,
           "hasExited": true
         },
-        "person_1761333030557": {
-          "personId": "person_1761333030557",
-          "expectedWaitTime": 16.67,
-          "enteringTimestamp": 1761333030557,
+        "person_1761339542803": {
+          "personId": "person_1761339542803",
+          "expectedWaitTime": 2995.47,
+          "enteringTimestamp": 1761339542803,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333040118": {
-          "personId": "person_1761333040118",
-          "expectedWaitTime": 19.71,
-          "enteringTimestamp": 1761333040118,
+        "person_1761339552274": {
+          "personId": "person_1761339552274",
+          "expectedWaitTime": 3026.67,
+          "enteringTimestamp": 1761339552274,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333046106": {
-          "personId": "person_1761333046106",
-          "expectedWaitTime": 26.28,
-          "enteringTimestamp": 1761333046106,
+        "person_1761339576708": {
+          "personId": "person_1761339576708",
+          "expectedWaitTime": 3048.63,
+          "enteringTimestamp": 1761339576708,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333055473": {
-          "personId": "person_1761333055473",
-          "expectedWaitTime": 32.85,
-          "enteringTimestamp": 1761333055473,
+        "person_1761339593445": {
+          "personId": "person_1761339593445",
+          "expectedWaitTime": 3080.06,
+          "enteringTimestamp": 1761339593445,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333059721": {
-          "personId": "person_1761333059721",
-          "expectedWaitTime": 39.42,
-          "enteringTimestamp": 1761333059721,
+        "person_1761339602730": {
+          "personId": "person_1761339602730",
+          "expectedWaitTime": 3111.49,
+          "enteringTimestamp": 1761339602730,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333066103": {
-          "personId": "person_1761333066103",
-          "expectedWaitTime": 48.62,
-          "enteringTimestamp": 1761333066103,
+        "person_1761339614725": {
+          "personId": "person_1761339614725",
+          "expectedWaitTime": 3142.92,
+          "enteringTimestamp": 1761339614725,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333070653": {
-          "personId": "person_1761333070653",
-          "expectedWaitTime": 56.72,
-          "enteringTimestamp": 1761333070653,
+        "person_1761339632266": {
+          "personId": "person_1761339632266",
+          "expectedWaitTime": 3170.63,
+          "enteringTimestamp": 1761339632266,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333079118": {
-          "personId": "person_1761333079118",
-          "expectedWaitTime": 64.83,
-          "enteringTimestamp": 1761333079118,
+        "person_1761339641040": {
+          "personId": "person_1761339641040",
+          "expectedWaitTime": 3202.34,
+          "enteringTimestamp": 1761339641040,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
           "hasExited": false
         },
-        "person_1761333084816": {
-          "personId": "person_1761333084816",
-          "expectedWaitTime": 72.93,
-          "enteringTimestamp": 1761333084816,
+        "person_1761339662695": {
+          "personId": "person_1761339662695",
+          "expectedWaitTime": 3234.04,
+          "enteringTimestamp": 1761339662695,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339673633": {
+          "personId": "person_1761339673633",
+          "expectedWaitTime": 3265.75,
+          "enteringTimestamp": 1761339673633,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339683098": {
+          "personId": "person_1761339683098",
+          "expectedWaitTime": 3297.45,
+          "enteringTimestamp": 1761339683098,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339694141": {
+          "personId": "person_1761339694141",
+          "expectedWaitTime": 3329.16,
+          "enteringTimestamp": 1761339694141,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339717105": {
+          "personId": "person_1761339717105",
+          "expectedWaitTime": 3386.97,
+          "enteringTimestamp": 1761339717105,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339735103": {
+          "personId": "person_1761339735103",
+          "expectedWaitTime": 3375.53,
+          "enteringTimestamp": 1761339735103,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339757235": {
+          "personId": "person_1761339757235",
+          "expectedWaitTime": 3407.68,
+          "enteringTimestamp": 1761339757235,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339776107": {
+          "personId": "person_1761339776107",
+          "expectedWaitTime": 3415.48,
+          "enteringTimestamp": 1761339776107,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339802589": {
+          "personId": "person_1761339802589",
+          "expectedWaitTime": 3342.28,
+          "enteringTimestamp": 1761339802589,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339831389": {
+          "personId": "person_1761339831389",
+          "expectedWaitTime": 3272.27,
+          "enteringTimestamp": 1761339831389,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339842090": {
+          "personId": "person_1761339842090",
+          "expectedWaitTime": 3303.74,
+          "enteringTimestamp": 1761339842090,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339857729": {
+          "personId": "person_1761339857729",
+          "expectedWaitTime": 3297.90,
+          "enteringTimestamp": 1761339857729,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339875512": {
+          "personId": "person_1761339875512",
+          "expectedWaitTime": 3281.16,
+          "enteringTimestamp": 1761339875512,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339893371": {
+          "personId": "person_1761339893371",
+          "expectedWaitTime": 3268.18,
+          "enteringTimestamp": 1761339893371,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339902514": {
+          "personId": "person_1761339902514",
+          "expectedWaitTime": 3299.31,
+          "enteringTimestamp": 1761339902514,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339930275": {
+          "personId": "person_1761339930275",
+          "expectedWaitTime": 3299.61,
+          "enteringTimestamp": 1761339930275,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339939668": {
+          "personId": "person_1761339939668",
+          "expectedWaitTime": 3330.74,
+          "enteringTimestamp": 1761339939668,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761339948947": {
+          "personId": "person_1761339948947",
+          "expectedWaitTime": 3361.87,
+          "enteringTimestamp": 1761339948947,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343395730": {
+          "personId": "person_1761343395730",
+          "expectedWaitTime": 7054.34,
+          "enteringTimestamp": 1761343395730,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343424163": {
+          "personId": "person_1761343424163",
+          "expectedWaitTime": 7119.66,
+          "enteringTimestamp": 1761343424163,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343444478": {
+          "personId": "person_1761343444478",
+          "expectedWaitTime": 7184.98,
+          "enteringTimestamp": 1761343444478,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343464353": {
+          "personId": "person_1761343464353",
+          "expectedWaitTime": 7250.29,
+          "enteringTimestamp": 1761343464353,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343474323": {
+          "personId": "person_1761343474323",
+          "expectedWaitTime": 7315.61,
+          "enteringTimestamp": 1761343474323,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343492736": {
+          "personId": "person_1761343492736",
+          "expectedWaitTime": 7410.83,
+          "enteringTimestamp": 1761343492736,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343517965": {
+          "personId": "person_1761343517965",
+          "expectedWaitTime": 7477.00,
+          "enteringTimestamp": 1761343517965,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343534196": {
+          "personId": "person_1761343534196",
+          "expectedWaitTime": 7543.17,
+          "enteringTimestamp": 1761343534196,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343578645": {
+          "personId": "person_1761343578645",
+          "expectedWaitTime": 7421.78,
+          "enteringTimestamp": 1761343578645,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343607726": {
+          "personId": "person_1761343607726",
+          "expectedWaitTime": 7373.86,
+          "enteringTimestamp": 1761343607726,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761343619380": {
+          "personId": "person_1761343619380",
+          "expectedWaitTime": 7439.11,
+          "enteringTimestamp": 1761343619380,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344455577": {
+          "personId": "person_1761344455577",
+          "expectedWaitTime": 7419.12,
+          "enteringTimestamp": 1761344455577,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344497329": {
+          "personId": "person_1761344497329",
+          "expectedWaitTime": 7484.20,
+          "enteringTimestamp": 1761344497329,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344523461": {
+          "personId": "person_1761344523461",
+          "expectedWaitTime": 8371.64,
+          "enteringTimestamp": 1761344523461,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344537644": {
+          "personId": "person_1761344537644",
+          "expectedWaitTime": 8444.44,
+          "enteringTimestamp": 1761344537644,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344551994": {
+          "personId": "person_1761344551994",
+          "expectedWaitTime": 8517.23,
+          "enteringTimestamp": 1761344551994,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344562075": {
+          "personId": "person_1761344562075",
+          "expectedWaitTime": 8590.03,
+          "enteringTimestamp": 1761344562075,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344573191": {
+          "personId": "person_1761344573191",
+          "expectedWaitTime": 8662.83,
+          "enteringTimestamp": 1761344573191,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344586395": {
+          "personId": "person_1761344586395",
+          "expectedWaitTime": 8735.62,
+          "enteringTimestamp": 1761344586395,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344599439": {
+          "personId": "person_1761344599439",
+          "expectedWaitTime": 8808.42,
+          "enteringTimestamp": 1761344599439,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344615319": {
+          "personId": "person_1761344615319",
+          "expectedWaitTime": 8881.22,
+          "enteringTimestamp": 1761344615319,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344632946": {
+          "personId": "person_1761344632946",
+          "expectedWaitTime": 8954.01,
+          "enteringTimestamp": 1761344632946,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344654559": {
+          "personId": "person_1761344654559",
+          "expectedWaitTime": 9025.63,
+          "enteringTimestamp": 1761344654559,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344705028": {
+          "personId": "person_1761344705028",
+          "expectedWaitTime": 8690.48,
+          "enteringTimestamp": 1761344705028,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344737012": {
+          "personId": "person_1761344737012",
+          "expectedWaitTime": 8648.27,
+          "enteringTimestamp": 1761344737012,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344755049": {
+          "personId": "person_1761344755049",
+          "expectedWaitTime": 8719.74,
+          "enteringTimestamp": 1761344755049,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344770832": {
+          "personId": "person_1761344770832",
+          "expectedWaitTime": 8791.22,
+          "enteringTimestamp": 1761344770832,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344807004": {
+          "personId": "person_1761344807004",
+          "expectedWaitTime": 8785.70,
+          "enteringTimestamp": 1761344807004,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344826603": {
+          "personId": "person_1761344826603",
+          "expectedWaitTime": 8731.00,
+          "enteringTimestamp": 1761344826603,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344842563": {
+          "personId": "person_1761344842563",
+          "expectedWaitTime": 8801.98,
+          "enteringTimestamp": 1761344842563,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344854152": {
+          "personId": "person_1761344854152",
+          "expectedWaitTime": 8872.97,
+          "enteringTimestamp": 1761344854152,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344895121": {
+          "personId": "person_1761344895121",
+          "expectedWaitTime": 8721.16,
+          "enteringTimestamp": 1761344895121,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344906359": {
+          "personId": "person_1761344906359",
+          "expectedWaitTime": 8791.49,
+          "enteringTimestamp": 1761344906359,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344933300": {
+          "personId": "person_1761344933300",
+          "expectedWaitTime": 8752.00,
+          "enteringTimestamp": 1761344933300,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344945356": {
+          "personId": "person_1761344945356",
+          "expectedWaitTime": 8822.01,
+          "enteringTimestamp": 1761344945356,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344964911": {
+          "personId": "person_1761344964911",
+          "expectedWaitTime": 8785.31,
+          "enteringTimestamp": 1761344964911,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761344993833": {
+          "personId": "person_1761344993833",
+          "expectedWaitTime": 8601.95,
+          "enteringTimestamp": 1761344993833,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345017626": {
+          "personId": "person_1761345017626",
+          "expectedWaitTime": 8670.77,
+          "enteringTimestamp": 1761345017626,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345034874": {
+          "personId": "person_1761345034874",
+          "expectedWaitTime": 8640.33,
+          "enteringTimestamp": 1761345034874,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345046548": {
+          "personId": "person_1761345046548",
+          "expectedWaitTime": 8708.90,
+          "enteringTimestamp": 1761345046548,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345070075": {
+          "personId": "person_1761345070075",
+          "expectedWaitTime": 8669.43,
+          "enteringTimestamp": 1761345070075,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345087675": {
+          "personId": "person_1761345087675",
+          "expectedWaitTime": 8737.70,
+          "enteringTimestamp": 1761345087675,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345107768": {
+          "personId": "person_1761345107768",
+          "expectedWaitTime": 8805.96,
+          "enteringTimestamp": 1761345107768,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345121860": {
+          "personId": "person_1761345121860",
+          "expectedWaitTime": 8874.22,
+          "enteringTimestamp": 1761345121860,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345137868": {
+          "personId": "person_1761345137868",
+          "expectedWaitTime": 8942.49,
+          "enteringTimestamp": 1761345137868,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345166967": {
+          "personId": "person_1761345166967",
+          "expectedWaitTime": 9010.75,
+          "enteringTimestamp": 1761345166967,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345180678": {
+          "personId": "person_1761345180678",
+          "expectedWaitTime": 9079.01,
+          "enteringTimestamp": 1761345180678,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345209432": {
+          "personId": "person_1761345209432",
+          "expectedWaitTime": 9156.73,
+          "enteringTimestamp": 1761345209432,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345231925": {
+          "personId": "person_1761345231925",
+          "expectedWaitTime": 9225.58,
+          "enteringTimestamp": 1761345231925,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345249842": {
+          "personId": "person_1761345249842",
+          "expectedWaitTime": 9294.43,
+          "enteringTimestamp": 1761345249842,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345264227": {
+          "personId": "person_1761345264227",
+          "expectedWaitTime": 9363.28,
+          "enteringTimestamp": 1761345264227,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345278220": {
+          "personId": "person_1761345278220",
+          "expectedWaitTime": 9432.12,
+          "enteringTimestamp": 1761345278220,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345306725": {
+          "personId": "person_1761345306725",
+          "expectedWaitTime": 9462.79,
+          "enteringTimestamp": 1761345306725,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345323282": {
+          "personId": "person_1761345323282",
+          "expectedWaitTime": 9531.86,
+          "enteringTimestamp": 1761345323282,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345363825": {
+          "personId": "person_1761345363825",
+          "expectedWaitTime": 9507.95,
+          "enteringTimestamp": 1761345363825,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345380492": {
+          "personId": "person_1761345380492",
+          "expectedWaitTime": 9576.85,
+          "enteringTimestamp": 1761345380492,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345408144": {
+          "personId": "person_1761345408144",
+          "expectedWaitTime": 9645.75,
+          "enteringTimestamp": 1761345408144,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345435414": {
+          "personId": "person_1761345435414",
+          "expectedWaitTime": 9660.74,
+          "enteringTimestamp": 1761345435414,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345452712": {
+          "personId": "person_1761345452712",
+          "expectedWaitTime": 9729.74,
+          "enteringTimestamp": 1761345452712,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345484687": {
+          "personId": "person_1761345484687",
+          "expectedWaitTime": 9706.07,
+          "enteringTimestamp": 1761345484687,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345500763": {
+          "personId": "person_1761345500763",
+          "expectedWaitTime": 9774.91,
+          "enteringTimestamp": 1761345500763,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345520570": {
+          "personId": "person_1761345520570",
+          "expectedWaitTime": 9843.75,
+          "enteringTimestamp": 1761345520570,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345540387": {
+          "personId": "person_1761345540387",
+          "expectedWaitTime": 9912.58,
+          "enteringTimestamp": 1761345540387,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345566679": {
+          "personId": "person_1761345566679",
+          "expectedWaitTime": 9981.42,
+          "enteringTimestamp": 1761345566679,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345585642": {
+          "personId": "person_1761345585642",
+          "expectedWaitTime": 10050.26,
+          "enteringTimestamp": 1761345585642,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345617728": {
+          "personId": "person_1761345617728",
+          "expectedWaitTime": 10122.83,
+          "enteringTimestamp": 1761345617728,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345653227": {
+          "personId": "person_1761345653227",
+          "expectedWaitTime": 10080.44,
+          "enteringTimestamp": 1761345653227,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345712702": {
+          "personId": "person_1761345712702",
+          "expectedWaitTime": 10057.61,
+          "enteringTimestamp": 1761345712702,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345745584": {
+          "personId": "person_1761345745584",
+          "expectedWaitTime": 10033.08,
+          "enteringTimestamp": 1761345745584,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345765809": {
+          "personId": "person_1761345765809",
+          "expectedWaitTime": 10101.80,
+          "enteringTimestamp": 1761345765809,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345809021": {
+          "personId": "person_1761345809021",
+          "expectedWaitTime": 10170.52,
+          "enteringTimestamp": 1761345809021,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345839453": {
+          "personId": "person_1761345839453",
+          "expectedWaitTime": 10239.24,
+          "enteringTimestamp": 1761345839453,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345880198": {
+          "personId": "person_1761345880198",
+          "expectedWaitTime": 10308.52,
+          "enteringTimestamp": 1761345880198,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345909309": {
+          "personId": "person_1761345909309",
+          "expectedWaitTime": 10377.71,
+          "enteringTimestamp": 1761345909309,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345933451": {
+          "personId": "person_1761345933451",
+          "expectedWaitTime": 10446.89,
+          "enteringTimestamp": 1761345933451,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761345956160": {
+          "personId": "person_1761345956160",
+          "expectedWaitTime": 10516.08,
+          "enteringTimestamp": 1761345956160,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346007173": {
+          "personId": "person_1761346007173",
+          "expectedWaitTime": 10580.09,
+          "enteringTimestamp": 1761346007173,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346037565": {
+          "personId": "person_1761346037565",
+          "expectedWaitTime": 10649.69,
+          "enteringTimestamp": 1761346037565,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346054549": {
+          "personId": "person_1761346054549",
+          "expectedWaitTime": 10719.30,
+          "enteringTimestamp": 1761346054549,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346102624": {
+          "personId": "person_1761346102624",
+          "expectedWaitTime": 10740.59,
+          "enteringTimestamp": 1761346102624,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346137038": {
+          "personId": "person_1761346137038",
+          "expectedWaitTime": 10713.52,
+          "enteringTimestamp": 1761346137038,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346172805": {
+          "personId": "person_1761346172805",
+          "expectedWaitTime": 10672.98,
+          "enteringTimestamp": 1761346172805,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346217582": {
+          "personId": "person_1761346217582",
+          "expectedWaitTime": 10649.34,
+          "enteringTimestamp": 1761346217582,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346268333": {
+          "personId": "person_1761346268333",
+          "expectedWaitTime": 10615.96,
+          "enteringTimestamp": 1761346268333,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346313286": {
+          "personId": "person_1761346313286",
+          "expectedWaitTime": 10591.41,
+          "enteringTimestamp": 1761346313286,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346329195": {
+          "personId": "person_1761346329195",
+          "expectedWaitTime": 10660.19,
+          "enteringTimestamp": 1761346329195,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346419700": {
+          "personId": "person_1761346419700",
+          "expectedWaitTime": 10425.93,
+          "enteringTimestamp": 1761346419700,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346440560": {
+          "personId": "person_1761346440560",
+          "expectedWaitTime": 10494.07,
+          "enteringTimestamp": 1761346440560,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346480543": {
+          "personId": "person_1761346480543",
+          "expectedWaitTime": 10480.58,
+          "enteringTimestamp": 1761346480543,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346498375": {
+          "personId": "person_1761346498375",
+          "expectedWaitTime": 10548.64,
+          "enteringTimestamp": 1761346498375,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346516475": {
+          "personId": "person_1761346516475",
+          "expectedWaitTime": 10616.70,
+          "enteringTimestamp": 1761346516475,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346537161": {
+          "personId": "person_1761346537161",
+          "expectedWaitTime": 10684.75,
+          "enteringTimestamp": 1761346537161,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346578131": {
+          "personId": "person_1761346578131",
+          "expectedWaitTime": 10712.90,
+          "enteringTimestamp": 1761346578131,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346597601": {
+          "personId": "person_1761346597601",
+          "expectedWaitTime": 10781.14,
+          "enteringTimestamp": 1761346597601,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346639647": {
+          "personId": "person_1761346639647",
+          "expectedWaitTime": 10779.93,
+          "enteringTimestamp": 1761346639647,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346685744": {
+          "personId": "person_1761346685744",
+          "expectedWaitTime": 10617.52,
+          "enteringTimestamp": 1761346685744,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346703229": {
+          "personId": "person_1761346703229",
+          "expectedWaitTime": 10685.14,
+          "enteringTimestamp": 1761346703229,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346745103": {
+          "personId": "person_1761346745103",
+          "expectedWaitTime": 10675.14,
+          "enteringTimestamp": 1761346745103,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346760907": {
+          "personId": "person_1761346760907",
+          "expectedWaitTime": 10742.70,
+          "enteringTimestamp": 1761346760907,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346796448": {
+          "personId": "person_1761346796448",
+          "expectedWaitTime": 10721.66,
+          "enteringTimestamp": 1761346796448,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346831070": {
+          "personId": "person_1761346831070",
+          "expectedWaitTime": 10789.09,
+          "enteringTimestamp": 1761346831070,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346931240": {
+          "personId": "person_1761346931240",
+          "expectedWaitTime": 10725.39,
+          "enteringTimestamp": 1761346931240,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346954412": {
+          "personId": "person_1761346954412",
+          "expectedWaitTime": 10792.85,
+          "enteringTimestamp": 1761346954412,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761346991489": {
+          "personId": "person_1761346991489",
+          "expectedWaitTime": 10779.86,
+          "enteringTimestamp": 1761346991489,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347014091": {
+          "personId": "person_1761347014091",
+          "expectedWaitTime": 10847.24,
+          "enteringTimestamp": 1761347014091,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347060458": {
+          "personId": "person_1761347060458",
+          "expectedWaitTime": 10849.20,
+          "enteringTimestamp": 1761347060458,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347083279": {
+          "personId": "person_1761347083279",
+          "expectedWaitTime": 10916.59,
+          "enteringTimestamp": 1761347083279,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347096871": {
+          "personId": "person_1761347096871",
+          "expectedWaitTime": 10983.97,
+          "enteringTimestamp": 1761347096871,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347116762": {
+          "personId": "person_1761347116762",
+          "expectedWaitTime": 11051.36,
+          "enteringTimestamp": 1761347116762,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347152322": {
+          "personId": "person_1761347152322",
+          "expectedWaitTime": 11083.98,
+          "enteringTimestamp": 1761347152322,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347180636": {
+          "personId": "person_1761347180636",
+          "expectedWaitTime": 11151.56,
+          "enteringTimestamp": 1761347180636,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347218961": {
+          "personId": "person_1761347218961",
+          "expectedWaitTime": 11145.68,
+          "enteringTimestamp": 1761347218961,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347252516": {
+          "personId": "person_1761347252516",
+          "expectedWaitTime": 11106.11,
+          "enteringTimestamp": 1761347252516,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347282816": {
+          "personId": "person_1761347282816",
+          "expectedWaitTime": 11069.88,
+          "enteringTimestamp": 1761347282816,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347303988": {
+          "personId": "person_1761347303988",
+          "expectedWaitTime": 11028.65,
+          "enteringTimestamp": 1761347303988,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347322476": {
+          "personId": "person_1761347322476",
+          "expectedWaitTime": 11095.49,
+          "enteringTimestamp": 1761347322476,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347335186": {
+          "personId": "person_1761347335186",
+          "expectedWaitTime": 11162.33,
+          "enteringTimestamp": 1761347335186,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347348920": {
+          "personId": "person_1761347348920",
+          "expectedWaitTime": 11229.17,
+          "enteringTimestamp": 1761347348920,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347362020": {
+          "personId": "person_1761347362020",
+          "expectedWaitTime": 11296.01,
+          "enteringTimestamp": 1761347362020,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347386434": {
+          "personId": "person_1761347386434",
+          "expectedWaitTime": 11310.17,
+          "enteringTimestamp": 1761347386434,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347405460": {
+          "personId": "person_1761347405460",
+          "expectedWaitTime": 11377.09,
+          "enteringTimestamp": 1761347405460,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347431686": {
+          "personId": "person_1761347431686",
+          "expectedWaitTime": 11355.68,
+          "enteringTimestamp": 1761347431686,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347445505": {
+          "personId": "person_1761347445505",
+          "expectedWaitTime": 11422.48,
+          "enteringTimestamp": 1761347445505,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347487286": {
+          "personId": "person_1761347487286",
+          "expectedWaitTime": 11391.07,
+          "enteringTimestamp": 1761347487286,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347503748": {
+          "personId": "person_1761347503748",
+          "expectedWaitTime": 11457.68,
+          "enteringTimestamp": 1761347503748,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347526895": {
+          "personId": "person_1761347526895",
+          "expectedWaitTime": 11448.37,
+          "enteringTimestamp": 1761347526895,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347560051": {
+          "personId": "person_1761347560051",
+          "expectedWaitTime": 11410.28,
+          "enteringTimestamp": 1761347560051,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347589657": {
+          "personId": "person_1761347589657",
+          "expectedWaitTime": 11476.62,
+          "enteringTimestamp": 1761347589657,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347602885": {
+          "personId": "person_1761347602885",
+          "expectedWaitTime": 11542.96,
+          "enteringTimestamp": 1761347602885,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347622141": {
+          "personId": "person_1761347622141",
+          "expectedWaitTime": 11609.29,
+          "enteringTimestamp": 1761347622141,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347637477": {
+          "personId": "person_1761347637477",
+          "expectedWaitTime": 11675.63,
+          "enteringTimestamp": 1761347637477,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347651296": {
+          "personId": "person_1761347651296",
+          "expectedWaitTime": 11741.97,
+          "enteringTimestamp": 1761347651296,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347678918": {
+          "personId": "person_1761347678918",
+          "expectedWaitTime": 11797.44,
+          "enteringTimestamp": 1761347678918,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347694502": {
+          "personId": "person_1761347694502",
+          "expectedWaitTime": 11864.09,
+          "enteringTimestamp": 1761347694502,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347715030": {
+          "personId": "person_1761347715030",
+          "expectedWaitTime": 11930.75,
+          "enteringTimestamp": 1761347715030,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347745609": {
+          "personId": "person_1761347745609",
+          "expectedWaitTime": 11929.90,
+          "enteringTimestamp": 1761347745609,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761347764650": {
+          "personId": "person_1761347764650",
+          "expectedWaitTime": 11996.55,
+          "enteringTimestamp": 1761347764650,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348412660": {
+          "personId": "person_1761348412660",
+          "expectedWaitTime": 12337.97,
+          "enteringTimestamp": 1761348412660,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348429304": {
+          "personId": "person_1761348429304",
+          "expectedWaitTime": 12407.28,
+          "enteringTimestamp": 1761348429304,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348549498": {
+          "personId": "person_1761348549498",
+          "expectedWaitTime": 12507.11,
+          "enteringTimestamp": 1761348549498,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348575993": {
+          "personId": "person_1761348575993",
+          "expectedWaitTime": 12461.50,
+          "enteringTimestamp": 1761348575993,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348589687": {
+          "personId": "person_1761348589687",
+          "expectedWaitTime": 12531.12,
+          "enteringTimestamp": 1761348589687,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348630135": {
+          "personId": "person_1761348630135",
+          "expectedWaitTime": 12371.73,
+          "enteringTimestamp": 1761348630135,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348669758": {
+          "personId": "person_1761348669758",
+          "expectedWaitTime": 12440.85,
+          "enteringTimestamp": 1761348669758,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348683809": {
+          "personId": "person_1761348683809",
+          "expectedWaitTime": 12509.96,
+          "enteringTimestamp": 1761348683809,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348730491": {
+          "personId": "person_1761348730491",
+          "expectedWaitTime": 12403.43,
+          "enteringTimestamp": 1761348730491,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348756743": {
+          "personId": "person_1761348756743",
+          "expectedWaitTime": 12356.33,
+          "enteringTimestamp": 1761348756743,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348782176": {
+          "personId": "person_1761348782176",
+          "expectedWaitTime": 12424.97,
+          "enteringTimestamp": 1761348782176,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348807122": {
+          "personId": "person_1761348807122",
+          "expectedWaitTime": 12409.61,
+          "enteringTimestamp": 1761348807122,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348826370": {
+          "personId": "person_1761348826370",
+          "expectedWaitTime": 12478.18,
+          "enteringTimestamp": 1761348826370,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348842750": {
+          "personId": "person_1761348842750",
+          "expectedWaitTime": 12546.74,
+          "enteringTimestamp": 1761348842750,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348861108": {
+          "personId": "person_1761348861108",
+          "expectedWaitTime": 12615.30,
+          "enteringTimestamp": 1761348861108,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348889976": {
+          "personId": "person_1761348889976",
+          "expectedWaitTime": 12625.28,
+          "enteringTimestamp": 1761348889976,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348937285": {
+          "personId": "person_1761348937285",
+          "expectedWaitTime": 12594.04,
+          "enteringTimestamp": 1761348937285,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348958976": {
+          "personId": "person_1761348958976",
+          "expectedWaitTime": 12662.48,
+          "enteringTimestamp": 1761348958976,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761348973839": {
+          "personId": "person_1761348973839",
+          "expectedWaitTime": 12730.93,
+          "enteringTimestamp": 1761348973839,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349003493": {
+          "personId": "person_1761349003493",
+          "expectedWaitTime": 12742.34,
+          "enteringTimestamp": 1761349003493,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349025134": {
+          "personId": "person_1761349025134",
+          "expectedWaitTime": 12810.85,
+          "enteringTimestamp": 1761349025134,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349050202": {
+          "personId": "person_1761349050202",
+          "expectedWaitTime": 12879.36,
+          "enteringTimestamp": 1761349050202,
+          "exitingTimestamp": 0,
+          "lineNumber": 3,
+          "actualWaitTime": 0.00,
+          "hasExited": false
+        },
+        "person_1761349682302": {
+          "personId": "person_1761349682302",
+          "expectedWaitTime": 13378.30,
+          "enteringTimestamp": 1761349682302,
           "exitingTimestamp": 0,
           "lineNumber": 3,
           "actualWaitTime": 0.00,
