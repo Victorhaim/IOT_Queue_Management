@@ -11,8 +11,12 @@
 #include <memory>
 #include <queue>
 #include <condition_variable>
+#include <filesystem>
+#include <sstream>
+#include <fstream>
 #include "../shared/cpp/QueueManager.h"
 #include "../shared/cpp/ThroughputTracker.h"
+#include "../shared/cpp/parameters.h"
 
 #include <fstream>
 #include <sstream>
@@ -217,118 +221,108 @@ public:
     }
 };
 
-// JSON output structure that mirrors Firebase
-struct JSONOutputManager
+// Firebase export functionality using REST API (no CLI setup required)
+struct FirebaseExporter
 {
+private:
     std::string outputDirectory;
 
-    JSONOutputManager(const std::string &dir) : outputDirectory(dir)
+    // Firebase project configurations using existing secret
+    struct FirebaseProject {
+        std::string name;
+        std::string url;
+        std::string simulationPath;
+    };
+
+    // Only use the main project since all data is stored there
+    std::vector<FirebaseProject> projects = {
+        {"iot-queue-management", "https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app", "simulation"}
+    };
+
+public:
+    FirebaseExporter(const std::string &dir) : outputDirectory(dir)
     {
         // Create output directory if it doesn't exist
         std::filesystem::create_directories(outputDirectory);
     }
 
-    void writeUnifiedStrategyData(const std::vector<std::unique_ptr<StrategySimulator>> &simulators)
+    void exportAllFirebaseData()
     {
-        std::string filename = outputDirectory + "/unified_simulation_data.json";
-        std::ofstream file(filename);
-
-        file << "{\n";
-        file << "  \"timestamp\": \"" << getCurrentTimestamp() << "\",\n";
-        file << "  \"strategies\": {\n";
-
-        bool firstStrategy = true;
-        for (const auto &simulator : simulators)
+        std::cout << "\n🔥 Exporting all simulation data from Firebase..." << std::endl;
+        
+        std::string timestamp = getCurrentTimestamp();
+        std::string filename = outputDirectory + "/firebase_export_" + timestamp + ".json";
+        
+        // Create a PowerShell script file and execute it
+        std::string scriptPath = outputDirectory + "/export_script.ps1";
+        if (createExportScript(scriptPath, filename))
         {
-            if (!firstStrategy)
-                file << ",\n";
-            firstStrategy = false;
-
-            std::string strategyKey;
-            if (simulator->getName() == "FEWEST_PEOPLE")
-                strategyKey = "shortest";
-            else if (simulator->getName() == "SHORTEST_WAIT_TIME")
-                strategyKey = "project";
-            else if (simulator->getName() == "FARTHEST_FROM_ENTRANCE")
-                strategyKey = "farthest";
-
-            file << "    \"" << strategyKey << "\": {\n";
-
-            // Overall stats
-            auto summary = simulator->getCumulativePeopleSummary();
-            file << "      \"overallStats\": {\n";
-            file << "        \"totalPeople\": " << summary.totalPeople << ",\n";
-            file << "        \"activePeople\": " << summary.activePeople << ",\n";
-            file << "        \"completedPeople\": " << summary.completedPeople << ",\n";
-            file << "        \"historicalAvgExpectedWait\": " << std::fixed << std::setprecision(2)
-                 << summary.historicalAvgExpectedWait << ",\n";
-            file << "        \"historicalAvgActualWait\": " << std::fixed << std::setprecision(2)
-                 << summary.historicalAvgActualWait << "\n";
-            file << "      },\n";
-
-            // Line stats
-            file << "      \"lineStats\": {\n";
-            for (int line = 1; line <= 3; ++line)
+            std::cout << "  📤 Running REST API export script..." << std::endl;
+            std::cout << "  📁 Output file: " << filename << std::endl;
+            
+            std::string command = "powershell -ExecutionPolicy Bypass -File \"" + scriptPath + "\"";
+            int result = system(command.c_str());
+            
+            if (result == 0)
             {
-                if (line > 1)
-                    file << ",\n";
-
-                auto lineActualWaitStats = simulator->getLineActualWaitStats(line);
-
-                file << "        \"line" << line << "\": {\n";
-                file << "          \"currentPeople\": " << simulator->getLineCount(line) << ",\n";
-                file << "          \"estimatedWaitTime\": " << std::fixed << std::setprecision(2)
-                     << simulator->getEstimatedWaitTime(line) << ",\n";
-                file << "          \"actualAvgWaitTime\": " << std::fixed << std::setprecision(2)
-                     << lineActualWaitStats.averageWaitTime << ",\n";
-                file << "          \"totalCompletedInLine\": " << lineActualWaitStats.completedPeople << ",\n";
-                file << "          \"totalActualWaitTime\": " << std::fixed << std::setprecision(2)
-                     << lineActualWaitStats.totalWaitTime << "\n";
-                file << "        }";
+                std::cout << "  ✅ Firebase export completed successfully!" << std::endl;
+                std::cout << "  📄 Exported to: " << filename << std::endl;
+                
+                // Clean up script file
+                std::remove(scriptPath.c_str());
             }
-            file << "\n      },\n";
-
-            // People data
-            auto allPeople = simulator->getAllPeople();
-            file << "      \"people\": {\n";
-            bool firstPerson = true;
-            for (const auto &person : allPeople)
+            else
             {
-                if (!firstPerson)
-                    file << ",\n";
-                firstPerson = false;
-
-                file << "        \"" << person.getId() << "\": {\n";
-                file << "          \"personId\": \"" << person.getId() << "\",\n";
-                file << "          \"expectedWaitTime\": " << std::fixed << std::setprecision(2)
-                     << person.getExpectedWaitTime() << ",\n";
-                file << "          \"enteringTimestamp\": " << person.getEnteringTimestamp() << ",\n";
-                file << "          \"exitingTimestamp\": " << person.getExitingTimestamp() << ",\n";
-                file << "          \"lineNumber\": " << person.getLineNumber() << ",\n";
-                file << "          \"actualWaitTime\": " << std::fixed << std::setprecision(2)
-                     << person.getActualWaitTime() << ",\n";
-                file << "          \"hasExited\": " << (person.hasExited() ? "true" : "false") << "\n";
-                file << "        }";
+                std::cout << "  ❌ Firebase export failed!" << std::endl;
+                std::cout << "  💡 Check your internet connection and Firebase credentials" << std::endl;
             }
-            file << "\n      }\n";
-            file << "    }";
         }
-
-        file << "\n  }\n";
-        file << "}";
-        file.close();
+        else
+        {
+            std::cout << "  ❌ Failed to create export script!" << std::endl;
+        }
     }
 
 private:
+    bool createExportScript(const std::string& scriptPath, const std::string& outputFile)
+    {
+        std::ofstream script(scriptPath);
+        if (!script.is_open()) {
+            return false;
+        }
+        
+        script << "# Firebase Export Script\n";
+        script << "$secret = '" << FIREBASE_SECRET << "'\n";
+        script << "$url = 'https://iot-queue-management-default-rtdb.europe-west1.firebasedatabase.app/.json?auth=' + $secret\n\n";
+        
+        script << "try {\n";
+        script << "    Write-Host 'Connecting to Firebase...'\n";
+        script << "    $response = Invoke-RestMethod -Uri $url -Method GET\n";
+        script << "    if ($response) {\n";
+        script << "        Write-Host '✅ Successfully exported from Firebase'\n";
+        script << "        Write-Host '   Data contains: ' + ($response.PSObject.Properties.Name -join ', ')\n";
+        script << "        \n";
+        script << "        # Write complete Firebase data to file\n";
+        script << "        $response | ConvertTo-Json -Depth 100 | Out-File -FilePath '" << outputFile << "' -Encoding UTF8\n";
+        script << "        Write-Host '📄 Complete export saved to " << outputFile << "'\n";
+        script << "    } else {\n";
+        script << "        Write-Host '⚠️  No data returned from Firebase'\n";
+        script << "    }\n";
+        script << "} catch {\n";
+        script << "    Write-Host '❌ Failed to export from Firebase: ' + $_.Exception.Message\n";
+        script << "}\n";
+        
+        script.close();
+        return true;
+    }
+
     std::string getCurrentTimestamp()
     {
         auto now = std::chrono::system_clock::now();
         auto time_t = std::chrono::system_clock::to_time_t(now);
-        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-
+        
         std::ostringstream oss;
-        oss << std::put_time(std::gmtime(&time_t), "%Y-%m-%dT%H:%M:%S");
-        oss << '.' << std::setfill('0') << std::setw(3) << ms.count() << 'Z';
+        oss << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S");
         return oss.str();
     }
 };
@@ -342,13 +336,12 @@ private:
     const double arrivalRate = 0.5;
     const std::vector<double> serviceRates = {0.08, 0.12, 0.18};
     const std::chrono::milliseconds updateInterval{2000};
-    const std::chrono::seconds jsonOutputInterval{30}; // Output JSON every 30 seconds
 
     // Simulators for each strategy
     std::vector<std::unique_ptr<StrategySimulator>> simulators;
 
-    // JSON output manager
-    std::unique_ptr<JSONOutputManager> jsonManager;
+    // Firebase export manager
+    std::unique_ptr<FirebaseExporter> firebaseExporter;
 
     // Shared random number generation (ensures same scenarios for all strategies)
     std::mt19937 rng;
@@ -371,9 +364,9 @@ public:
                               arrivalDist(0.0, 1.0),
                               serviceDist(0.0, 1.0)
     {
-        // Initialize JSON output manager
+        // Initialize Firebase export manager
         std::string outputDir = "simulation_output";
-        jsonManager = std::make_unique<JSONOutputManager>(outputDir);
+        firebaseExporter = std::make_unique<FirebaseExporter>(outputDir);
 
         // Create simulators for all three strategies
         simulators.emplace_back(std::make_unique<StrategySimulator>(
@@ -410,8 +403,7 @@ public:
         }
         std::cout << std::endl;
         std::cout << "  Update interval: " << updateInterval.count() << "ms" << std::endl;
-        std::cout << "  JSON output directory: " << outputDir << std::endl;
-        std::cout << "  JSON output interval: " << jsonOutputInterval.count() << "s" << std::endl;
+        std::cout << "  Firebase export directory: " << outputDir << std::endl;
         std::cout << "================================" << std::endl;
     }
 
@@ -453,13 +445,32 @@ public:
         }
     }
 
+    void exportFirebaseData()
+    {
+        std::lock_guard<std::mutex> lock(outputMutex);
+
+        // Print simulation summary before exporting
+        std::cout << "\n📊 Final Simulation Summary:" << std::endl;
+        for (const auto &simulator : simulators)
+        {
+            auto summary = simulator->getCumulativePeopleSummary();
+            std::cout << "   [" << simulator->getName() << "] Total: " << summary.totalPeople
+                      << ", Active: " << summary.activePeople
+                      << ", Completed: " << summary.completedPeople
+                      << ", Avg Actual Wait: " << std::fixed << std::setprecision(1)
+                      << summary.historicalAvgActualWait << "s" << std::endl;
+        }
+
+        // Export data from Firebase
+        firebaseExporter->exportAllFirebaseData();
+    }
+
 private:
     void generateAndProcessEvents()
     {
         std::cout << "Event generator and processor thread started" << std::endl;
 
         auto lastStatsTime = std::chrono::steady_clock::now();
-        auto lastJsonTime = std::chrono::steady_clock::now();
 
         while (running.load())
         {
@@ -501,19 +512,10 @@ private:
                 lastStatsTime = now;
             }
 
-            // Write JSON output periodically
-            if (std::chrono::duration_cast<std::chrono::seconds>(now - lastJsonTime) >= jsonOutputInterval)
-            {
-                writeJSONOutput();
-                lastJsonTime = now;
-            }
-
             // Wait before generating next batch of events
             std::this_thread::sleep_for(updateInterval);
         }
 
-        // Write final JSON output when stopping
-        writeJSONOutput();
         std::cout << "Event generator and processor thread stopped" << std::endl;
     }
 
@@ -617,28 +619,6 @@ private:
         }
         std::cout << "=========================================" << std::endl;
     }
-
-    void writeJSONOutput()
-    {
-        std::lock_guard<std::mutex> lock(outputMutex);
-
-        std::cout << "\n📁 Writing unified JSON output file..." << std::endl;
-
-        jsonManager->writeUnifiedStrategyData(simulators);
-
-        // Print summary for all strategies
-        for (const auto &simulator : simulators)
-        {
-            auto summary = simulator->getCumulativePeopleSummary();
-            std::cout << "   [" << simulator->getName() << "] Total: " << summary.totalPeople
-                      << ", Active: " << summary.activePeople
-                      << ", Completed: " << summary.completedPeople
-                      << ", Avg Actual Wait: " << std::fixed << std::setprecision(1)
-                      << summary.historicalAvgActualWait << "s" << std::endl;
-        }
-
-        std::cout << "✅ Unified JSON file updated: simulation_output/unified_simulation_data.json" << std::endl;
-    }
 };
 
 // Global simulator instance for signal handling
@@ -650,6 +630,10 @@ void signalHandler(int signal)
     if (g_simulator)
     {
         g_simulator->stop();
+        
+        // Export Firebase data before shutting down
+        std::cout << "\n🔥 Exporting final data from Firebase..." << std::endl;
+        g_simulator->exportFirebaseData();
     }
     exit(0);
 }
