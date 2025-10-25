@@ -1,19 +1,34 @@
 import json
+import csv
 import matplotlib.pyplot as plt
 from pathlib import Path
+
+# ======================================
+# Config
+# ======================================
 
 JSON_PATH = Path("unified_simulation_data.json")
 OUTPUT_DIR = Path("plots")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-STRATEGY_COLORS = {
-    "shortest": "orange",
-    "project": "royalblue",
-    "farthest": "green",
+Y_CEILING_SECONDS = 5000  # max displayed wait time
+
+SIM_COLORS = {
+    "simulation_project": "royalblue",
+    "simulation_farthest": "green",
+    "simulation_shortest": "purple",
+    # ESP32 intentionally omitted
 }
+
+def get_color_for_sim(sim_name: str):
+    return SIM_COLORS.get(sim_name, "gray")
 
 def log(msg: str):
     print(f"✅ {msg}")
+
+# ======================================
+# Data handling
+# ======================================
 
 def load_data(path: Path):
     log(f"Loading data from {path}")
@@ -25,123 +40,72 @@ def save_plot(fig, filename: str):
     fig.savefig(filepath, dpi=300, bbox_inches="tight")
     log(f"Saved: {filepath}")
 
-def get_people_series(strategy_block):
-    people = [
-        {
-            "enteringTimestamp": p["enteringTimestamp"],
-            "actualWaitTime": p["actualWaitTime"],
-            "expectedWaitTime": p["expectedWaitTime"],
-        }
-        for p in strategy_block["people"].values()
+def get_all_simulation_names(data):
+    """
+    Filter only relevant simulations — ditch simulation_ESP32 entirely.
+    """
+    return [
+        name for name in data.keys()
+        if name.startswith("simulation_") and name != "simulation_ESP32"
     ]
-    people.sort(key=lambda p: p["enteringTimestamp"])
-    return people
 
-def extract_expected_vs_actual_curves(strategy_block):
-    ppl = get_people_series(strategy_block)
+def get_people_series(sim_block):
+    ppl_raw = sim_block["people"]
+    ppl_list = []
+    for pid, p in ppl_raw.items():
+        ppl_list.append({
+            "personId": pid,
+            "enteringTimestamp": p.get("enteringTimestamp", 0),
+            "actualWaitTime": p.get("actualWaitTime", 0),
+            "expectedWaitTime": p.get("expectedWaitTime", 0),
+            "exitingTimestamp": p.get("exitingTimestamp", 0),
+            "lineNumber": p.get("lineNumber", None),
+            "hasExited": p.get("hasExited", False),
+        })
+    ppl_list.sort(key=lambda row: row["enteringTimestamp"])
+    return ppl_list
+
+def extract_curves_expected_vs_actual(sim_block):
+    ppl = get_people_series(sim_block)
     xs = list(range(1, len(ppl) + 1))
-    expected = [p["expectedWaitTime"] for p in ppl]
-    actual = [p["actualWaitTime"] for p in ppl]
-    return xs, expected, actual
+    expected_vals = [p["expectedWaitTime"] for p in ppl]
+    actual_vals = [p["actualWaitTime"] for p in ppl]
+    return xs, expected_vals, actual_vals
 
 def compute_global_wait_ylim(data):
-    """Computes a shared Y-axis limit for all wait-time graphs (expected/actual),
-    with a fixed ceiling of 5000 seconds."""
-    max_val = 0
-    for block in data["strategies"].values():
-        _, expected, actual = extract_expected_vs_actual_curves(block)
-        if expected:
-            max_val = max(max_val, max(expected))
-        if actual:
-            max_val = max(max_val, max(actual))
+    max_val = 0.0
+    for sim_name in get_all_simulation_names(data):
+        sim_block = data[sim_name]
+        _, expected_list, actual_list = extract_curves_expected_vs_actual(sim_block)
+        if expected_list:
+            max_val = max(max_val, max(expected_list))
+        if actual_list:
+            max_val = max(max_val, max(actual_list))
+    upper = max_val * 1.05 if max_val > 0 else 1.0
+    if upper > Y_CEILING_SECONDS:
+        upper = Y_CEILING_SECONDS
+    return (0, upper)
 
-    upper = min(max_val * 1.05 if max_val > 0 else 1.0, 5000)
-    return 0, upper
+def get_historical_avg_actual_wait(sim_block):
+    return sim_block["overallStats"]["historicalAvgActualWait"]
 
-
-def plot_actual_wait_all_strategies(data, y_lim):
-    log("Plotting: graph1_actual_wait_all_strategies")
-    strategies = data["strategies"]
-
-    fig, ax = plt.subplots()
-    for name, block in strategies.items():
-        ppl = get_people_series(block)
-        xs = list(range(1, len(ppl) + 1))
-        ys = [p["actualWaitTime"] for p in ppl]
-        ax.plot(xs, ys, label=name, color=STRATEGY_COLORS.get(name), linewidth=2)
-
-    ax.set_xlabel("Person index (arrival order)")
-    ax.set_ylabel("Actual wait time (seconds)")
-    ax.set_ylim(y_lim)
-    ax.set_title("Actual wait time vs person index (all strategies)")
-    ax.legend()
-    ax.grid(True, linestyle="--", alpha=0.3)
-    save_plot(fig, "graph1_actual_wait_all_strategies")
-
-def plot_expected_vs_actual_per_strategy(data, y_lim):
-    log("Plotting: graph2_expected_vs_actual_<strategy>")
-    for name, block in data["strategies"].items():
-        xs, expected, actual = extract_expected_vs_actual_curves(block)
-        fig, ax = plt.subplots()
-        ax.plot(xs, expected, label="Expected", linewidth=2)
-        ax.plot(xs, actual, label="Actual", linewidth=2)
-        ax.set_xlabel("Person index (arrival order)")
-        ax.set_ylabel("Wait time (seconds)")
-        ax.set_ylim(y_lim)
-        ax.set_title(f"Expected vs Actual wait time - {name}")
-        ax.legend()
-        ax.grid(True, linestyle="--", alpha=0.3)
-        save_plot(fig, f"graph2_expected_vs_actual_{name}")
-
-def plot_historical_avg_actual_wait_bar(data):
-    log("Plotting: graph3_historical_avg_actual_wait")
-    names, vals, colors = [], [], []
-    for name, block in data["strategies"].items():
-        names.append(name)
-        vals.append(block["overallStats"]["historicalAvgActualWait"])
-        colors.append(STRATEGY_COLORS.get(name))
-    fig, ax = plt.subplots()
-    ax.bar(names, vals, color=colors)
-    for i, v in enumerate(vals):
-        ax.text(i, v, f"{v:.2f}", ha='center', va='bottom')
-    ax.set_ylabel("Historical Avg Actual Wait (seconds)")
-    ax.set_title("Historical Avg Actual Wait per Strategy")
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
-    save_plot(fig, "graph3_historical_avg_actual_wait")
-
-def plot_max_actual_avg_wait_time_bar(data):
-    log("Plotting: graph4_max_actual_avg_wait")
-    names, vals, colors = [], [], []
-    for name, block in data["strategies"].items():
-        max_val = max(l["actualAvgWaitTime"] for l in block["lineStats"].values())
-        names.append(name)
-        vals.append(max_val)
-        colors.append(STRATEGY_COLORS.get(name))
-    fig, ax = plt.subplots()
-    ax.bar(names, vals, color=colors)
-    for i, v in enumerate(vals):
-        ax.text(i, v, f"{v:.2f}", ha='center', va='bottom')
-    ax.set_ylabel("Max actualAvgWaitTime across lines (seconds)")
-    ax.set_title("Peak Average Wait (busiest line) per Strategy")
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
-    save_plot(fig, "graph4_max_actual_avg_wait")
-
-import csv
+def get_max_queue_wait(sim_block):
+    max_val = 0.0
+    queues = sim_block.get("queues", {})
+    for q in queues.values():
+        wait_est = q.get("estimatedWaitForNewPerson", 0.0)
+        if wait_est > max_val:
+            max_val = wait_est
+    return max_val
 
 def export_json_to_csv(data, output_csv_path="unified_simulation_data.csv"):
-    """
-    Exports all 'people' data from all strategies into a single CSV file.
-
-    Each row includes:
-    strategy, personId, enteringTimestamp, exitingTimestamp, lineNumber,
-    expectedWaitTime, actualWaitTime, hasExited
-    """
+    log("Exporting CSV...")
     rows = []
-
-    for strategy_name, strategy_block in data["strategies"].items():
-        for person_id, p in strategy_block["people"].items():
+    for sim_name in get_all_simulation_names(data):
+        sim_block = data[sim_name]
+        for person_id, p in sim_block["people"].items():
             rows.append({
-                "strategy": strategy_name,
+                "simulationName": sim_name,
                 "personId": person_id,
                 "enteringTimestamp": p.get("enteringTimestamp", ""),
                 "exitingTimestamp": p.get("exitingTimestamp", ""),
@@ -150,13 +114,11 @@ def export_json_to_csv(data, output_csv_path="unified_simulation_data.csv"):
                 "actualWaitTime": p.get("actualWaitTime", ""),
                 "hasExited": p.get("hasExited", ""),
             })
-
-    # Write to CSV
     with open(output_csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "strategy",
+                "simulationName",
                 "personId",
                 "enteringTimestamp",
                 "exitingTimestamp",
@@ -168,20 +130,96 @@ def export_json_to_csv(data, output_csv_path="unified_simulation_data.csv"):
         )
         writer.writeheader()
         writer.writerows(rows)
+    log(f"CSV written to {output_csv_path}")
 
-    log(f"Exported JSON data to CSV: {output_csv_path}")
+# ======================================
+# Plotting
+# ======================================
+
+def plot_actual_wait_all_sims(data, y_lim):
+    log("Plotting: graph1_actual_wait_all_sims")
+    fig, ax = plt.subplots()
+    for sim_name in get_all_simulation_names(data):
+        sim_block = data[sim_name]
+        ppl = get_people_series(sim_block)
+        xs = list(range(1, len(ppl) + 1))
+        ys = [p["actualWaitTime"] for p in ppl]
+        ax.plot(xs, ys, label=sim_name,
+                color=get_color_for_sim(sim_name), linewidth=2)
+    ax.set_xlabel("Person index (arrival order)")
+    ax.set_ylabel("Actual wait time (seconds)")
+    ax.set_ylim(y_lim)
+    ax.set_title("Actual wait time vs person index (all simulations)")
+    ax.legend()
+    ax.grid(True, linestyle="--", alpha=0.3)
+    save_plot(fig, "graph1_actual_wait_all_sims")
+
+def plot_expected_vs_actual_per_sim(data, y_lim):
+    log("Plotting: graph2_expected_vs_actual_<simulation>")
+    for sim_name in get_all_simulation_names(data):
+        sim_block = data[sim_name]
+        xs, exp_vals, act_vals = extract_curves_expected_vs_actual(sim_block)
+        fig, ax = plt.subplots()
+        ax.plot(xs, exp_vals, label="Expected", linewidth=2)
+        ax.plot(xs, act_vals, label="Actual", linewidth=2)
+        ax.set_xlabel("Person index (arrival order)")
+        ax.set_ylabel("Wait time (seconds)")
+        ax.set_ylim(y_lim)
+        ax.set_title(f"Expected vs Actual wait time - {sim_name}")
+        ax.legend()
+        ax.grid(True, linestyle="--", alpha=0.3)
+        save_plot(fig, f"graph2_expected_vs_actual_{sim_name}")
+
+def plot_historical_avg_actual_wait_bar(data):
+    log("Plotting: graph3_historical_avg_actual_wait")
+    sim_names = get_all_simulation_names(data)
+    vals = []
+    colors = []
+    for sim_name in sim_names:
+        sim_block = data[sim_name]
+        vals.append(get_historical_avg_actual_wait(sim_block))
+        colors.append(get_color_for_sim(sim_name))
+    fig, ax = plt.subplots()
+    ax.bar(sim_names, vals, color=colors)
+    for i, v in enumerate(vals):
+        ax.text(i, v, f"{v:.2f}", ha="center", va="bottom", fontsize=9)
+    ax.set_ylabel("Historical Avg Actual Wait (seconds)")
+    ax.set_title("Historical Avg Actual Wait per Simulation")
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    save_plot(fig, "graph3_historical_avg_actual_wait")
+
+def plot_max_actual_avg_wait_time_bar(data):
+    log("Plotting: graph4_max_queue_wait")
+    sim_names = get_all_simulation_names(data)
+    vals = []
+    colors = []
+    for sim_name in sim_names:
+        sim_block = data[sim_name]
+        vals.append(get_max_queue_wait(sim_block))
+        colors.append(get_color_for_sim(sim_name))
+    fig, ax = plt.subplots()
+    ax.bar(sim_names, vals, color=colors)
+    for i, v in enumerate(vals):
+        ax.text(i, v, f"{v:.2f}", ha="center", va="bottom", fontsize=9)
+    ax.set_ylabel("Max estimated wait across queues (seconds)")
+    ax.set_title("Peak queue wait per Simulation (worst line right now)")
+    ax.grid(axis="y", linestyle="--", alpha=0.3)
+    save_plot(fig, "graph4_max_queue_wait")
+
+# ======================================
+# Main
+# ======================================
 
 def main():
     data = load_data(JSON_PATH)
     export_json_to_csv(data)
     y_lim = compute_global_wait_ylim(data)
-    plot_actual_wait_all_strategies(data, y_lim)
-    plot_expected_vs_actual_per_strategy(data, y_lim)
+    plot_actual_wait_all_sims(data, y_lim)
+    plot_expected_vs_actual_per_sim(data, y_lim)
     plot_historical_avg_actual_wait_bar(data)
     plot_max_actual_avg_wait_time_bar(data)
+    log("Showing all figures...")
     plt.show()
-    
 
 if __name__ == "__main__":
     main()
-
