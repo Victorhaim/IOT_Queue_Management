@@ -114,6 +114,19 @@ The graphs will be saved in `shared/simulation_output/plots/` directory and incl
 - Throughput performance metrics
 - Strategy switching behavior over time
 
+### Firebase Data Export
+The unified queue simulator automatically exports Firebase data when stopped:
+
+```bash
+# When you stop the simulator (Ctrl+C), it automatically exports Firebase data
+# The JSON export will be saved as: simulation_output/firebase_export_YYYYMMDD_HHMMSS.json
+```
+The exported JSON contains:
+- Real-time queue state data from all strategies
+- Historical throughput measurements
+- Customer wait time statistics
+- Service rate analytics
+
 ## Queue Selection Strategies
 
 ### Available Algorithms
