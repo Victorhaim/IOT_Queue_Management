@@ -1,6 +1,6 @@
 {
   "rules": {
     ".read": true,
-    ".write": false
+    ".write": "auth != null || root.child('admin_secret').val() == 'ESP32_DEVICE_SECRET'"
   }
 }

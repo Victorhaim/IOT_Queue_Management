@@ -37,7 +37,11 @@ const char* root_ca =
 //const String AccessToken = "";
 
 // It is also possible to use "API Key" instead of "Access Token". It doesn't have time limit.
-const std::string ApiKey = "";
+const std::string ApiKey = "AIzaSyBFGXWvfv0IwYtlmg0q05W9ZOZXtZut7TQ";
+
+// Firebase Authentication - Add these
+// Option 1: Use Database Secret (Recommended for ESP32)
+const std::string FIREBASE_DATABASE_SECRET = "bvNiGOwhdBR2KDerLCSUm1Xu8clmBCM83gGsKXo8";
 
 // see https://cloud.google.com/docs/authentication?hl=ja#getting_credentials_for_server-centric_flow
 // see https://qiita.com/basi/items/3623a576b754f738138e (Japanese)
