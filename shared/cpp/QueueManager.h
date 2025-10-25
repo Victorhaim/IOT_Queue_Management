@@ -12,10 +12,10 @@
 /// Line selection strategies for queue management
 enum class LineSelectionStrategy
 {
-    SHORTEST_WAIT_TIME,    ///< Selects line with shortest estimated wait time (considers queue length + throughput)
-    FEWEST_PEOPLE,         ///< Simply chooses line with fewest people (ignores throughput differences)
-    FARTHEST_FROM_ENTRANCE,///< Chooses line where last person is farthest from entrance (assumes higher line numbers = farther)
-    NEAREST_TO_ENTRANCE  ///< Chooses line where last person is nearest to entrance (assumes lower line numbers = nearer)
+    SHORTEST_WAIT_TIME,     ///< Selects line with shortest estimated wait time (considers queue length + throughput)
+    FEWEST_PEOPLE,          ///< Simply chooses line with fewest people (ignores throughput differences)
+    FARTHEST_FROM_ENTRANCE, ///< Chooses line where last person is farthest from entrance (assumes higher line numbers = farther)
+    NEAREST_TO_ENTRANCE     ///< Chooses line where last person is nearest to entrance (assumes lower line numbers = nearer)
 };
 
 /**
@@ -174,6 +174,26 @@ public:
      */
     double getArrivalRate() const;
 
+    /**
+     * @brief Set availability status for a specific line based on sensor health
+     * @param lineNumber Line to set availability for (1-based indexing)
+     * @param available true if line is available (sensor working), false if not available (sensor failed)
+     */
+    void setLineAvailability(int lineNumber, bool available);
+
+    /**
+     * @brief Get availability status for a specific line
+     * @param lineNumber Line to check (1-based indexing)
+     * @return true if line is available (sensor working), false if not available (sensor failed)
+     */
+    bool isLineAvailable(int lineNumber) const;
+
+    /**
+     * @brief Get availability status for all lines
+     * @return Vector of bool values indicating availability for each line (1-based indexing matches line numbers)
+     */
+    std::vector<bool> getAllLineAvailability() const;
+
 private:
     static const int MAX_LINES = 10; // Historical cap; still enforced to avoid runaway usage
 
@@ -198,6 +218,9 @@ private:
     // Queue theory enhancements
     std::vector<double> m_expectedServiceRates; // Expected service rates for each line
     double m_currentArrivalRate;                // Current system arrival rate
+
+    // Line availability tracking (sensor health)
+    std::vector<bool> m_lineAvailability; // Tracks if each line is available (sensor working)
 
     // History tracking for offline functionality
     std::vector<Person> m_lastHourHistory; // Queue of all people who entered in the last hour
