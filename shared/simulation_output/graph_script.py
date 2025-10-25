@@ -122,14 +122,62 @@ def plot_max_actual_avg_wait_time_bar(data):
     ax.grid(axis="y", linestyle="--", alpha=0.3)
     save_plot(fig, "graph4_max_actual_avg_wait")
 
+import csv
+
+def export_json_to_csv(data, output_csv_path="unified_simulation_data.csv"):
+    """
+    Exports all 'people' data from all strategies into a single CSV file.
+
+    Each row includes:
+    strategy, personId, enteringTimestamp, exitingTimestamp, lineNumber,
+    expectedWaitTime, actualWaitTime, hasExited
+    """
+    rows = []
+
+    for strategy_name, strategy_block in data["strategies"].items():
+        for person_id, p in strategy_block["people"].items():
+            rows.append({
+                "strategy": strategy_name,
+                "personId": person_id,
+                "enteringTimestamp": p.get("enteringTimestamp", ""),
+                "exitingTimestamp": p.get("exitingTimestamp", ""),
+                "lineNumber": p.get("lineNumber", ""),
+                "expectedWaitTime": p.get("expectedWaitTime", ""),
+                "actualWaitTime": p.get("actualWaitTime", ""),
+                "hasExited": p.get("hasExited", ""),
+            })
+
+    # Write to CSV
+    with open(output_csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "strategy",
+                "personId",
+                "enteringTimestamp",
+                "exitingTimestamp",
+                "lineNumber",
+                "expectedWaitTime",
+                "actualWaitTime",
+                "hasExited",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+    log(f"Exported JSON data to CSV: {output_csv_path}")
+
 def main():
     data = load_data(JSON_PATH)
+    export_json_to_csv(data)
     y_lim = compute_global_wait_ylim(data)
     plot_actual_wait_all_strategies(data, y_lim)
     plot_expected_vs_actual_per_strategy(data, y_lim)
     plot_historical_avg_actual_wait_bar(data)
     plot_max_actual_avg_wait_time_bar(data)
     plt.show()
+    
 
 if __name__ == "__main__":
     main()
+
