@@ -199,8 +199,14 @@ bool QueueManager::dequeue(int lineNumber, LineSelectionStrategy strategy)
     auto &line = m_lines[lineNumber - 1];
     if (!line.empty())
     {
+        // Store the completed person info before removing them to update history
+        Person completedPerson = line.front();
+        
         line.pop_front();
         m_totalPeople--;
+
+        // Update the completed person in history with their exit information
+        updatePersonInHistory(completedPerson);
 
         // If there is a new first person, set their exit timestamp now
         if (!line.empty() && !line.front().hasExited())
@@ -684,6 +690,20 @@ void QueueManager::cleanOldHistoryEntries()
                            return person.getEnteringTimestamp() < oneHourAgo;
                        }),
         m_lastHourHistory.end());
+}
+
+void QueueManager::updatePersonInHistory(const Person &completedPerson)
+{
+    // Find the person in history by their person ID and update their exit information
+    for (auto &historyPerson : m_lastHourHistory)
+    {
+        if (historyPerson.getPersonId() == completedPerson.getPersonId())
+        {
+            // Update the person in history with the completed person's exit information
+            historyPerson = completedPerson;
+            break;
+        }
+    }
 }
 
 std::vector<Person> QueueManager::getPeopleFromLastHour() const

@@ -80,6 +80,12 @@ public:
     std::string getId() const;
 
     /**
+     * @brief Gets the unique person ID assigned by QueueManager
+     * @return Person ID number
+     */
+    int getPersonId() const { return m_personId; }
+
+    /**
      * @brief Sets the simulation start time to current time (call once at simulation start)
      */
     static void setSimulationStartTime();
