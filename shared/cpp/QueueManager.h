@@ -188,6 +188,7 @@ private:
     double m_totalExpectedWaitTime; // Sum of all expected wait times
     double m_totalActualWaitTime;   // Sum of all actual wait times for completed people
     int m_lastSelectedLine;         // Last line selected by enqueue strategy
+    int m_nextPersonId;             // Counter for generating unique person IDs (independent per QueueManager)
 
     // Optional Firebase integration
     std::shared_ptr<FirebaseClient> m_firebaseClient;

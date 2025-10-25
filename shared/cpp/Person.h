@@ -79,15 +79,29 @@ public:
      */
     std::string getId() const;
 
-private:
-    double m_expectedWaitTime;      ///< Expected wait time when entering (seconds)
-    long long m_enteringTimestamp;  ///< Timestamp when entering queue (milliseconds since epoch)
-    long long m_exitingTimestamp;   ///< Timestamp when exiting queue (milliseconds since epoch, 0 = not exited)
-    int m_lineNumber;               ///< Line number assignment (1-based indexing)
+    /**
+     * @brief Sets the simulation start time to current time (call once at simulation start)
+     */
+    static void setSimulationStartTime();
 
     /**
-     * @brief Gets current timestamp in milliseconds since epoch
-     * @return Current timestamp
+     * @brief Sets the person ID for this person (used by QueueManager)
+     * @param id The unique ID to assign to this person
+     */
+    void setPersonId(int id);
+
+private:
+    double m_expectedWaitTime;      ///< Expected wait time when entering (seconds)
+    long long m_enteringTimestamp;  ///< Timestamp when entering queue (seconds since simulation start)
+    long long m_exitingTimestamp;   ///< Timestamp when exiting queue (seconds since simulation start, 0 = not exited)
+    int m_lineNumber;               ///< Line number assignment (1-based indexing)
+    int m_personId;                 ///< Unique person ID assigned by QueueManager
+
+    /**
+     * @brief Gets current timestamp in seconds since simulation start
+     * @return Current timestamp relative to simulation start
      */
     static long long getCurrentTimestamp();
+
+    static long long s_simulationStartTime; ///< Start time of simulation in system milliseconds
 };
