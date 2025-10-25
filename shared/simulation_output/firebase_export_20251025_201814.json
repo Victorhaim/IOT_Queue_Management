@@ -1,0 +1,244 @@
+﻿{
+    "simulation_ESP32":  {
+                             "overallStats":  {
+                                                  "activePeople":  0,
+                                                  "completedPeople":  6,
+                                                  "historicalAvgActualWait":  1.33,
+                                                  "historicalAvgExpectedWait":  2.05,
+                                                  "lastUpdated":  "2025-10-25T19:39:06.814Z",
+                                                  "totalPeople":  6
+                                              },
+                             "people":  {
+                                            "person_1":  {
+                                                             "actualWaitTime":  0.0,
+                                                             "enteringTimestamp":  9,
+                                                             "exitingTimestamp":  9,
+                                                             "expectedWaitTime":  0.0,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_1"
+                                                         },
+                                            "person_2":  {
+                                                             "actualWaitTime":  0.0,
+                                                             "enteringTimestamp":  17,
+                                                             "exitingTimestamp":  17,
+                                                             "expectedWaitTime":  0.0,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_2"
+                                                         },
+                                            "person_5":  {
+                                                             "actualWaitTime":  8.0,
+                                                             "enteringTimestamp":  61,
+                                                             "exitingTimestamp":  69,
+                                                             "expectedWaitTime":  12.28,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_5"
+                                                         }
+                                        },
+                             "queues":  {
+                                            "line1":  {
+                                                          "estimatedWaitForNewPerson":  0.0,
+                                                          "lastUpdated":  "2025-10-25 19:39:05",
+                                                          "lineNumber":  1,
+                                                          "queueLength":  0,
+                                                          "serviceRatePeoplePerSec":  0.0449
+                                                      },
+                                            "line2":  {
+                                                          "estimatedWaitForNewPerson":  0.0,
+                                                          "lastUpdated":  "2025-10-25 19:39:06",
+                                                          "lineNumber":  2,
+                                                          "queueLength":  0,
+                                                          "serviceRatePeoplePerSec":  0.12
+                                                      }
+                                        },
+                             "recommendedChoice":  {
+                                                       "numberOfLines":  2,
+                                                       "recommendedLine":  1,
+                                                       "recommendedLineEstWaitTime":  0.0,
+                                                       "recommendedLineQueueLength":  0,
+                                                       "totalPeopleInAllQueues":  0
+                                                   }
+                         },
+    "simulation_farthest":  {
+                                "overallStats":  {
+                                                     "activePeople":  0,
+                                                     "completedPeople":  2,
+                                                     "historicalAvgActualWait":  0.0,
+                                                     "historicalAvgExpectedWait":  0.0,
+                                                     "lastUpdated":  "2025-10-25T20:18:11.953Z",
+                                                     "totalPeople":  2
+                                                 },
+                                "people":  {
+                                               "person_1":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  5,
+                                                                "exitingTimestamp":  5,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_1"
+                                                            },
+                                               "person_2":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  12,
+                                                                "exitingTimestamp":  12,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_2"
+                                                            }
+                                           },
+                                "queues":  {
+                                               "line1":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 20:18:11",
+                                                             "lineNumber":  1,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.08
+                                                         },
+                                               "line2":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 20:18:11",
+                                                             "lineNumber":  2,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.12
+                                                         },
+                                               "line3":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 20:18:11",
+                                                             "lineNumber":  3,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.1681
+                                                         }
+                                           },
+                                "recommendedChoice":  {
+                                                          "numberOfLines":  3,
+                                                          "recommendedLine":  3,
+                                                          "recommendedLineEstWaitTime":  0.0,
+                                                          "recommendedLineQueueLength":  0,
+                                                          "totalPeopleInAllQueues":  0
+                                                      }
+                            },
+    "simulation_project":  {
+                               "overallStats":  {
+                                                    "activePeople":  1,
+                                                    "completedPeople":  2,
+                                                    "historicalAvgActualWait":  0.0,
+                                                    "historicalAvgExpectedWait":  0.0,
+                                                    "lastUpdated":  "2025-10-25T20:18:11.078Z",
+                                                    "totalPeople":  2
+                                                },
+                               "people":  {
+                                              "person_1":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  5,
+                                                               "exitingTimestamp":  5,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  1,
+                                                               "personId":  "person_1"
+                                                           },
+                                              "person_2":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  12,
+                                                               "exitingTimestamp":  12,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_2"
+                                                           }
+                                          },
+                               "queues":  {
+                                              "line1":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 20:18:10",
+                                                            "lineNumber":  1,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.0787
+                                                        },
+                                              "line2":  {
+                                                            "estimatedWaitForNewPerson":  8.33,
+                                                            "lastUpdated":  "2025-10-25 20:18:10",
+                                                            "lineNumber":  2,
+                                                            "queueLength":  1,
+                                                            "serviceRatePeoplePerSec":  0.12
+                                                        },
+                                              "line3":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 20:18:10",
+                                                            "lineNumber":  3,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.18
+                                                        }
+                                          },
+                               "recommendedChoice":  {
+                                                         "numberOfLines":  3,
+                                                         "recommendedLine":  1,
+                                                         "recommendedLineEstWaitTime":  0.0,
+                                                         "recommendedLineQueueLength":  0,
+                                                         "totalPeopleInAllQueues":  1
+                                                     }
+                           },
+    "simulation_shortest":  {
+                                "overallStats":  {
+                                                     "activePeople":  1,
+                                                     "completedPeople":  2,
+                                                     "historicalAvgActualWait":  0.0,
+                                                     "historicalAvgExpectedWait":  0.0,
+                                                     "lastUpdated":  "2025-10-25T20:18:10.436Z",
+                                                     "totalPeople":  2
+                                                 },
+                                "people":  {
+                                               "person_1":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  4,
+                                                                "exitingTimestamp":  4,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_1"
+                                                            },
+                                               "person_2":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  11,
+                                                                "exitingTimestamp":  11,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_2"
+                                                            }
+                                           },
+                                "queues":  {
+                                               "line1":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 20:18:09",
+                                                             "lineNumber":  1,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.0786
+                                                         },
+                                               "line2":  {
+                                                             "estimatedWaitForNewPerson":  8.33,
+                                                             "lastUpdated":  "2025-10-25 20:18:10",
+                                                             "lineNumber":  2,
+                                                             "queueLength":  1,
+                                                             "serviceRatePeoplePerSec":  0.12
+                                                         },
+                                               "line3":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 20:18:10",
+                                                             "lineNumber":  3,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.18
+                                                         }
+                                           },
+                                "recommendedChoice":  {
+                                                          "numberOfLines":  3,
+                                                          "recommendedLine":  1,
+                                                          "recommendedLineEstWaitTime":  0.0,
+                                                          "recommendedLineQueueLength":  0,
+                                                          "totalPeopleInAllQueues":  1
+                                                      }
+                            }
+}
