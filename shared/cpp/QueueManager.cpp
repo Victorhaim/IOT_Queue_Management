@@ -22,8 +22,15 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
       m_firebaseClient(nullptr), m_strategyPrefix(strategyPrefix), m_throughputTrackers(),
       m_expectedServiceRates(), m_currentArrivalRate(0.5), // Default arrival rate from simulations
       m_totalPeopleEver(0), m_completedPeopleEver(0), m_totalExpectedWaitTime(0.0), m_totalActualWaitTime(0.0),
-      m_lastSelectedLine(-1)
+      m_lastSelectedLine(-1), m_nextPersonId(1) // Each QueueManager starts its own ID counter at 1
 {
+    // Initialize simulation time to start from 0 (only once globally)
+    static bool timeInitialized = false;
+    if (!timeInitialized) {
+        Person::setSimulationStartTime();
+        timeInitialized = true;
+    }
+    
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
     if (m_numberOfLines > MAX_LINES)
@@ -76,6 +83,7 @@ bool QueueManager::enqueue(LineSelectionStrategy strategy)
 
     // Create a new person and add to the line
     Person newPerson(expectedWaitTime, lineNumber);
+    newPerson.setPersonId(m_nextPersonId++); // Assign unique ID for this QueueManager instance
     auto &line = m_lines[lineNumber - 1];
     line.push_back(newPerson);
     m_totalPeople++;
@@ -239,6 +247,7 @@ bool QueueManager::enqueueOnLine(int lineNumber)
 
     // Create a new person and add to the specified line
     Person newPerson(expectedWaitTime, lineNumber);
+    newPerson.setPersonId(m_nextPersonId++); // Assign unique ID for this QueueManager instance
     auto &line = m_lines[lineNumber - 1];
     line.push_back(newPerson);
     m_totalPeople++;
