@@ -4,6 +4,8 @@ _IoT Project - Intelligent Queue Distribution System_
 ## Project Overview
 This project implements an **IoT-based smart queue management system** that intelligently distributes customers across multiple service lines using real-time data analysis and machine learning algorithms.
 
+**🌐 Live Demo**: [https://iot-queue-management.web.app](https://iot-queue-management.web.app)
+
 The system features multiple queue selection strategies:
 - **Shortest Wait Time**: Considers both queue length and service throughput
 - **Fewest People**: Simple queue length-based distribution  
@@ -93,6 +95,25 @@ flutter run
 2. Upload firmware using Arduino IDE
 3. Connect sensors according to connection diagram
 
+### Generating Performance Graphs
+After running simulations, generate visualization graphs:
+
+```bash
+# Run the unified queue simulator to generate data
+cd shared/bin
+./unified_queue_simulator
+
+# Generate graphs from simulation data
+cd ../simulation_output
+python3 graph_script.py
+```
+
+The graphs will be saved in `shared/simulation_output/plots/` directory and include:
+- Queue length comparison across strategies
+- Average wait time analysis
+- Throughput performance metrics
+- Strategy switching behavior over time
+
 ## Queue Selection Strategies
 
 ### Available Algorithms
@@ -136,6 +157,11 @@ flutter_svg: ^2.0.10+1
 ```
 
 ## Usage Examples
+
+### Live Web Application
+Visit the deployed application at: **[https://iot-queue-management.web.app](https://iot-queue-management.web.app)**
+
+The web app provides real-time queue visualization, wait time estimates, and queue recommendations synchronized with the ESP32 hardware and simulations.
 
 ### ESP32 Integration
 ```cpp
