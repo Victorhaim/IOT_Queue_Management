@@ -237,5 +237,6 @@ private:
     // History management helpers
     void addPersonToHistory(const Person &person);
     void cleanOldHistoryEntries();
+    void updatePersonInHistory(const Person &completedPerson);
     bool writeHistoryToFirebase();
 };
