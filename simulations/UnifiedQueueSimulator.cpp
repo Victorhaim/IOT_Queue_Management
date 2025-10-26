@@ -29,9 +29,9 @@
 namespace SimConfig
 {
     const int MAX_QUEUE_SIZE = 10000;
-    const int NUMBER_OF_LINES = 6;
+    const int NUMBER_OF_LINES = 3;
     const double ARRIVAL_RATE = 0.5;
-    const std::vector<double> SERVICE_RATES = {0.08, 0.12, 0.18, 0.24, 0.30, 0.36};
+    const std::vector<double> SERVICE_RATES = {0.08, 0.18, 0.36};
     const std::chrono::milliseconds UPDATE_INTERVAL{2000};
 }
 // ============================================================================

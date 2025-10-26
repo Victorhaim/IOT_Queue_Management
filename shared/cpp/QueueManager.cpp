@@ -311,7 +311,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 1; i <= m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i - 1) || !isLineAvailable(i - 1))
+            if (isLineAtCapacity(i - 1) || !isLineAvailable(i))
                 continue;
             double waitTime = getEstimatedWaitTimeForNewPerson(i);
             if (waitTime < minWaitTime)
@@ -330,7 +330,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 0; i < m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i) || !isLineAvailable(i))
+            if (isLineAtCapacity(i) || !isLineAvailable(i + 1))
                 continue;
             int peopleCount = static_cast<int>(m_lines[i].size());
             if (peopleCount < minPeople)
@@ -349,7 +349,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         // Find the farthest line that's not at capacity and is available
         for (int i = m_numberOfLines; i >= 1; i--)
         {
-            if (!isLineAtCapacity(i - 1) && isLineAvailable(i - 1))
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i))
             {
                 bestLine = i;
                 break;
@@ -363,7 +363,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         // Find the nearest line (line 1) that's available and not at capacity
         for (int i = 1; i <= m_numberOfLines; i++)
         {
-            if (!isLineAtCapacity(i - 1) && isLineAvailable(i - 1))
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i))
             {
                 return i;
             }
