@@ -301,10 +301,6 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         return m_maxSize > 0 && static_cast<int>(m_lines[lineIndex].size()) >= m_maxSize;
     };
 
-    auto isLineUnavailable = [this](int lineIndex) -> bool
-    {
-        return !m_lineAvailability[lineIndex];
-    };
 
     switch (strategy)
     {
@@ -315,7 +311,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 1; i <= m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i - 1) || isLineUnavailable(i - 1))
+            if (isLineAtCapacity(i - 1) || !isLineAvailable(i - 1))
                 continue;
             double waitTime = getEstimatedWaitTimeForNewPerson(i);
             if (waitTime < minWaitTime)
@@ -334,7 +330,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 0; i < m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i) || isLineUnavailable(i))
+            if (isLineAtCapacity(i) || !isLineAvailable(i))
                 continue;
             int peopleCount = static_cast<int>(m_lines[i].size());
             if (peopleCount < minPeople)
@@ -353,7 +349,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         // Find the farthest line that's not at capacity and is available
         for (int i = m_numberOfLines; i >= 1; i--)
         {
-            if (!isLineAtCapacity(i - 1) && !isLineUnavailable(i - 1))
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i - 1))
             {
                 bestLine = i;
                 break;
@@ -367,7 +363,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         // Find the nearest line (line 1) that's available and not at capacity
         for (int i = 1; i <= m_numberOfLines; i++)
         {
-            if (!isLineAtCapacity(i - 1) && !isLineUnavailable(i - 1))
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i - 1))
             {
                 return i;
             }
