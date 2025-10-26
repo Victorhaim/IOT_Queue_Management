@@ -26,17 +26,21 @@ QueueManager::QueueManager(int maxSize, int numberOfLines, const std::string &st
 {
     // Initialize simulation time to start from 0 (only once globally)
     static bool timeInitialized = false;
-    if (!timeInitialized) {
+    if (!timeInitialized)
+    {
         Person::setSimulationStartTime();
         timeInitialized = true;
     }
-    
+
     if (m_numberOfLines < 0)
         m_numberOfLines = 0;
     if (m_numberOfLines > MAX_LINES)
         m_numberOfLines = MAX_LINES;                      // enforce historical cap
     m_lines.reserve(m_numberOfLines);                     // reserve capacity to avoid reallocations
     m_lines.assign(m_numberOfLines, std::list<Person>()); // initialize with empty lists
+
+    // Initialize line availability - all lines start as available (sensors working)
+    m_lineAvailability.assign(m_numberOfLines, true);
 
     // Initialize throughput trackers with service rates
     initializeThroughputTrackers(serviceRates);
@@ -291,11 +295,12 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
         return -1;
     }
 
-    // Check if a line is at capacity
+    // Check if a line is at capacity OR unavailable (sensor failed)
     auto isLineAtCapacity = [this](int lineIndex) -> bool
     {
         return m_maxSize > 0 && static_cast<int>(m_lines[lineIndex].size()) >= m_maxSize;
     };
+
 
     switch (strategy)
     {
@@ -306,7 +311,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 1; i <= m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i - 1))
+            if (isLineAtCapacity(i - 1) || !isLineAvailable(i))
                 continue;
             double waitTime = getEstimatedWaitTimeForNewPerson(i);
             if (waitTime < minWaitTime)
@@ -325,7 +330,7 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
         for (int i = 0; i < m_numberOfLines; i++)
         {
-            if (isLineAtCapacity(i))
+            if (isLineAtCapacity(i) || !isLineAvailable(i + 1))
                 continue;
             int peopleCount = static_cast<int>(m_lines[i].size());
             if (peopleCount < minPeople)
@@ -341,10 +346,10 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
     {
         int bestLine = -1;
 
-        // Find the farthest line that's not at capacity
+        // Find the farthest line that's not at capacity and is available
         for (int i = m_numberOfLines; i >= 1; i--)
         {
-            if (!isLineAtCapacity(i - 1))
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i))
             {
                 bestLine = i;
                 break;
@@ -355,7 +360,15 @@ int QueueManager::getNextLineNumber(LineSelectionStrategy strategy) const
 
     case LineSelectionStrategy::NEAREST_TO_ENTRANCE:
     {
-        return 1; // Always choose line 1 as nearest to entrance
+        // Find the nearest line (line 1) that's available and not at capacity
+        for (int i = 1; i <= m_numberOfLines; i++)
+        {
+            if (!isLineAtCapacity(i - 1) && isLineAvailable(i))
+            {
+                return i;
+            }
+        }
+        return -1; // No available lines
     }
 
     default:
@@ -856,4 +869,43 @@ void QueueManager::setArrivalRate(double arrivalRate)
 double QueueManager::getArrivalRate() const
 {
     return m_currentArrivalRate;
+}
+
+void QueueManager::setLineAvailability(int lineNumber, bool available)
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        std::cerr << "❌ Invalid line number " << lineNumber << " for setLineAvailability" << std::endl;
+        return;
+    }
+
+    bool wasAvailable = m_lineAvailability[lineNumber - 1];
+    m_lineAvailability[lineNumber - 1] = available;
+
+    // Log availability changes
+    if (wasAvailable != available)
+    {
+        if (available)
+        {
+            std::cout << "✅ Line " << lineNumber << " sensor restored - line now AVAILABLE" << std::endl;
+        }
+        else
+        {
+            std::cout << "❌ Line " << lineNumber << " sensor failed - line now UNAVAILABLE" << std::endl;
+        }
+    }
+}
+
+bool QueueManager::isLineAvailable(int lineNumber) const
+{
+    if (!isValidLineNumber(lineNumber))
+    {
+        return false;
+    }
+    return m_lineAvailability[lineNumber - 1];
+}
+
+std::vector<bool> QueueManager::getAllLineAvailability() const
+{
+    return m_lineAvailability;
 }
