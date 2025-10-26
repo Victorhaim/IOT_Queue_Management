@@ -62,6 +62,11 @@ flutter_app/macos/Podfile.lock
 # Test artifacts
 tests/build/
 
+#Secrets and Parameters
+shared/cpp/parameters.h
+shared/cpp/SECRETS.h
+
+
 # Logs
 *.log
 
