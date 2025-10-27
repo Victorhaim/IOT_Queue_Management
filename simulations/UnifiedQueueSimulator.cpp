@@ -311,8 +311,11 @@ private:
         script << "        Write-Host '✅ Successfully exported from Firebase'\n";
         script << "        Write-Host '   Data contains: ' + ($response.PSObject.Properties.Name -join ', ')\n";
         script << "        \n";
-        script << "        # Write complete Firebase data to file\n";
-        script << "        $response | ConvertTo-Json -Depth 100 | Out-File -FilePath '" << outputFile << "' -Encoding UTF8\n";
+        script << "        # Write complete Firebase data to file with proper formatting\n";
+        script << "        $jsonContent = $response | ConvertTo-Json -Depth 100 -Compress:$false\n";
+        script << "        # Ensure UTF-8 encoding without BOM\n";
+        script << "        $utf8NoBom = New-Object System.Text.UTF8Encoding $false\n";
+        script << "        [System.IO.File]::WriteAllText('" << outputFile << "', $jsonContent, $utf8NoBom)\n";
         script << "        Write-Host '📄 Complete export saved to " << outputFile << "'\n";
         script << "    } else {\n";
         script << "        Write-Host '⚠️  No data returned from Firebase'\n";
