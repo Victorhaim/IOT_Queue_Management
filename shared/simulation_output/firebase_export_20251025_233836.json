@@ -1,0 +1,1387 @@
+﻿{
+    "simulation_ESP32":  {
+                             "overallStats":  {
+                                                  "activePeople":  0,
+                                                  "completedPeople":  6,
+                                                  "historicalAvgActualWait":  1.33,
+                                                  "historicalAvgExpectedWait":  2.05,
+                                                  "lastUpdated":  "2025-10-25T19:39:06.814Z",
+                                                  "totalPeople":  6
+                                              },
+                             "people":  {
+                                            "person_1":  {
+                                                             "actualWaitTime":  0.0,
+                                                             "enteringTimestamp":  9,
+                                                             "exitingTimestamp":  9,
+                                                             "expectedWaitTime":  0.0,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_1"
+                                                         },
+                                            "person_2":  {
+                                                             "actualWaitTime":  0.0,
+                                                             "enteringTimestamp":  17,
+                                                             "exitingTimestamp":  17,
+                                                             "expectedWaitTime":  0.0,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_2"
+                                                         },
+                                            "person_5":  {
+                                                             "actualWaitTime":  8.0,
+                                                             "enteringTimestamp":  61,
+                                                             "exitingTimestamp":  69,
+                                                             "expectedWaitTime":  12.28,
+                                                             "hasExited":  true,
+                                                             "lineNumber":  1,
+                                                             "personId":  "person_5"
+                                                         }
+                                        },
+                             "queues":  {
+                                            "line1":  {
+                                                          "estimatedWaitForNewPerson":  0.0,
+                                                          "lastUpdated":  "2025-10-25 19:39:05",
+                                                          "lineNumber":  1,
+                                                          "queueLength":  0,
+                                                          "serviceRatePeoplePerSec":  0.0449
+                                                      },
+                                            "line2":  {
+                                                          "estimatedWaitForNewPerson":  0.0,
+                                                          "lastUpdated":  "2025-10-25 19:39:06",
+                                                          "lineNumber":  2,
+                                                          "queueLength":  0,
+                                                          "serviceRatePeoplePerSec":  0.12
+                                                      }
+                                        },
+                             "recommendedChoice":  {
+                                                       "numberOfLines":  2,
+                                                       "recommendedLine":  1,
+                                                       "recommendedLineEstWaitTime":  0.0,
+                                                       "recommendedLineQueueLength":  0,
+                                                       "totalPeopleInAllQueues":  0
+                                                   }
+                         },
+    "simulation_farthest":  {
+                                "overallStats":  {
+                                                     "activePeople":  23,
+                                                     "completedPeople":  20,
+                                                     "historicalAvgActualWait":  91.15,
+                                                     "historicalAvgExpectedWait":  179.41,
+                                                     "lastUpdated":  "2025-10-25T23:38:30.804Z",
+                                                     "totalPeople":  42
+                                                 },
+                                "people":  {
+                                               "person_1":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  4,
+                                                                "exitingTimestamp":  4,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_1"
+                                                            },
+                                               "person_10":  {
+                                                                 "actualWaitTime":  96.0,
+                                                                 "enteringTimestamp":  72,
+                                                                 "exitingTimestamp":  168,
+                                                                 "expectedWaitTime":  41.41,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_10"
+                                                             },
+                                               "person_11":  {
+                                                                 "actualWaitTime":  97.0,
+                                                                 "enteringTimestamp":  79,
+                                                                 "exitingTimestamp":  176,
+                                                                 "expectedWaitTime":  49.69,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_11"
+                                                             },
+                                               "person_12":  {
+                                                                 "actualWaitTime":  83.0,
+                                                                 "enteringTimestamp":  98,
+                                                                 "exitingTimestamp":  181,
+                                                                 "expectedWaitTime":  105.88,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_12"
+                                                             },
+                                               "person_13":  {
+                                                                 "actualWaitTime":  90.0,
+                                                                 "enteringTimestamp":  108,
+                                                                 "exitingTimestamp":  198,
+                                                                 "expectedWaitTime":  97.87,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_13"
+                                                             },
+                                               "person_14":  {
+                                                                 "actualWaitTime":  93.0,
+                                                                 "enteringTimestamp":  116,
+                                                                 "exitingTimestamp":  209,
+                                                                 "expectedWaitTime":  94.21,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_14"
+                                                             },
+                                               "person_15":  {
+                                                                 "actualWaitTime":  142.0,
+                                                                 "enteringTimestamp":  122,
+                                                                 "exitingTimestamp":  264,
+                                                                 "expectedWaitTime":  109.92,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_15"
+                                                             },
+                                               "person_16":  {
+                                                                 "actualWaitTime":  147.0,
+                                                                 "enteringTimestamp":  129,
+                                                                 "exitingTimestamp":  276,
+                                                                 "expectedWaitTime":  125.62,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_16"
+                                                             },
+                                               "person_17":  {
+                                                                 "actualWaitTime":  145.0,
+                                                                 "enteringTimestamp":  135,
+                                                                 "exitingTimestamp":  280,
+                                                                 "expectedWaitTime":  141.32,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_17"
+                                                             },
+                                               "person_18":  {
+                                                                 "actualWaitTime":  196.0,
+                                                                 "enteringTimestamp":  141,
+                                                                 "exitingTimestamp":  337,
+                                                                 "expectedWaitTime":  157.02,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_18"
+                                                             },
+                                               "person_19":  {
+                                                                 "actualWaitTime":  211.0,
+                                                                 "enteringTimestamp":  155,
+                                                                 "exitingTimestamp":  366,
+                                                                 "expectedWaitTime":  184.38,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_19"
+                                                             },
+                                               "person_2":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  9,
+                                                                "exitingTimestamp":  9,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_2"
+                                                            },
+                                               "person_20":  {
+                                                                 "actualWaitTime":  238.0,
+                                                                 "enteringTimestamp":  161,
+                                                                 "exitingTimestamp":  399,
+                                                                 "expectedWaitTime":  202.82,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_20"
+                                                             },
+                                               "person_21":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  191,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  147.27,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_21"
+                                                             },
+                                               "person_22":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  206,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  147.66,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_22"
+                                                             },
+                                               "person_23":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  222,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  143.83,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_23"
+                                                             },
+                                               "person_24":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  228,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  159.81,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_24"
+                                                             },
+                                               "person_25":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  234,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  175.79,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_25"
+                                                             },
+                                               "person_26":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  242,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  191.77,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_26"
+                                                             },
+                                               "person_27":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  250,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  207.75,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_27"
+                                                             },
+                                               "person_28":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  260,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  223.73,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_28"
+                                                             },
+                                               "person_29":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  270,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  263.02,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_29"
+                                                             },
+                                               "person_3":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  19,
+                                                                "exitingTimestamp":  19,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_3"
+                                                            },
+                                               "person_30":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  289,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  226.25,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_30"
+                                                             },
+                                               "person_31":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  297,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  243.65,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_31"
+                                                             },
+                                               "person_32":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  306,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  261.05,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_32"
+                                                             },
+                                               "person_33":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  318,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  278.46,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_33"
+                                                             },
+                                               "person_34":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  324,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  295.86,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_34"
+                                                             },
+                                               "person_35":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  335,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  313.26,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_35"
+                                                             },
+                                               "person_36":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  343,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  355.3,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_36"
+                                                             },
+                                               "person_37":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  351,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  375.04,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_37"
+                                                             },
+                                               "person_38":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  363,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  394.77,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_38"
+                                                             },
+                                               "person_39":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  377,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  404.73,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_39"
+                                                             },
+                                               "person_4":  {
+                                                                "actualWaitTime":  23.0,
+                                                                "enteringTimestamp":  24,
+                                                                "exitingTimestamp":  47,
+                                                                "expectedWaitTime":  3.33,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_4"
+                                                            },
+                                               "person_40":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  387,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  424.97,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_40"
+                                                             },
+                                               "person_41":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  393,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  445.2,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_41"
+                                                             },
+                                               "person_42":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  405,
+                                                                 "exitingTimestamp":  0,
+                                                                 "expectedWaitTime":  460.41,
+                                                                 "hasExited":  false,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_42"
+                                                             },
+                                               "person_5":  {
+                                                                "actualWaitTime":  34.0,
+                                                                "enteringTimestamp":  33,
+                                                                "exitingTimestamp":  67,
+                                                                "expectedWaitTime":  6.65,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_5"
+                                                            },
+                                               "person_6":  {
+                                                                "actualWaitTime":  46.0,
+                                                                "enteringTimestamp":  44,
+                                                                "exitingTimestamp":  90,
+                                                                "expectedWaitTime":  9.98,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_6"
+                                                            },
+                                               "person_7":  {
+                                                                "actualWaitTime":  47.0,
+                                                                "enteringTimestamp":  52,
+                                                                "exitingTimestamp":  99,
+                                                                "expectedWaitTime":  16.35,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_7"
+                                                            },
+                                               "person_8":  {
+                                                                "actualWaitTime":  52.0,
+                                                                "enteringTimestamp":  59,
+                                                                "exitingTimestamp":  111,
+                                                                "expectedWaitTime":  21.8,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_8"
+                                                            },
+                                               "person_9":  {
+                                                                "actualWaitTime":  83.0,
+                                                                "enteringTimestamp":  66,
+                                                                "exitingTimestamp":  149,
+                                                                "expectedWaitTime":  27.25,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_9"
+                                                            }
+                                           },
+                                "queues":  {
+                                               "line1":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  1,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.08
+                                                         },
+                                               "line2":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  2,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.12
+                                                         },
+                                               "line3":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  3,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.18
+                                                         },
+                                               "line4":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  4,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.24
+                                                         },
+                                               "line5":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  5,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.3
+                                                         },
+                                               "line6":  {
+                                                             "estimatedWaitForNewPerson":  481.34,
+                                                             "lastUpdated":  "2025-10-25 23:38:30",
+                                                             "lineNumber":  6,
+                                                             "queueLength":  23,
+                                                             "serviceRatePeoplePerSec":  0.0478
+                                                         }
+                                           },
+                                "recommendedChoice":  {
+                                                          "numberOfLines":  6,
+                                                          "recommendedLine":  6,
+                                                          "recommendedLineEstWaitTime":  481.34,
+                                                          "recommendedLineQueueLength":  23,
+                                                          "totalPeopleInAllQueues":  23
+                                                      }
+                            },
+    "simulation_project":  {
+                               "overallStats":  {
+                                                    "activePeople":  2,
+                                                    "completedPeople":  42,
+                                                    "historicalAvgActualWait":  1.19,
+                                                    "historicalAvgExpectedWait":  0.76,
+                                                    "lastUpdated":  "2025-10-25T23:38:30.062Z",
+                                                    "totalPeople":  42
+                                                },
+                               "people":  {
+                                              "person_1":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  3,
+                                                               "exitingTimestamp":  3,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  1,
+                                                               "personId":  "person_1"
+                                                           },
+                                              "person_10":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  71,
+                                                                "exitingTimestamp":  71,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_10"
+                                                            },
+                                              "person_11":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  78,
+                                                                "exitingTimestamp":  78,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  5,
+                                                                "personId":  "person_11"
+                                                            },
+                                              "person_12":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  97,
+                                                                "exitingTimestamp":  97,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_12"
+                                                            },
+                                              "person_13":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  107,
+                                                                "exitingTimestamp":  107,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_13"
+                                                            },
+                                              "person_14":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  115,
+                                                                "exitingTimestamp":  115,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_14"
+                                                            },
+                                              "person_15":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  121,
+                                                                "exitingTimestamp":  121,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_15"
+                                                            },
+                                              "person_16":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  128,
+                                                                "exitingTimestamp":  128,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  5,
+                                                                "personId":  "person_16"
+                                                            },
+                                              "person_17":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  134,
+                                                                "exitingTimestamp":  134,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_17"
+                                                            },
+                                              "person_18":  {
+                                                                "actualWaitTime":  46.0,
+                                                                "enteringTimestamp":  140,
+                                                                "exitingTimestamp":  186,
+                                                                "expectedWaitTime":  14.62,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_18"
+                                                            },
+                                              "person_19":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  153,
+                                                                "exitingTimestamp":  153,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_19"
+                                                            },
+                                              "person_2":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  8,
+                                                               "exitingTimestamp":  8,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_2"
+                                                           },
+                                              "person_20":  {
+                                                                "actualWaitTime":  4.0,
+                                                                "enteringTimestamp":  160,
+                                                                "exitingTimestamp":  164,
+                                                                "expectedWaitTime":  17.11,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_20"
+                                                            },
+                                              "person_21":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  190,
+                                                                "exitingTimestamp":  190,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_21"
+                                                            },
+                                              "person_22":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  205,
+                                                                "exitingTimestamp":  205,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_22"
+                                                            },
+                                              "person_23":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  221,
+                                                                "exitingTimestamp":  221,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_23"
+                                                            },
+                                              "person_24":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  227,
+                                                                "exitingTimestamp":  227,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  5,
+                                                                "personId":  "person_24"
+                                                            },
+                                              "person_25":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  233,
+                                                                "exitingTimestamp":  233,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  6,
+                                                                "personId":  "person_25"
+                                                            },
+                                              "person_26":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  241,
+                                                                "exitingTimestamp":  241,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_26"
+                                                            },
+                                              "person_27":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  249,
+                                                                "exitingTimestamp":  249,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_27"
+                                                            },
+                                              "person_28":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  259,
+                                                                "exitingTimestamp":  259,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_28"
+                                                            },
+                                              "person_29":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  269,
+                                                                "exitingTimestamp":  269,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_29"
+                                                            },
+                                              "person_3":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  18,
+                                                               "exitingTimestamp":  18,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_3"
+                                                           },
+                                              "person_30":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  288,
+                                                                "exitingTimestamp":  288,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_30"
+                                                            },
+                                              "person_31":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  296,
+                                                                "exitingTimestamp":  296,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_31"
+                                                            },
+                                              "person_32":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  305,
+                                                                "exitingTimestamp":  305,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_32"
+                                                            },
+                                              "person_33":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  317,
+                                                                "exitingTimestamp":  317,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_33"
+                                                            },
+                                              "person_34":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  323,
+                                                                "exitingTimestamp":  323,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_34"
+                                                            },
+                                              "person_35":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  334,
+                                                                "exitingTimestamp":  334,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_35"
+                                                            },
+                                              "person_36":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  342,
+                                                                "exitingTimestamp":  342,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  4,
+                                                                "personId":  "person_36"
+                                                            },
+                                              "person_37":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  350,
+                                                                "exitingTimestamp":  350,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_37"
+                                                            },
+                                              "person_38":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  362,
+                                                                "exitingTimestamp":  362,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_38"
+                                                            },
+                                              "person_39":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  376,
+                                                                "exitingTimestamp":  376,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_39"
+                                                            },
+                                              "person_4":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  23,
+                                                               "exitingTimestamp":  23,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  3,
+                                                               "personId":  "person_4"
+                                                           },
+                                              "person_40":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  386,
+                                                                "exitingTimestamp":  386,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_40"
+                                                            },
+                                              "person_41":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  392,
+                                                                "exitingTimestamp":  392,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_41"
+                                                            },
+                                              "person_42":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  404,
+                                                                "exitingTimestamp":  404,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_42"
+                                                            },
+                                              "person_5":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  32,
+                                                               "exitingTimestamp":  32,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_5"
+                                                           },
+                                              "person_6":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  43,
+                                                               "exitingTimestamp":  43,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_6"
+                                                           },
+                                              "person_7":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  51,
+                                                               "exitingTimestamp":  51,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  1,
+                                                               "personId":  "person_7"
+                                                           },
+                                              "person_8":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  58,
+                                                               "exitingTimestamp":  58,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  2,
+                                                               "personId":  "person_8"
+                                                           },
+                                              "person_9":  {
+                                                               "actualWaitTime":  0.0,
+                                                               "enteringTimestamp":  65,
+                                                               "exitingTimestamp":  65,
+                                                               "expectedWaitTime":  0.0,
+                                                               "hasExited":  true,
+                                                               "lineNumber":  3,
+                                                               "personId":  "person_9"
+                                                           }
+                                          },
+                               "queues":  {
+                                              "line1":  {
+                                                            "estimatedWaitForNewPerson":  76.35,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  1,
+                                                            "queueLength":  1,
+                                                            "serviceRatePeoplePerSec":  0.0131
+                                                        },
+                                              "line2":  {
+                                                            "estimatedWaitForNewPerson":  28.28,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  2,
+                                                            "queueLength":  1,
+                                                            "serviceRatePeoplePerSec":  0.0354
+                                                        },
+                                              "line3":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  3,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.0226
+                                                        },
+                                              "line4":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  4,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.0168
+                                                        },
+                                              "line5":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  5,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.1266
+                                                        },
+                                              "line6":  {
+                                                            "estimatedWaitForNewPerson":  0.0,
+                                                            "lastUpdated":  "2025-10-25 23:38:29",
+                                                            "lineNumber":  6,
+                                                            "queueLength":  0,
+                                                            "serviceRatePeoplePerSec":  0.1509
+                                                        }
+                                          },
+                               "recommendedChoice":  {
+                                                         "numberOfLines":  6,
+                                                         "recommendedLine":  3,
+                                                         "recommendedLineEstWaitTime":  0.0,
+                                                         "recommendedLineQueueLength":  0,
+                                                         "totalPeopleInAllQueues":  2
+                                                     }
+                           },
+    "simulation_shortest":  {
+                                "overallStats":  {
+                                                     "activePeople":  2,
+                                                     "completedPeople":  42,
+                                                     "historicalAvgActualWait":  1.24,
+                                                     "historicalAvgExpectedWait":  0.76,
+                                                     "lastUpdated":  "2025-10-25T23:38:29.304Z",
+                                                     "totalPeople":  42
+                                                 },
+                                "people":  {
+                                               "person_1":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  2,
+                                                                "exitingTimestamp":  2,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_1"
+                                                            },
+                                               "person_10":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  70,
+                                                                 "exitingTimestamp":  70,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_10"
+                                                             },
+                                               "person_11":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  77,
+                                                                 "exitingTimestamp":  77,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  5,
+                                                                 "personId":  "person_11"
+                                                             },
+                                               "person_12":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  96,
+                                                                 "exitingTimestamp":  96,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_12"
+                                                             },
+                                               "person_13":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  106,
+                                                                 "exitingTimestamp":  106,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_13"
+                                                             },
+                                               "person_14":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  114,
+                                                                 "exitingTimestamp":  114,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_14"
+                                                             },
+                                               "person_15":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  119,
+                                                                 "exitingTimestamp":  119,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_15"
+                                                             },
+                                               "person_16":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  127,
+                                                                 "exitingTimestamp":  127,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  5,
+                                                                 "personId":  "person_16"
+                                                             },
+                                               "person_17":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  133,
+                                                                 "exitingTimestamp":  133,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_17"
+                                                             },
+                                               "person_18":  {
+                                                                 "actualWaitTime":  47.0,
+                                                                 "enteringTimestamp":  138,
+                                                                 "exitingTimestamp":  185,
+                                                                 "expectedWaitTime":  14.62,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  1,
+                                                                 "personId":  "person_18"
+                                                             },
+                                               "person_19":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  152,
+                                                                 "exitingTimestamp":  152,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_19"
+                                                             },
+                                               "person_2":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  7,
+                                                                "exitingTimestamp":  7,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_2"
+                                                            },
+                                               "person_20":  {
+                                                                 "actualWaitTime":  5.0,
+                                                                 "enteringTimestamp":  158,
+                                                                 "exitingTimestamp":  163,
+                                                                 "expectedWaitTime":  17.17,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_20"
+                                                             },
+                                               "person_21":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  189,
+                                                                 "exitingTimestamp":  189,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_21"
+                                                             },
+                                               "person_22":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  204,
+                                                                 "exitingTimestamp":  204,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_22"
+                                                             },
+                                               "person_23":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  220,
+                                                                 "exitingTimestamp":  220,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_23"
+                                                             },
+                                               "person_24":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  226,
+                                                                 "exitingTimestamp":  226,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  5,
+                                                                 "personId":  "person_24"
+                                                             },
+                                               "person_25":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  232,
+                                                                 "exitingTimestamp":  232,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  6,
+                                                                 "personId":  "person_25"
+                                                             },
+                                               "person_26":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  240,
+                                                                 "exitingTimestamp":  240,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_26"
+                                                             },
+                                               "person_27":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  248,
+                                                                 "exitingTimestamp":  248,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_27"
+                                                             },
+                                               "person_28":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  258,
+                                                                 "exitingTimestamp":  258,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  1,
+                                                                 "personId":  "person_28"
+                                                             },
+                                               "person_29":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  268,
+                                                                 "exitingTimestamp":  268,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_29"
+                                                             },
+                                               "person_3":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  17,
+                                                                "exitingTimestamp":  17,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_3"
+                                                            },
+                                               "person_30":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  287,
+                                                                 "exitingTimestamp":  287,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_30"
+                                                             },
+                                               "person_31":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  295,
+                                                                 "exitingTimestamp":  295,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_31"
+                                                             },
+                                               "person_32":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  304,
+                                                                 "exitingTimestamp":  304,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_32"
+                                                             },
+                                               "person_33":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  316,
+                                                                 "exitingTimestamp":  316,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_33"
+                                                             },
+                                               "person_34":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  322,
+                                                                 "exitingTimestamp":  322,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_34"
+                                                             },
+                                               "person_35":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  332,
+                                                                 "exitingTimestamp":  332,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_35"
+                                                             },
+                                               "person_36":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  341,
+                                                                 "exitingTimestamp":  341,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  4,
+                                                                 "personId":  "person_36"
+                                                             },
+                                               "person_37":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  349,
+                                                                 "exitingTimestamp":  349,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_37"
+                                                             },
+                                               "person_38":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  361,
+                                                                 "exitingTimestamp":  361,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_38"
+                                                             },
+                                               "person_39":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  375,
+                                                                 "exitingTimestamp":  375,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  1,
+                                                                 "personId":  "person_39"
+                                                             },
+                                               "person_4":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  22,
+                                                                "exitingTimestamp":  22,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_4"
+                                                            },
+                                               "person_40":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  385,
+                                                                 "exitingTimestamp":  385,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  1,
+                                                                 "personId":  "person_40"
+                                                             },
+                                               "person_41":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  391,
+                                                                 "exitingTimestamp":  391,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  3,
+                                                                 "personId":  "person_41"
+                                                             },
+                                               "person_42":  {
+                                                                 "actualWaitTime":  0.0,
+                                                                 "enteringTimestamp":  403,
+                                                                 "exitingTimestamp":  403,
+                                                                 "expectedWaitTime":  0.0,
+                                                                 "hasExited":  true,
+                                                                 "lineNumber":  2,
+                                                                 "personId":  "person_42"
+                                                             },
+                                               "person_5":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  31,
+                                                                "exitingTimestamp":  31,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_5"
+                                                            },
+                                               "person_6":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  42,
+                                                                "exitingTimestamp":  42,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_6"
+                                                            },
+                                               "person_7":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  50,
+                                                                "exitingTimestamp":  50,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  1,
+                                                                "personId":  "person_7"
+                                                            },
+                                               "person_8":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  57,
+                                                                "exitingTimestamp":  57,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  2,
+                                                                "personId":  "person_8"
+                                                            },
+                                               "person_9":  {
+                                                                "actualWaitTime":  0.0,
+                                                                "enteringTimestamp":  64,
+                                                                "exitingTimestamp":  64,
+                                                                "expectedWaitTime":  0.0,
+                                                                "hasExited":  true,
+                                                                "lineNumber":  3,
+                                                                "personId":  "person_9"
+                                                            }
+                                           },
+                                "queues":  {
+                                               "line1":  {
+                                                             "estimatedWaitForNewPerson":  76.42,
+                                                             "lastUpdated":  "2025-10-25 23:38:28",
+                                                             "lineNumber":  1,
+                                                             "queueLength":  1,
+                                                             "serviceRatePeoplePerSec":  0.0131
+                                                         },
+                                               "line2":  {
+                                                             "estimatedWaitForNewPerson":  28.3,
+                                                             "lastUpdated":  "2025-10-25 23:38:28",
+                                                             "lineNumber":  2,
+                                                             "queueLength":  1,
+                                                             "serviceRatePeoplePerSec":  0.0353
+                                                         },
+                                               "line3":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:28",
+                                                             "lineNumber":  3,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.0226
+                                                         },
+                                               "line4":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:29",
+                                                             "lineNumber":  4,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.0168
+                                                         },
+                                               "line5":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:29",
+                                                             "lineNumber":  5,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.1266
+                                                         },
+                                               "line6":  {
+                                                             "estimatedWaitForNewPerson":  0.0,
+                                                             "lastUpdated":  "2025-10-25 23:38:29",
+                                                             "lineNumber":  6,
+                                                             "queueLength":  0,
+                                                             "serviceRatePeoplePerSec":  0.1508
+                                                         }
+                                           },
+                                "recommendedChoice":  {
+                                                          "numberOfLines":  6,
+                                                          "recommendedLine":  3,
+                                                          "recommendedLineEstWaitTime":  0.0,
+                                                          "recommendedLineQueueLength":  0,
+                                                          "totalPeopleInAllQueues":  2
+                                                      }
+                            }
+}
